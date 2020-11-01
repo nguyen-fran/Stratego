@@ -11,24 +11,22 @@ public class StrategoLocalGame extends LocalGame {
     public static final int BLUE = 0;
     public static final int RED = 1;
 
-    @Override
-    protected void sendUpdatedStateTo(GamePlayer p) {
-
     public StrategoLocalGame(){
-        strategoGameState = new StrategoGameState();
+        gameState = new StrategoGameState();
     }
 
     @Override
     protected boolean canMove(int playerIdx) {
-        if(strategoGameState.getCurrPlayerIndex() != playerIdx)
+        if(gameState.getCurrPlayerIndex() != playerIdx){
             return false;
+        }
         return true;
 
     }
 
     @Override
     protected void sendUpdatedStateTo(GamePlayer p) {
-        p.sendInfo(new StrategoGameState(this.strategoGameState));
+        p.sendInfo(new StrategoGameState(this.gameState));
 
     }
 
@@ -221,8 +219,8 @@ public class StrategoLocalGame extends LocalGame {
     protected String checkIfGameOver() {
         for (int i = 0; i < 10; i++) {
             for(int j = 0; j < 10; j++){
-                if(strategoGameState.getBoardSquares()[i][j].getPiece().getRank() == 0){
-                    if(strategoGameState.getBoardSquares()[i][j].getPiece().getCaptured()){
+                if(gameState.getBoardSquares()[i][j].getPiece().getRank() == 0){
+                    if(gameState.getBoardSquares()[i][j].getPiece().getCaptured()){
                         return "The Game is Over";
                     }
                 }
