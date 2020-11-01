@@ -505,6 +505,8 @@ public abstract class GameMainActivity extends Activity implements
 
     }// initStarterGui
 
+    //TODO make menu system to select game settings before board is shown?
+/*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.game_main, menu);
@@ -521,6 +523,8 @@ public abstract class GameMainActivity extends Activity implements
                 return super.onOptionsItemSelected(item);
         }
     }
+
+ */
 
     /**
      * this method is called whenever the user clicks on a button.
