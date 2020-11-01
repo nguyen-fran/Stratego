@@ -17,10 +17,7 @@ public class StrategoLocalGame extends LocalGame {
 
     @Override
     protected boolean canMove(int playerIdx) {
-        if(gameState.getCurrPlayerIndex() != playerIdx){
-            return false;
-        }
-        return true;
+        return (gameState.getCurrPlayerIndex() == playerIdx);
 
     }
 
@@ -143,11 +140,18 @@ public class StrategoLocalGame extends LocalGame {
             }
         }
         if (defendPiece.getCaptured()) {
-            //check which team the defend piece was
-            if (defendPiece.getTeam() == BLUE) {
-                gameState.getBlueGY()[defendPiece.getRank() - 1] += 1;
-            } else {
-                gameState.getRedGY()[defendPiece.getRank() - 1] += 1;
+            if (defendPiece.getRank() == 0) { //captured a flag game piece
+                if (defendPiece.getTeam() == BLUE) {
+                    gameState.getBlueGY()[11] += 1;
+                } else {
+                    gameState.getRedGY()[11] += 1;
+                }
+            } else { //captured regular game piece
+                if (defendPiece.getTeam() == BLUE) {
+                    gameState.getBlueGY()[defendPiece.getRank() - 1] += 1;
+                } else {
+                    gameState.getRedGY()[defendPiece.getRank() - 1] += 1;
+                }
             }
         }
 
@@ -217,16 +221,12 @@ public class StrategoLocalGame extends LocalGame {
     //TODO need to write specific message for who won
     @Override
     protected String checkIfGameOver() {
-        for (int i = 0; i < 10; i++) {
-            for(int j = 0; j < 10; j++){
-                if(gameState.getBoardSquares()[i][j].getPiece().getRank() == 0){
-                    if(gameState.getBoardSquares()[i][j].getPiece().getCaptured()){
-                        return "The Game is Over";
-                    }
-                }
-            }
-
+        if (gameState.getBlueGY()[11] > 0) {
+            return "Red team has won";
+        } else if (gameState.getRedGY()[11] > 0) {
+            return "Blue team has won";
+        } else {
+            return null;
         }
-      return null;
     }
 }
