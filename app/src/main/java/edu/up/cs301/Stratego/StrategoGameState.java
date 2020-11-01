@@ -8,9 +8,9 @@ public class StrategoGameState extends GameState {
     //Stratego only has two phases: setup and main gameplay
     private boolean gamePhase;  //false if on setup, true if on main gameplay
     private int currPlayerIndex; //true if human's turn, false if com's turn
-    //these arrays holds the number of deaths of each type of piece (no flag) in order of: 1, 2, ..., 9, 10, bomb
-    private int[] blueGY = new int[11];
-    private int[] redGY = new int[11];
+    //these arrays holds the number of deaths of each type of piece in order of: 1, 2, ..., 9, 10, bomb, flag (ie.index = piece's rank - 1, except for flag)
+    private int[] blueGY = new int[12];
+    private int[] redGY = new int[12];
 
     private StrategoGameState prevGameState;
     private BoardSquare[][] boardSquares = new BoardSquare[10][10];
