@@ -1,22 +1,562 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/top_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="5dp"
+    android:background="#FFFFFF"
+    android:gravity="center_horizontal"
     android:orientation="vertical"
-    tools:context=".MainActivity" >
+    tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/move"
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:text="STRATEGO"
+        android:textSize="36sp" />
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="move" />
+        android:layout_weight="0"
+        android:background="#FFAFAFAF"
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/swap"
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Player's Graveyard"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#900000FF"
+            android:orientation="horizontal">
+
+            <!-- TODO: either import images or set text when initializing the buttons -->
+            <androidx.gridlayout.widget.GridLayout
+                android:id="@+id/playerGY"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:columnCount="11"
+                app:rowCount="2">
+
+                <ImageView
+                    android:id="@+id/blue1_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_column="0"
+                    app:layout_row="0"
+                    app:srcCompat="@drawable/blue1" />
+
+                <ImageView
+                    android:id="@+id/blue2_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_column="1"
+                    app:layout_row="0"
+                    app:srcCompat="@drawable/blue2" />
+
+                <ImageView
+                    android:id="@+id/blue3_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_column="2"
+                    app:layout_row="0"
+                    app:srcCompat="@drawable/blue3" />
+
+                <ImageView
+                    android:id="@+id/blue4_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_column="3"
+                    app:layout_row="0"
+                    app:srcCompat="@drawable/blue4" />
+
+                <ImageView
+                    android:id="@+id/blue5_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_column="4"
+                    app:layout_row="0"
+                    app:srcCompat="@drawable/blue5" />
+
+                <ImageView
+                    android:id="@+id/blue6_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_column="5"
+                    app:layout_row="0"
+                    app:srcCompat="@drawable/blue6" />
+
+                <ImageView
+                    android:id="@+id/blue7_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_column="6"
+                    app:layout_row="0"
+                    app:srcCompat="@drawable/blue7" />
+
+                <ImageView
+                    android:id="@+id/blue8_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_column="7"
+                    app:layout_row="0"
+                    app:srcCompat="@drawable/blue8" />
+
+                <ImageView
+                    android:id="@+id/blue9_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_column="8"
+                    app:layout_row="0"
+                    app:srcCompat="@drawable/blue9" />
+
+                <ImageView
+                    android:id="@+id/blue10_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_column="9"
+                    app:layout_row="0"
+                    app:srcCompat="@drawable/blue10" />
+
+                <ImageView
+                    android:id="@+id/blueb_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_column="10"
+                    app:layout_row="0"
+                    app:srcCompat="@drawable/blueb" />
+
+                <TextView
+                    android:id="@+id/blue1_dead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#000"
+                    android:textSize="@dimen/graveyardDeathCount"
+                    app:layout_column="0"
+                    app:layout_gravity="center_horizontal"
+                    app:layout_row="1" />
+
+                <TextView
+                    android:id="@+id/blue2_dead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#000"
+                    android:textSize="@dimen/graveyardDeathCount"
+                    app:layout_column="1"
+                    app:layout_gravity="center_horizontal"
+                    app:layout_row="1" />
+
+                <TextView
+                    android:id="@+id/blue3_dead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#000"
+                    android:textSize="@dimen/graveyardDeathCount"
+                    app:layout_column="2"
+                    app:layout_gravity="center_horizontal"
+                    app:layout_row="1" />
+
+                <TextView
+                    android:id="@+id/blue4_dead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#000"
+                    android:textSize="@dimen/graveyardDeathCount"
+                    app:layout_column="3"
+                    app:layout_gravity="center_horizontal"
+                    app:layout_row="1" />
+
+                <TextView
+                    android:id="@+id/blue5_dead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#000"
+                    android:textSize="@dimen/graveyardDeathCount"
+                    app:layout_column="4"
+                    app:layout_gravity="center_horizontal"
+                    app:layout_row="1" />
+
+                <TextView
+                    android:id="@+id/blue6_dead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#000"
+                    android:textSize="@dimen/graveyardDeathCount"
+                    app:layout_column="5"
+                    app:layout_gravity="center_horizontal"
+                    app:layout_row="1" />
+
+                <TextView
+                    android:id="@+id/blue7_dead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#000"
+                    android:textSize="@dimen/graveyardDeathCount"
+                    app:layout_column="6"
+                    app:layout_gravity="center_horizontal"
+                    app:layout_row="1" />
+
+                <TextView
+                    android:id="@+id/blue8_dead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#000"
+                    android:textSize="@dimen/graveyardDeathCount"
+                    app:layout_column="7"
+                    app:layout_gravity="center_horizontal"
+                    app:layout_row="1" />
+
+                <TextView
+                    android:id="@+id/blue9_dead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#000"
+                    android:textSize="@dimen/graveyardDeathCount"
+                    app:layout_column="8"
+                    app:layout_gravity="center_horizontal"
+                    app:layout_row="1" />
+
+                <TextView
+                    android:id="@+id/blue10_dead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#000"
+                    android:textSize="@dimen/graveyardDeathCount"
+                    app:layout_column="9"
+                    app:layout_gravity="center_horizontal"
+                    app:layout_row="1" />
+
+                <TextView
+                    android:id="@+id/blueb_dead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#000"
+                    android:textSize="@dimen/graveyardDeathCount"
+                    app:layout_column="10"
+                    app:layout_gravity="center_horizontal"
+                    app:layout_row="1" />
+
+            </androidx.gridlayout.widget.GridLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Opponent's Graveyard"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#90FF0000"
+            android:orientation="horizontal">
+
+            <androidx.gridlayout.widget.GridLayout
+                android:id="@+id/oppGY"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:columnCount="11"
+                app:rowCount="2">
+
+                <ImageView
+                    android:id="@+id/red1_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_column="0"
+                    app:layout_row="0"
+                    app:srcCompat="@drawable/red1" />
+
+                <ImageView
+                    android:id="@+id/red2_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_column="1"
+                    app:layout_row="0"
+                    app:srcCompat="@drawable/red2" />
+
+                <ImageView
+                    android:id="@+id/red3_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_column="2"
+                    app:layout_row="0"
+                    app:srcCompat="@drawable/red3" />
+
+                <ImageView
+                    android:id="@+id/red4_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_column="3"
+                    app:layout_row="0"
+                    app:srcCompat="@drawable/red4" />
+
+                <ImageView
+                    android:id="@+id/red5_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_column="4"
+                    app:layout_row="0"
+                    app:srcCompat="@drawable/red5" />
+
+                <ImageView
+                    android:id="@+id/red6_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_column="5"
+                    app:layout_row="0"
+                    app:srcCompat="@drawable/red6" />
+
+                <ImageView
+                    android:id="@+id/red7_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_column="6"
+                    app:layout_row="0"
+                    app:srcCompat="@drawable/red7" />
+
+                <ImageView
+                    android:id="@+id/red8_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_column="7"
+                    app:layout_row="0"
+                    app:srcCompat="@drawable/red8" />
+
+                <ImageView
+                    android:id="@+id/red9_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_column="8"
+                    app:layout_row="0"
+                    app:srcCompat="@drawable/red9" />
+
+                <ImageView
+                    android:id="@+id/red10_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_column="9"
+                    app:layout_row="0"
+                    app:srcCompat="@drawable/red10" />
+
+                <ImageView
+                    android:id="@+id/redb_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_column="10"
+                    app:layout_row="0"
+                    app:srcCompat="@drawable/redb" />
+
+                <TextView
+                    android:id="@+id/red1_dead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#000"
+                    android:textSize="@dimen/graveyardDeathCount"
+                    app:layout_column="0"
+                    app:layout_gravity="center_horizontal"
+                    app:layout_row="1" />
+
+                <TextView
+                    android:id="@+id/red2_dead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#000"
+                    android:textSize="@dimen/graveyardDeathCount"
+                    app:layout_column="1"
+                    app:layout_gravity="center_horizontal"
+                    app:layout_row="1" />
+
+                <TextView
+                    android:id="@+id/red3_dead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#000"
+                    android:textSize="@dimen/graveyardDeathCount"
+                    app:layout_column="2"
+                    app:layout_gravity="center_horizontal"
+                    app:layout_row="1" />
+
+                <TextView
+                    android:id="@+id/red4_dead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#000"
+                    android:textSize="@dimen/graveyardDeathCount"
+                    app:layout_column="3"
+                    app:layout_gravity="center_horizontal"
+                    app:layout_row="1" />
+
+                <TextView
+                    android:id="@+id/red5_dead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#000"
+                    android:textSize="@dimen/graveyardDeathCount"
+                    app:layout_column="4"
+                    app:layout_gravity="center_horizontal"
+                    app:layout_row="1" />
+
+                <TextView
+                    android:id="@+id/red6_dead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#000"
+                    android:textSize="@dimen/graveyardDeathCount"
+                    app:layout_column="5"
+                    app:layout_gravity="center_horizontal"
+                    app:layout_row="1" />
+
+                <TextView
+                    android:id="@+id/red7_dead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#000"
+                    android:textSize="@dimen/graveyardDeathCount"
+                    app:layout_column="6"
+                    app:layout_gravity="center_horizontal"
+                    app:layout_row="1" />
+
+                <TextView
+                    android:id="@+id/red8_dead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#000"
+                    android:textSize="@dimen/graveyardDeathCount"
+                    app:layout_column="7"
+                    app:layout_gravity="center_horizontal"
+                    app:layout_row="1" />
+
+                <TextView
+                    android:id="@+id/red9_dead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#000"
+                    android:textSize="@dimen/graveyardDeathCount"
+                    app:layout_column="8"
+                    app:layout_gravity="center_horizontal"
+                    app:layout_row="1" />
+
+                <TextView
+                    android:id="@+id/red10_dead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#000"
+                    android:textSize="@dimen/graveyardDeathCount"
+                    app:layout_column="9"
+                    app:layout_gravity="center_horizontal"
+                    app:layout_row="1" />
+
+                <TextView
+                    android:id="@+id/redb_dead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="#000"
+                    android:textSize="@dimen/graveyardDeathCount"
+                    app:layout_column="10"
+                    app:layout_gravity="center_horizontal"
+                    app:layout_row="1" />
+
+            </androidx.gridlayout.widget.GridLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="swap" />
+        android:layout_weight="5"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <androidx.gridlayout.widget.GridLayout
+            android:id="@+id/gameBoardGrid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:columnCount="10"
+            app:rowCount="10" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/turnIndicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:gravity="right"
+        android:text="Blue Player's turn"
+        android:textSize="30sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/undoButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Undo" />
+
+        <Button
+            android:id="@+id/resetButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Reset" />
+
+        <Button
+            android:id="@+id/rulesButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Rules" />
+
+        <Button
+            android:id="@+id/quitButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Quit" />
+
+        <Button
+            android:id="@+id/settingsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Settings" />
+    </LinearLayout>
 </LinearLayout>
