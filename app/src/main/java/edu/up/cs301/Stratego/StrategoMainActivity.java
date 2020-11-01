@@ -11,8 +11,9 @@ public class StrategoMainActivity extends GameMainActivity {
         return null;
     }
 
+
     @Override
     public LocalGame createLocalGame() {
-        return null;
+        return new StrategoLocalGame();
     }
 }
