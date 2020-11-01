@@ -1,14 +1,52 @@
 package edu.up.cs301.Stratego;
 
+import java.util.ArrayList;
+
 import edu.up.cs301.game.GameFramework.GameMainActivity;
+import edu.up.cs301.game.GameFramework.GamePlayer;
 import edu.up.cs301.game.GameFramework.LocalGame;
 import edu.up.cs301.game.GameFramework.gameConfiguration.GameConfig;
+import edu.up.cs301.game.GameFramework.gameConfiguration.GamePlayerType;
 
 public class StrategoMainActivity extends GameMainActivity {
 
+    private static final int PORT_NUMBER = 2278;
+
     @Override
     public GameConfig createDefaultConfig() {
-        return null;
+
+        /**
+         * External Citation
+         * Date:    1 November 2020
+         * Problem: Didn't know how to set up the configuration
+         *
+         * Resource:    https://github.com/cs301up/PigGameStarter
+         * Solution:    I used the code from the project's main activity class, changin some values to fit Stratego
+         */
+        ArrayList<GamePlayerType> playerTypes = new ArrayList<GamePlayerType>();
+
+        playerTypes.add(new GamePlayerType("Local Human Player") {
+            @Override
+            public GamePlayer createPlayer(String name) {
+                return new StrategoHumanPlayer(name);
+            }});
+        playerTypes.add(new GamePlayerType("Computer Player") {
+            @Override
+            public GamePlayer createPlayer(String name) {
+                return new StrategoComputerPlayer(name);
+            }});
+        playerTypes.add(new GamePlayerType("Smart Computer Player") {
+            @Override
+            public GamePlayer createPlayer(String name) {
+                return new StrategoSmartComputerPlayer(name);
+            }
+        });
+
+        GameConfig defaultConfig = new GameConfig(playerTypes, 2, 2, "Stratego", PORT_NUMBER);
+        defaultConfig.addPlayer("Human", 0);
+        defaultConfig.addPlayer("Computer", 1);
+        defaultConfig.setRemoteData("Remote Human Player", "", 0);
+        return defaultConfig;
     }
 
 
