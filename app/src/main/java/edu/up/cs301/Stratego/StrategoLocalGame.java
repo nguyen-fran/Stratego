@@ -14,17 +14,22 @@ public class StrategoLocalGame extends LocalGame {
     @Override
     protected void sendUpdatedStateTo(GamePlayer p) {
 
+    public StrategoLocalGame(){
+        strategoGameState = new StrategoGameState();
     }
 
-    //TODO: make this check properly
     @Override
     protected boolean canMove(int playerIdx) {
-        return false;
+        if(strategoGameState.getCurrPlayerIndex() != playerIdx)
+            return false;
+        return true;
+
     }
 
     @Override
-    protected String checkIfGameOver() {
-        return null;
+    protected void sendUpdatedStateTo(GamePlayer p) {
+        p.sendInfo(new StrategoGameState(this.strategoGameState));
+
     }
 
     @Override
@@ -207,5 +212,23 @@ public class StrategoLocalGame extends LocalGame {
 
         //should only hit here if new square is a valid movement
         return true;
+    }
+
+
+    //checks if either flag has the 'captured' status (captured = true)
+    //TODO need to write specific message for who won
+    @Override
+    protected String checkIfGameOver() {
+        for (int i = 0; i < 10; i++) {
+            for(int j = 0; j < 10; j++){
+                if(strategoGameState.getBoardSquares()[i][j].getPiece().getRank() == 0){
+                    if(strategoGameState.getBoardSquares()[i][j].getPiece().getCaptured()){
+                        return "The Game is Over";
+                    }
+                }
+            }
+
+        }
+      return null;
     }
 }
