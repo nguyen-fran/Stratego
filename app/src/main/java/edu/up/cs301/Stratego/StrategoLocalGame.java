@@ -29,79 +29,81 @@ public class StrategoLocalGame extends LocalGame {
 
     @Override
     protected boolean makeMove(GameAction action) {
-        if( action instanceof StrategoMoveAction){
+        if (action instanceof StrategoMoveAction){
             //TODO: make sure action updates gamestate when moving
             prevGameState = new StrategoGameState(this.gameState);
 
-            BoardSquare squareSrc = ((StrategoMoveAction) action).getSquareSrc();
-            BoardSquare squareDest = ((StrategoMoveAction) action).getSquareDest();
-
-            //return false if not player's turn or if squareSrc is empty
-            //or if src square is not curr player's piece or if dest square is curr player's piece.
-            //the last two conditions should account for if the two squares are the same
-            if (!canMove(gameState.getCurrPlayerIndex()) || squareSrc.getPiece() == null
-                    || squareSrc.getPiece().getTeam() != getPlayerIdx(action.getPlayer())
-                    || squareDest.getPiece().getTeam() == getPlayerIdx(action.getPlayer())) {
-                return false;
-            }
-
-            //check if coordinates you want to move to are valid for piece (special exception for scout range, and immobile pieces)
-            if (squareSrc.getPiece().getRank() == 11 || squareSrc.getPiece().getRank() == 0) { //immobile pieces (cannot move)
-                return false;
-            } else if (squareSrc.getPiece().getRank() == 2) { //special scout movement
-                //check if not valid scout move
-                if (!scoutMove(squareSrc, squareDest)) {
-                    return false;
-                }
-            } else { //all other pieces have normal movement range (check if square is in range, and is moving at all)
-                if (squareDest.getRow() > squareSrc.getRow() + 1 || squareDest.getRow() < squareSrc.getRow() - 1
-                        || squareDest.getCol() > squareSrc.getCol() + 1 || squareDest.getCol() < squareSrc.getCol() - 1) {
-                    return false;
-                    }
-                }
-
-            //if dest occupied by another piece (ie. is not null), then attack
-            if (squareDest.getOccupied() && squareDest.getPiece() == null) { //trying to move into a lake square
-                return false;
-            } else if (squareDest.getOccupied()) {
-                //check if not valid attack
-                if(!attack(squareSrc.getPiece(), squareDest.getPiece())) {
-                    return false;
+            //if the action was a valid move, change whose turn it is
+            if (move((StrategoMoveAction) action)) {
+                if (gameState.getCurrPlayerIndex() == 0) {
+                    gameState.setCurrPlayerIndex(1);
+                } else {
+                    gameState.setCurrPlayerIndex(0);
                 }
             }
-
-            //check if src square hasn't been captured
-            if (!squareSrc.getPiece().getCaptured()) {
-                //TODO: check if this line updates the gamestate correctly
-                gameState.getBoardSquares()[squareDest.getRow()][squareDest.getCol()].setPiece(squareSrc.getPiece());
-            }
-            //update src square appropriately
-            //TODO: make sure this updates the game state, not the copy that the player is looking at
-            squareSrc.setPiece(null);
-            squareSrc.setOccupied(false);
 
             return true;
-        }else if(action instanceof StrategoSwapAction){
-            //TODO: make sure swapping updates the gamestate properly
-            BoardSquare squareSrc = ((StrategoSwapAction) action).getSquareSrc();
-            BoardSquare squareDest = ((StrategoSwapAction) action).getSquareDest();
-
-            //check if there are pieces on the squares to swap
-            if (squareSrc.getPiece() == null || squareDest.getPiece() == null) {
-                return false;
-            }
-            //check if the pieces belong to the player doing the swap
-            if (squareSrc.getPiece().getTeam() != getPlayerIdx(action.getPlayer())
-                    || squareDest.getPiece().getTeam() != getPlayerIdx(action.getPlayer())) {
-                return false;
-            }
-
-            GamePiece temp = squareSrc.getPiece();
-            squareSrc.setPiece(squareDest.getPiece());
-            squareDest.setPiece(temp);
-            return true;
+        } else if (action instanceof StrategoSwapAction){
+            return swap((StrategoSwapAction) action);
+        } else {
+            return false;
         }
-        return false;
+    }
+
+    /**
+     * method for moving the piece on a given board square to another square
+     * @param action    the action being done by a game player
+     * @return  true if move is legal, false if not
+     */
+    public boolean move(StrategoMoveAction action) {
+        BoardSquare squareSrc = action.getSquareSrc();
+        BoardSquare squareDest = action.getSquareDest();
+
+        //return false if not player's turn or if squareSrc is empty
+        //or if src square is not curr player's piece or if dest square is curr player's piece.
+        //the last two conditions should account for if the two squares are the same
+        if (!canMove(gameState.getCurrPlayerIndex()) || squareSrc.getPiece() == null
+                || squareSrc.getPiece().getTeam() != getPlayerIdx(action.getPlayer())
+                || squareDest.getPiece().getTeam() == getPlayerIdx(action.getPlayer())) {
+            return false;
+        }
+
+        //check if coordinates you want to move to are valid for piece (special exception for scout range, and immobile pieces)
+        if (squareSrc.getPiece().getRank() == 11 || squareSrc.getPiece().getRank() == 0) { //immobile pieces (cannot move)
+            return false;
+        } else if (squareSrc.getPiece().getRank() == 2) { //special scout movement
+            //check if not valid scout move
+            if (!scoutMove(squareSrc, squareDest)) {
+                return false;
+            }
+        } else { //all other pieces have normal movement range (check if square is in range, and is moving at all)
+            if (squareDest.getRow() > squareSrc.getRow() + 1 || squareDest.getRow() < squareSrc.getRow() - 1
+                    || squareDest.getCol() > squareSrc.getCol() + 1 || squareDest.getCol() < squareSrc.getCol() - 1) {
+                return false;
+            }
+        }
+
+        //if dest occupied by another piece (ie. is not null), then attack
+        if (squareDest.getOccupied() && squareDest.getPiece() == null) { //trying to move into a lake square
+            return false;
+        } else if (squareDest.getOccupied()) {
+            //check if not valid attack
+            if(!attack(squareSrc.getPiece(), squareDest.getPiece())) {
+                return false;
+            }
+        }
+
+        //check if src square hasn't been captured
+        if (!squareSrc.getPiece().getCaptured()) {
+            //TODO: check if this line updates the gamestate correctly
+            gameState.getBoardSquares()[squareDest.getRow()][squareDest.getCol()].setPiece(squareSrc.getPiece());
+        }
+        //update src square appropriately
+        //TODO: make sure this updates the game state, not the copy that the player is looking at
+        squareSrc.setPiece(null);
+        squareSrc.setOccupied(false);
+
+        return true;
     }
 
     /**
@@ -216,6 +218,31 @@ public class StrategoLocalGame extends LocalGame {
         return true;
     }
 
+    /**
+     * Swaps pieces that are on the same team, this is for the setup phase of the game
+     *
+     * @param action    the action being done by a game player
+     * @return true if swap was successful, false otherwise
+     */
+    public boolean swap(StrategoSwapAction action) {
+        BoardSquare squareSrc = action.getSquareSrc();
+        BoardSquare squareDest = action.getSquareDest();
+
+        //check if there are pieces on the squares to swap
+        if (squareSrc.getPiece() == null || squareDest.getPiece() == null) {
+            return false;
+        }
+        //check if the pieces belong to the player doing the swap
+        if (squareSrc.getPiece().getTeam() != getPlayerIdx(action.getPlayer())
+                || squareDest.getPiece().getTeam() != getPlayerIdx(action.getPlayer())) {
+            return false;
+        }
+
+        GamePiece temp = squareSrc.getPiece();
+        squareSrc.setPiece(squareDest.getPiece());
+        squareDest.setPiece(temp);
+        return true;
+    }
 
     //checks if either flag has the 'captured' status (captured = true)
     //TODO need to write specific message for who won
