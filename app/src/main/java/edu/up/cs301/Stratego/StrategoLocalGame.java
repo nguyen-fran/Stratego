@@ -51,8 +51,22 @@ public class StrategoLocalGame extends LocalGame {
      * @return  true if move is legal, false if not
      */
     public boolean move(StrategoMoveAction action) {
-        BoardSquare squareSrc = action.getSquareSrc();
-        BoardSquare squareDest = action.getSquareDest();
+
+        if (!gameState.getGamePhase()) {
+            return false;
+        }
+
+//TODO convert the int index coming in into a board square coordinate to get
+        int topHalf;
+        int bottomHalf;
+
+        topHalf = action.getSquareSrc()/10;
+        bottomHalf = action.getSquareSrc() - (topHalf*10);
+        BoardSquare squareSrc = gameState.getBoardSquares()[topHalf][bottomHalf];
+
+        topHalf = action.getSquareDest()/10;
+        bottomHalf = action.getSquareDest() - (topHalf*10);
+        BoardSquare squareDest = gameState.getBoardSquares()[topHalf][bottomHalf];
 
         //return false if not player's turn or if squareSrc is empty
         //or if src square is not curr player's piece or if dest square is curr player's piece.
@@ -220,8 +234,21 @@ public class StrategoLocalGame extends LocalGame {
      * @return true if swap was successful, false otherwise
      */
     public boolean swap(StrategoSwapAction action) {
-        BoardSquare squareSrc = action.getSquareSrc();
-        BoardSquare squareDest = action.getSquareDest();
+
+        if (gameState.getGamePhase()) {
+            return false;
+        }
+
+        int topHalf;
+        int bottomHalf;
+
+        topHalf = action.getSquareSrc()/10;
+        bottomHalf = (action.getSquareSrc() - (topHalf*10) - 1);
+        BoardSquare squareSrc = gameState.getBoardSquares()[topHalf][bottomHalf];
+
+        topHalf = action.getSquareDest()/10;
+        bottomHalf = (action.getSquareDest() - (topHalf*10) - 1);
+        BoardSquare squareDest = gameState.getBoardSquares()[topHalf][bottomHalf];
 
         //check if there are pieces on the squares to swap
         if (squareSrc.getPiece() == null || squareDest.getPiece() == null) {

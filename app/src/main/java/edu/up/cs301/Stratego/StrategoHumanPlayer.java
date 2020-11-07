@@ -28,6 +28,9 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
     public static final int BLUE = 0;
     public static final int RED = 1;
 
+    private int firstClick = -1;
+    private int secondClick = -1;
+
     /**
      * constructor
      *
@@ -106,8 +109,11 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
         activity.setContentView(R.layout.stratego_layout);
 
         gameBoardGrid = (ViewGroup) myActivity.findViewById(R.id.gameBoardGrid);
+        Button temp;
         for (int i = 0; i < 100; i++) {
-            gameBoardGrid.addView(new Button(myActivity));
+            temp = new Button(myActivity);
+            temp.setId(i);
+            gameBoardGrid.addView(temp);
         }
 
         this.playerGY = activity.findViewById(R.id.blueGY);
@@ -119,15 +125,30 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
 
     @Override
     public void onClick(View v) {
-//        switch(v.getId()){
-//            case R.id.swap:
-//                game.sendAction(new StrategoSwapAction(this));
-//                break;
-//            case R.id.move:
-//                game.sendAction(new StrategoMoveAction(this));
-//                break;
-//            default:
-//                break;
-//        }
+        if(firstClick > 0){
+            secondClick = v.getId();
+            // TODO need better way to determine which action is being attempted
+            if(Math.abs((firstClick-secondClick)) == 1){
+                game.sendAction(new StrategoMoveAction(this, firstClick, secondClick));
+            }
+            else{
+                game.sendAction(new StrategoSwapAction(this, firstClick, secondClick));
+            }
+        }
+        else{
+            firstClick = v.getId();
+        }
+        /*
+          switch(v.getId()){
+            case R.id.swap:
+                game.sendAction(new StrategoSwapAction(this));
+                break;
+            case R.id.move:
+                game.sendAction(new StrategoMoveAction(this));
+                break;
+            default:
+                break;
+        }
+         */
     }
 }
