@@ -4,32 +4,35 @@ import edu.up.cs301.game.GameFramework.GamePlayer;
 import edu.up.cs301.game.GameFramework.actionMessage.GameAction;
 
 public class StrategoMoveAction extends GameAction {
-    private BoardSquare squareSrc;
-    private BoardSquare squareDest;
+    private int squareSrc;
+    private int squareDest;
 
     /**
      * constructor for GameAction
      *
      * @param player the player who created the action
      */
-    public StrategoMoveAction(GamePlayer player, BoardSquare squareSrc, BoardSquare squareDest) {
+    public StrategoMoveAction(GamePlayer player, int squareSrc, int squareDest) {
         super(player);
         this.squareSrc = squareSrc;
         this.squareDest = squareDest;
     }
 
     //getters and setters
-    public BoardSquare getSquareSrc() {
+
+    public int getSquareSrc() {
         return squareSrc;
     }
-    public BoardSquare getSquareDest() {
+
+    public void setSquareSrc(int squareSrc) {
+        this.squareSrc = squareSrc;
+    }
+
+    public int getSquareDest() {
         return squareDest;
     }
 
-    public void setSquareSrc(BoardSquare squareSrc) {
-        this.squareSrc = squareSrc;
-    }
-    public void setSquareDest(BoardSquare squareDest) {
+    public void setSquareDest(int squareDest) {
         this.squareDest = squareDest;
     }
 }
