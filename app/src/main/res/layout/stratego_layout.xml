@@ -1,13 +1,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/top_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="5dp"
     android:background="#FFFFFF"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".Stratego.StrategoMainActivity">
 
     <TextView
         android:id="@+id/title"
@@ -37,9 +38,8 @@
             android:background="#900000FF"
             android:orientation="horizontal">
 
-            <!-- TODO: either import images or set text when initializing the buttons -->
             <androidx.gridlayout.widget.GridLayout
-                android:id="@+id/playerGY"
+                android:id="@+id/blueGY"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -52,7 +52,7 @@
                     android:layout_height="wrap_content"
                     app:layout_column="0"
                     app:layout_row="0"
-                    app:srcCompat="@drawable/blue1" />
+                    android:src="@drawable/blue1" />
 
                 <ImageView
                     android:id="@+id/blue2_image"
@@ -60,7 +60,7 @@
                     android:layout_height="wrap_content"
                     app:layout_column="1"
                     app:layout_row="0"
-                    app:srcCompat="@drawable/blue2" />
+                    android:src="@drawable/blue2" />
 
                 <ImageView
                     android:id="@+id/blue3_image"
@@ -68,7 +68,7 @@
                     android:layout_height="wrap_content"
                     app:layout_column="2"
                     app:layout_row="0"
-                    app:srcCompat="@drawable/blue3" />
+                    android:src="@drawable/blue3" />
 
                 <ImageView
                     android:id="@+id/blue4_image"
@@ -76,7 +76,7 @@
                     android:layout_height="wrap_content"
                     app:layout_column="3"
                     app:layout_row="0"
-                    app:srcCompat="@drawable/blue4" />
+                    android:src="@drawable/blue4" />
 
                 <ImageView
                     android:id="@+id/blue5_image"
@@ -84,7 +84,7 @@
                     android:layout_height="wrap_content"
                     app:layout_column="4"
                     app:layout_row="0"
-                    app:srcCompat="@drawable/blue5" />
+                    android:src="@drawable/blue5" />
 
                 <ImageView
                     android:id="@+id/blue6_image"
@@ -92,7 +92,7 @@
                     android:layout_height="wrap_content"
                     app:layout_column="5"
                     app:layout_row="0"
-                    app:srcCompat="@drawable/blue6" />
+                    android:src="@drawable/blue6" />
 
                 <ImageView
                     android:id="@+id/blue7_image"
@@ -100,7 +100,7 @@
                     android:layout_height="wrap_content"
                     app:layout_column="6"
                     app:layout_row="0"
-                    app:srcCompat="@drawable/blue7" />
+                    android:src="@drawable/blue7" />
 
                 <ImageView
                     android:id="@+id/blue8_image"
@@ -108,7 +108,7 @@
                     android:layout_height="wrap_content"
                     app:layout_column="7"
                     app:layout_row="0"
-                    app:srcCompat="@drawable/blue8" />
+                    android:src="@drawable/blue8" />
 
                 <ImageView
                     android:id="@+id/blue9_image"
@@ -116,7 +116,7 @@
                     android:layout_height="wrap_content"
                     app:layout_column="8"
                     app:layout_row="0"
-                    app:srcCompat="@drawable/blue9" />
+                    android:src="@drawable/blue9" />
 
                 <ImageView
                     android:id="@+id/blue10_image"
@@ -124,7 +124,7 @@
                     android:layout_height="wrap_content"
                     app:layout_column="9"
                     app:layout_row="0"
-                    app:srcCompat="@drawable/blue10" />
+                    android:src="@drawable/blue10" />
 
                 <ImageView
                     android:id="@+id/blueb_image"
@@ -132,7 +132,7 @@
                     android:layout_height="wrap_content"
                     app:layout_column="10"
                     app:layout_row="0"
-                    app:srcCompat="@drawable/blueb" />
+                    android:src="@drawable/blueb" />
 
                 <TextView
                     android:id="@+id/blue1_dead"
@@ -272,7 +272,7 @@
             android:orientation="horizontal">
 
             <androidx.gridlayout.widget.GridLayout
-                android:id="@+id/oppGY"
+                android:id="@+id/redGY"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -285,7 +285,7 @@
                     android:layout_height="wrap_content"
                     app:layout_column="0"
                     app:layout_row="0"
-                    app:srcCompat="@drawable/red1" />
+                    android:src="@drawable/red1" />
 
                 <ImageView
                     android:id="@+id/red2_image"
@@ -293,7 +293,7 @@
                     android:layout_height="wrap_content"
                     app:layout_column="1"
                     app:layout_row="0"
-                    app:srcCompat="@drawable/red2" />
+                    android:src="@drawable/red2" />
 
                 <ImageView
                     android:id="@+id/red3_image"
@@ -301,7 +301,7 @@
                     android:layout_height="wrap_content"
                     app:layout_column="2"
                     app:layout_row="0"
-                    app:srcCompat="@drawable/red3" />
+                    android:src="@drawable/red3" />
 
                 <ImageView
                     android:id="@+id/red4_image"
@@ -309,7 +309,7 @@
                     android:layout_height="wrap_content"
                     app:layout_column="3"
                     app:layout_row="0"
-                    app:srcCompat="@drawable/red4" />
+                    android:src="@drawable/red4" />
 
                 <ImageView
                     android:id="@+id/red5_image"
@@ -317,7 +317,7 @@
                     android:layout_height="wrap_content"
                     app:layout_column="4"
                     app:layout_row="0"
-                    app:srcCompat="@drawable/red5" />
+                    android:src="@drawable/red5" />
 
                 <ImageView
                     android:id="@+id/red6_image"
@@ -325,7 +325,7 @@
                     android:layout_height="wrap_content"
                     app:layout_column="5"
                     app:layout_row="0"
-                    app:srcCompat="@drawable/red6" />
+                    android:src="@drawable/red6" />
 
                 <ImageView
                     android:id="@+id/red7_image"
@@ -333,7 +333,7 @@
                     android:layout_height="wrap_content"
                     app:layout_column="6"
                     app:layout_row="0"
-                    app:srcCompat="@drawable/red7" />
+                    android:src="@drawable/red7" />
 
                 <ImageView
                     android:id="@+id/red8_image"
@@ -341,7 +341,7 @@
                     android:layout_height="wrap_content"
                     app:layout_column="7"
                     app:layout_row="0"
-                    app:srcCompat="@drawable/red8" />
+                    android:src="@drawable/red8" />
 
                 <ImageView
                     android:id="@+id/red9_image"
@@ -349,7 +349,7 @@
                     android:layout_height="wrap_content"
                     app:layout_column="8"
                     app:layout_row="0"
-                    app:srcCompat="@drawable/red9" />
+                    android:src="@drawable/red9" />
 
                 <ImageView
                     android:id="@+id/red10_image"
@@ -357,7 +357,7 @@
                     android:layout_height="wrap_content"
                     app:layout_column="9"
                     app:layout_row="0"
-                    app:srcCompat="@drawable/red10" />
+                    android:src="@drawable/red10" />
 
                 <ImageView
                     android:id="@+id/redb_image"
@@ -365,7 +365,7 @@
                     android:layout_height="wrap_content"
                     app:layout_column="10"
                     app:layout_row="0"
-                    app:srcCompat="@drawable/redb" />
+                    android:src="@drawable/redb" />
 
                 <TextView
                     android:id="@+id/red1_dead"
@@ -514,7 +514,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="30dp"
-        android:gravity="right"
+        android:gravity="end"
         android:text="Blue Player's turn"
         android:textSize="30sp" />
 
