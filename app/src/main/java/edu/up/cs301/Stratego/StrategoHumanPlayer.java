@@ -7,6 +7,7 @@ import edu.up.cs301.game.GameFramework.GameHumanPlayer;
 import edu.up.cs301.game.GameFramework.GameMainActivity;
 import edu.up.cs301.game.GameFramework.infoMessage.GameInfo;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
 
 public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListener {
@@ -14,6 +15,8 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
     private GameMainActivity myActivity;
     private Button swap;
     private Button move;
+
+    private ViewGroup gameBoardGrid;
 
     /**
      * constructor
@@ -39,21 +42,26 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
         myActivity = activity;
         activity.setContentView(R.layout.stratego_layout);
 
-        swap = myActivity.findViewById(R.id.swap);
-        move = myActivity.findViewById(R.id.move);
+        gameBoardGrid = (ViewGroup) myActivity.findViewById(R.id.gameBoardGrid);
+        for (int i = 0; i < 100; i++) {
+            gameBoardGrid.addView(new Button(myActivity));
+        }
+
+//        swap = myActivity.findViewById(R.id.swap);
+//        move = myActivity.findViewById(R.id.move);
     }
 
     @Override
     public void onClick(View v) {
-        switch(v.getId()){
-            case R.id.swap:
-                game.sendAction(new StrategoSwapAction(this));
-                break;
-            case R.id.move:
-                game.sendAction(new StrategoMoveAction(this));
-                break;
-            default:
-                break;
-        }
+//        switch(v.getId()){
+//            case R.id.swap:
+//                game.sendAction(new StrategoSwapAction(this));
+//                break;
+//            case R.id.move:
+//                game.sendAction(new StrategoMoveAction(this));
+//                break;
+//            default:
+//                break;
+//        }
     }
 }

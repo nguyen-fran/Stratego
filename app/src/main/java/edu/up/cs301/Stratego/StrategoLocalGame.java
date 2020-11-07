@@ -33,13 +33,8 @@ public class StrategoLocalGame extends LocalGame {
             //TODO: make sure action updates gamestate when moving
             prevGameState = new StrategoGameState(this.gameState);
 
-            //if the action was a valid move, change whose turn it is
             if (move((StrategoMoveAction) action)) {
-                if (gameState.getCurrPlayerIndex() == 0) {
-                    gameState.setCurrPlayerIndex(1);
-                } else {
-                    gameState.setCurrPlayerIndex(0);
-                }
+                gameState.setCurrPlayerIndex(0);
             }
 
             return true;
