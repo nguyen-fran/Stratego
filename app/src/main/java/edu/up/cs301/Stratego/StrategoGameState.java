@@ -15,7 +15,7 @@ public class StrategoGameState extends GameState {
     private StrategoGameState prevGameState;
     private BoardSquare[][] boardSquares = new BoardSquare[10][10];
 
-    private static final int BOARD_SIZE = 10;
+    public static final int BOARD_SIZE = 10;
     public static final int BLUE = 0;   //team blue will always go first
     public static final int RED = 1;    //team red will always go second
     public static final boolean HUMAN_TURN = true;
