@@ -86,21 +86,108 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
                 int gridCoord = (i*10) + j;
                 ImageButton square = (ImageButton)gameBoardGrid.getChildAt(gridCoord);
 
-                //TODO: find out how to set text on imagebuttons or get images in here
-                //might need to redo this based on filenames when switching to images
-
-                //set text color based on team
-                if(((StrategoGameState) info).getBoardSquares()[i][j].getPiece().getTeam() == BLUE){
-                    //set text to blue
-                }else{
-                    //set text to red
-                }
-
-                //set text based on rank
-
+                //TODO: test to make sure this works
+                boardImagePicker(square, (StrategoGameState)info, i, j);
             }
         }
 
+    }
+
+    /**
+     * helper method to pick out image for a given image button based on the game state
+     * there is absolutely a better way to do this but i don't know what it is
+     * @param button button to update the image of
+     * @param gameState current state of the game
+     * @param i row of game board array to pull from
+     * @param j col of game board array to pull from
+     */
+    public void boardImagePicker(ImageButton button, StrategoGameState gameState, int i, int j){
+        if(gameState.getBoardSquares()[i][j].getPiece().getTeam() == BLUE){ //blue pieces
+            switch(gameState.getBoardSquares()[i][j].getPiece().getRank()){
+                case 0: //blue flag
+                    button.setImageResource(R.drawable.bluef);
+                    break;
+                case 1:
+                    button.setImageResource(R.drawable.blue1);
+                    break;
+                case 2:
+                    button.setImageResource(R.drawable.blue2);
+                    break;
+                case 3:
+                    button.setImageResource(R.drawable.blue3);
+                    break;
+                case 4:
+                    button.setImageResource(R.drawable.blue4);
+                    break;
+                case 5:
+                    button.setImageResource(R.drawable.blue5);
+                    break;
+                case 6:
+                    button.setImageResource(R.drawable.blue6);
+                    break;
+                case 7:
+                    button.setImageResource(R.drawable.blue7);
+                    break;
+                case 8:
+                    button.setImageResource(R.drawable.blue8);
+                    break;
+                case 9:
+                    button.setImageResource(R.drawable.blue9);
+                    break;
+                case 10:
+                    button.setImageResource(R.drawable.blue10);
+                    break;
+                case 11:
+                    button.setImageResource(R.drawable.blueb); //blue bomb
+                    break;
+            }
+        }else if(gameState.getBoardSquares()[i][j].getPiece().getTeam() == RED){ //red pieces
+            switch(gameState.getBoardSquares()[i][j].getPiece().getRank()){
+                case 0: //red flag
+                    button.setImageResource(R.drawable.redf);
+                    break;
+                case 1:
+                    button.setImageResource(R.drawable.red1);
+                    break;
+                case 2:
+                    button.setImageResource(R.drawable.red2);
+                    break;
+                case 3:
+                    button.setImageResource(R.drawable.red3);
+                    break;
+                case 4:
+                    button.setImageResource(R.drawable.red4);
+                    break;
+                case 5:
+                    button.setImageResource(R.drawable.red5);
+                    break;
+                case 6:
+                    button.setImageResource(R.drawable.red6);
+                    break;
+                case 7:
+                    button.setImageResource(R.drawable.red7);
+                    break;
+                case 8:
+                    button.setImageResource(R.drawable.red8);
+                    break;
+                case 9:
+                    button.setImageResource(R.drawable.red9);
+                    break;
+                case 10:
+                    button.setImageResource(R.drawable.red10);
+                    break;
+                case 11:
+                    button.setImageResource(R.drawable.redb); //red bomb
+                    break;
+            }
+        }else{ //lakes/empty spaces
+            if(gameState.getBoardSquares()[i][j].getOccupied() &&
+               gameState.getBoardSquares()[i][j].getPiece() == null){ //lake
+                button.setImageResource(R.drawable.lake);
+            }else{ //empty square
+                button.setImageResource(R.drawable.empty_space);
+            }
+        }
     }
 
     @Override

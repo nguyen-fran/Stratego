@@ -55,6 +55,7 @@ public class StrategoComputerPlayer extends GameComputerPlayer {
 
         //don't need to error check the move, if a move fails the local game won't move to the player
         //which means this comp player would get another shot
+        //TODO: convert board square coordinates to int, or refactor how the move action handles picking coords
         game.sendAction(new StrategoMoveAction(this, gameState.getBoardSquares()[randRow][randCol], gameState.getBoardSquares()[randRow + dir[0]][randCol + dir[1]]));
     }
     
