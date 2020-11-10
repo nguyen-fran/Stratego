@@ -20,6 +20,7 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
     private GameMainActivity myActivity;
     private Button swap;
     private Button move;
+    private TextView turnIndicator;
 
     private ViewGroup gameBoardGrid;
     private ViewGroup playerGY;
@@ -62,7 +63,6 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
          Solution: used this as an example
          */
 
-
         //setting up player graveyard with a loop
         for (int i = 0; i < 11; i++){
             TextView GY = (TextView)playerGY.getChildAt(i + 11);
@@ -85,10 +85,15 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
                 //using this to be able to get from the board grid at the correct place
                 int gridCoord = (i*10) + j;
                 ImageButton square = (ImageButton)gameBoardGrid.getChildAt(gridCoord);
-
-                //TODO: test to make sure this works
                 boardImagePicker(square, (StrategoGameState)info, i, j);
             }
+        }
+
+        //updating turn indicator
+        if(((StrategoGameState) info).getCurrPlayerIndex() == BLUE){
+            turnIndicator.setText("Player's turn");
+        }else{
+            turnIndicator.setText("Opponent's turn");
         }
 
     }
@@ -110,83 +115,109 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
                 gameState.getBoardSquares()[i][j].getPiece() == null){ //empty square
             button.setImageResource(R.drawable.empty_space);
         }else if (gameState.getBoardSquares()[i][j].getPiece().getTeam() == BLUE){ //blue pieces
-            switch(gameState.getBoardSquares()[i][j].getPiece().getRank()){
-                case 0: //blue flag
-                    button.setImageResource(R.drawable.bluef);
-                    break;
-                case 1:
-                    button.setImageResource(R.drawable.blue1);
-                    break;
-                case 2:
-                    button.setImageResource(R.drawable.blue2);
-                    break;
-                case 3:
-                    button.setImageResource(R.drawable.blue3);
-                    break;
-                case 4:
-                    button.setImageResource(R.drawable.blue4);
-                    break;
-                case 5:
-                    button.setImageResource(R.drawable.blue5);
-                    break;
-                case 6:
-                    button.setImageResource(R.drawable.blue6);
-                    break;
-                case 7:
-                    button.setImageResource(R.drawable.blue7);
-                    break;
-                case 8:
-                    button.setImageResource(R.drawable.blue8);
-                    break;
-                case 9:
-                    button.setImageResource(R.drawable.blue9);
-                    break;
-                case 10:
-                    button.setImageResource(R.drawable.blue10);
-                    break;
-                case 11:
-                    button.setImageResource(R.drawable.blueb); //blue bomb
-                    break;
-            }
+            imagePickerBlue(button, gameState, i, j);
         }else if(gameState.getBoardSquares()[i][j].getPiece().getTeam() == RED){ //red pieces
-            switch(gameState.getBoardSquares()[i][j].getPiece().getRank()){
-                case 0: //red flag
-                    button.setImageResource(R.drawable.redf);
-                    break;
-                case 1:
-                    button.setImageResource(R.drawable.red1);
-                    break;
-                case 2:
-                    button.setImageResource(R.drawable.red2);
-                    break;
-                case 3:
-                    button.setImageResource(R.drawable.red3);
-                    break;
-                case 4:
-                    button.setImageResource(R.drawable.red4);
-                    break;
-                case 5:
-                    button.setImageResource(R.drawable.red5);
-                    break;
-                case 6:
-                    button.setImageResource(R.drawable.red6);
-                    break;
-                case 7:
-                    button.setImageResource(R.drawable.red7);
-                    break;
-                case 8:
-                    button.setImageResource(R.drawable.red8);
-                    break;
-                case 9:
-                    button.setImageResource(R.drawable.red9);
-                    break;
-                case 10:
-                    button.setImageResource(R.drawable.red10);
-                    break;
-                case 11:
-                    button.setImageResource(R.drawable.redb); //red bomb
-                    break;
+            if(gameState.getBoardSquares()[i][j].getPiece().getVisible() == false){
+                button.setImageResource(R.drawable.red_unknown);
+            }else{
+                imagePickerRed(button, gameState, i, j);
             }
+        }
+    }
+
+    /**
+     * helper method to contain the switch statement for setting blue piece images
+     * @param button button being updated
+     * @param gameState current state of the game
+     * @param i row of game board array to pull from
+     * @param j col of game board array to pull from
+     */
+    public void imagePickerBlue(ImageButton button, StrategoGameState gameState, int i, int j){
+        switch(gameState.getBoardSquares()[i][j].getPiece().getRank()){
+            case 0: //blue flag
+                button.setImageResource(R.drawable.bluef);
+                break;
+            case 1:
+                button.setImageResource(R.drawable.blue1);
+                break;
+            case 2:
+                button.setImageResource(R.drawable.blue2);
+                break;
+            case 3:
+                button.setImageResource(R.drawable.blue3);
+                break;
+            case 4:
+                button.setImageResource(R.drawable.blue4);
+                break;
+            case 5:
+                button.setImageResource(R.drawable.blue5);
+                break;
+            case 6:
+                button.setImageResource(R.drawable.blue6);
+                break;
+            case 7:
+                button.setImageResource(R.drawable.blue7);
+                break;
+            case 8:
+                button.setImageResource(R.drawable.blue8);
+                break;
+            case 9:
+                button.setImageResource(R.drawable.blue9);
+                break;
+            case 10:
+                button.setImageResource(R.drawable.blue10);
+                break;
+            case 11:
+                button.setImageResource(R.drawable.blueb); //blue bomb
+                break;
+        }
+    }
+
+    /**
+     * helper method to contain the switch statement for setting red piece images
+     * @param button button being updated
+     * @param gameState current state of the game
+     * @param i row of game board array to pull from
+     * @param j col of game board array to pull from
+     */
+    public void imagePickerRed(ImageButton button, StrategoGameState gameState, int i, int j){
+        switch(gameState.getBoardSquares()[i][j].getPiece().getRank()){
+            case 0: //red flag
+                button.setImageResource(R.drawable.redf);
+                break;
+            case 1:
+                button.setImageResource(R.drawable.red1);
+                break;
+            case 2:
+                button.setImageResource(R.drawable.red2);
+                break;
+            case 3:
+                button.setImageResource(R.drawable.red3);
+                break;
+            case 4:
+                button.setImageResource(R.drawable.red4);
+                break;
+            case 5:
+                button.setImageResource(R.drawable.red5);
+                break;
+            case 6:
+                button.setImageResource(R.drawable.red6);
+                break;
+            case 7:
+                button.setImageResource(R.drawable.red7);
+                break;
+            case 8:
+                button.setImageResource(R.drawable.red8);
+                break;
+            case 9:
+                button.setImageResource(R.drawable.red9);
+                break;
+            case 10:
+                button.setImageResource(R.drawable.red10);
+                break;
+            case 11:
+                button.setImageResource(R.drawable.redb); //red bomb
+                break;
         }
     }
 
@@ -205,6 +236,7 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
 
         this.playerGY = activity.findViewById(R.id.blueGY);
         this.oppGY = activity.findViewById(R.id.redGY);
+        this.turnIndicator = activity.findViewById(R.id.turnIndicator);
     }
 
     @Override
