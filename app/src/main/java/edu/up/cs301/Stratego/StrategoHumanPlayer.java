@@ -22,8 +22,8 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
     private Button move;
 
     private ViewGroup gameBoardGrid;
-    private GridLayout playerGY;
-    private GridLayout oppGY;
+    private ViewGroup playerGY;
+    private ViewGroup oppGY;
 
     public static final int BLUE = 0;
     public static final int RED = 1;
