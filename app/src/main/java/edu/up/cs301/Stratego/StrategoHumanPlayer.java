@@ -83,11 +83,11 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
         for (int i = 0; i < 10; i++){
             for (int j = 0; j < 10; j++){
                 //using this to be able to get from the board grid at the correct place
-                //int gridCoord = (i*10) + j;
-                //ImageButton square = (ImageButton)gameBoardGrid.getChildAt(gridCoord);
+                int gridCoord = (i*10) + j;
+                ImageButton square = (ImageButton)gameBoardGrid.getChildAt(gridCoord);
 
                 //TODO: test to make sure this works
-                //boardImagePicker(square, (StrategoGameState)info, i, j);
+                boardImagePicker(square, (StrategoGameState)info, i, j);
             }
         }
 
@@ -102,7 +102,14 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
      * @param j col of game board array to pull from
      */
     public void boardImagePicker(ImageButton button, StrategoGameState gameState, int i, int j){
-        if(gameState.getBoardSquares()[i][j].getPiece().getTeam() == BLUE){ //blue pieces
+        //lakes/empty spaces
+        if(gameState.getBoardSquares()[i][j].getOccupied() &&
+                gameState.getBoardSquares()[i][j].getPiece() == null){ //lake
+            button.setImageResource(R.drawable.lake);
+        }else if(!gameState.getBoardSquares()[i][j].getOccupied() &&
+                gameState.getBoardSquares()[i][j].getPiece() == null){ //empty square
+            button.setImageResource(R.drawable.empty_space);
+        }else if (gameState.getBoardSquares()[i][j].getPiece().getTeam() == BLUE){ //blue pieces
             switch(gameState.getBoardSquares()[i][j].getPiece().getRank()){
                 case 0: //blue flag
                     button.setImageResource(R.drawable.bluef);
@@ -180,13 +187,6 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
                     button.setImageResource(R.drawable.redb); //red bomb
                     break;
             }
-        }else{ //lakes/empty spaces
-            if(gameState.getBoardSquares()[i][j].getOccupied() &&
-               gameState.getBoardSquares()[i][j].getPiece() == null){ //lake
-                button.setImageResource(R.drawable.lake);
-            }else{ //empty square
-                button.setImageResource(R.drawable.empty_space);
-            }
         }
     }
 
@@ -196,9 +196,9 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
         activity.setContentView(R.layout.stratego_layout);
 
         gameBoardGrid = (ViewGroup) myActivity.findViewById(R.id.gameBoardGrid);
-        Button temp;
+        ImageButton temp;
         for (int i = 0; i < 100; i++) {
-            temp = new Button(myActivity);
+            temp = new ImageButton(myActivity);
             temp.setId(i);
             gameBoardGrid.addView(temp);
         }
