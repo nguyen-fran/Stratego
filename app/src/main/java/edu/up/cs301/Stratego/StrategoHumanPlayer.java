@@ -31,6 +31,8 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
     private int firstClick = -1;
     private int secondClick = -1;
 
+    private StrategoGameState tempGameState = null;
+
     /**
      * constructor
      *
@@ -53,6 +55,8 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
             flash(Color.RED, 10);
             return;
         }
+
+        tempGameState = (StrategoGameState) info;
 
         /**
          External Citation
@@ -210,16 +214,20 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
     @Override
     public void onClick(View v) {
         if(firstClick > 0){
+
             secondClick = v.getId();
             // TODO need better way to determine which action is being attempted
             if(Math.abs((firstClick-secondClick)) == 1){
                 game.sendAction(new StrategoMoveAction(this, firstClick, secondClick));
+                firstClick = -1;
+                secondClick = -1;
             }
             else{
                 game.sendAction(new StrategoSwapAction(this, firstClick, secondClick));
+                firstClick = -1;
+                secondClick = -1;
             }
-        }
-        else{
+        }else{
             firstClick = v.getId();
         }
         /*
