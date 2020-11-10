@@ -204,6 +204,7 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
         for (int i = 0; i < 100; i++) {
             temp = new ImageButton(myActivity);
             temp.setId(i);
+            temp.setOnClickListener(this);
             gameBoardGrid.addView(temp);
         }
 
@@ -216,8 +217,9 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
         if(firstClick > 0){
 
             secondClick = v.getId();
+            Log.i("testing clicks", "recorded first click " + firstClick + " and made it to record the second" + secondClick);
             // TODO need better way to determine which action is being attempted
-            if(Math.abs((firstClick-secondClick)) == 1){
+            if(tempGameState.getGamePhase()){
                 game.sendAction(new StrategoMoveAction(this, firstClick, secondClick));
                 firstClick = -1;
                 secondClick = -1;
@@ -230,17 +232,5 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
         }else{
             firstClick = v.getId();
         }
-        /*
-          switch(v.getId()){
-            case R.id.swap:
-                game.sendAction(new StrategoSwapAction(this));
-                break;
-            case R.id.move:
-                game.sendAction(new StrategoMoveAction(this));
-                break;
-            default:
-                break;
-        }
-         */
     }
 }
