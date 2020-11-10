@@ -22,8 +22,8 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
     private Button move;
 
     private ViewGroup gameBoardGrid;
-    private GridLayout playerGY;
-    private GridLayout oppGY;
+    private ViewGroup playerGY;
+    private ViewGroup oppGY;
 
     public static final int BLUE = 0;
     public static final int RED = 1;
@@ -68,7 +68,7 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
             TextView GY = (TextView)playerGY.getChildAt(i + 11);
             //setting text to whatever value is in graveyard array at that coord
             //might need to adjust +- 1 depending to avoid out of bounds errors
-            GY.setText(((StrategoGameState) info).getBlueGY()[i]);
+            GY.setText("" + ((StrategoGameState) info).getBlueGY()[i]);
         }
 
         //setting up computer graveyard with a loop
@@ -76,18 +76,18 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
             TextView GY = (TextView)oppGY.getChildAt(i + 11);
             //setting text to whatever value is in graveyard array at that coord
             //might need to adjust +- 1 depending to avoid out of bounds errors
-            GY.setText(((StrategoGameState) info).getRedGY()[i]);
+            GY.setText("" + ((StrategoGameState) info).getRedGY()[i]);
         }
 
         //double for loop to update game board from game state
         for (int i = 0; i < 10; i++){
             for (int j = 0; j < 10; j++){
                 //using this to be able to get from the board grid at the correct place
-                int gridCoord = (i*10) + j;
-                ImageButton square = (ImageButton)gameBoardGrid.getChildAt(gridCoord);
+                //int gridCoord = (i*10) + j;
+                //ImageButton square = (ImageButton)gameBoardGrid.getChildAt(gridCoord);
 
                 //TODO: test to make sure this works
-                boardImagePicker(square, (StrategoGameState)info, i, j);
+                //boardImagePicker(square, (StrategoGameState)info, i, j);
             }
         }
 
@@ -205,9 +205,6 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
 
         this.playerGY = activity.findViewById(R.id.blueGY);
         this.oppGY = activity.findViewById(R.id.redGY);
-
-//        swap = myActivity.findViewById(R.id.swap);
-//        move = myActivity.findViewById(R.id.move);
     }
 
     @Override
