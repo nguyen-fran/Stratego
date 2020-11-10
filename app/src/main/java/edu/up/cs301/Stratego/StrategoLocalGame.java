@@ -33,10 +33,14 @@ public class StrategoLocalGame extends LocalGame {
             //TODO: make sure action updates gamestate when moving
             prevGameState = new StrategoGameState(this.gameState);
 
+            //if the move was successful, go on to the next player
             if (move((StrategoMoveAction) action)) {
-                gameState.setCurrPlayerIndex(0);
+                if (gameState.getCurrPlayerIndex() == 0) {
+                    gameState.setCurrPlayerIndex(1);
+                } else {
+                    gameState.setCurrPlayerIndex(0);
+                }
             }
-
             return true;
         } else if (action instanceof StrategoSwapAction){
             return swap((StrategoSwapAction) action);
@@ -56,7 +60,7 @@ public class StrategoLocalGame extends LocalGame {
             return false;
         }
 
-//TODO convert the int index coming in into a board square coordinate to get
+        //TODO convert the int index coming in into a board square coordinate to get
         int topHalf;
         int bottomHalf;
 
@@ -145,23 +149,23 @@ public class StrategoLocalGame extends LocalGame {
         if (attackPiece.getCaptured()) {
             //check which team the attack piece was
             if (attackPiece.getTeam() == BLUE) {
-                gameState.getBlueGY()[attackPiece.getRank() - 1] += 1;
+                gameState.setBlueGYIdx(attackPiece.getRank() - 1, gameState.getBlueGY()[attackPiece.getRank() - 1] + 1);
             } else {
-                gameState.getRedGY()[attackPiece.getRank() - 1] += 1;
+                gameState.setRedGYIdx(attackPiece.getRank() - 1, gameState.getRedGY()[attackPiece.getRank() - 1] + 1);
             }
         }
         if (defendPiece.getCaptured()) {
             if (defendPiece.getRank() == 0) { //captured a flag game piece
                 if (defendPiece.getTeam() == BLUE) {
-                    gameState.getBlueGY()[11] += 1;
+                    gameState.setBlueGYIdx(11, gameState.getBlueGY()[11] + 1);
                 } else {
-                    gameState.getRedGY()[11] += 1;
+                    gameState.setRedGYIdx(11, gameState.getRedGY()[11] + 1);
                 }
             } else { //captured regular game piece
                 if (defendPiece.getTeam() == BLUE) {
-                    gameState.getBlueGY()[defendPiece.getRank() - 1] += 1;
+                    gameState.setBlueGYIdx(defendPiece.getRank() - 1, gameState.getBlueGY()[defendPiece.getRank() - 1] + 1);
                 } else {
-                    gameState.getRedGY()[defendPiece.getRank() - 1] += 1;
+                    gameState.setRedGYIdx(defendPiece.getRank() - 1, gameState.getRedGY()[defendPiece.getRank() - 1] + 1);
                 }
             }
         }

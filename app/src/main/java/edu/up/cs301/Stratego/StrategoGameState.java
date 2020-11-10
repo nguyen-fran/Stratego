@@ -191,7 +191,7 @@ public class StrategoGameState extends GameState {
     public void setBlueGY(int[] blueGY) {
         this.blueGY = blueGY;
     }
-    public void setPlayerGYIdx(int index, int val){
+    public void setBlueGYIdx(int index, int val){
         if(index >= 0 && index < blueGY.length ){
             this.blueGY[index] = val;
         }
@@ -199,7 +199,7 @@ public class StrategoGameState extends GameState {
     public void setRedGY(int[] redGY) {
         this.redGY = redGY;
     }
-    public void setOppGYIdx(int index, int val){
+    public void setRedGYIdx(int index, int val){
         if(index >= 0 && index < redGY.length ){
             this.redGY[index] = val;
         }
