@@ -37,16 +37,16 @@ public class StrategoComputerPlayer extends GameComputerPlayer {
         int randDir = rand.nextInt(4); //randomize which direction to move the gamepiece
         switch (randDir) {
             case 0: //move left
-                squareDest = -1;
+                squareDest -= 1;
                 break;
             case 1: //move right
-                squareDest = 1;
+                squareDest += 1;
                 break;
             case 2: //move up
-                squareDest = -10;
+                squareDest -= 10;
                 break;
             case 3: //move down
-                squareDest = 10;
+                squareDest += 10;
                 break;
             default:
                 break;
