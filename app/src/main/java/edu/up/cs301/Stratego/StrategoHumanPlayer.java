@@ -252,12 +252,12 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
             Log.i("testing clicks", "recorded first click " + firstClick + " and made it to record the second" + secondClick);
             // TODO need better way to determine which action is being attempted
             if(tempGameState.getGamePhase()){
-                game.sendAction(new StrategoMoveAction(this, firstClick + 1, secondClick + 1 ));
+                game.sendAction(new StrategoMoveAction(this, firstClick, secondClick));
                 firstClick = -1;
                 secondClick = -1;
             }
             else{
-                game.sendAction(new StrategoSwapAction(this, firstClick + 1, secondClick + 1));
+                game.sendAction(new StrategoSwapAction(this, firstClick, secondClick));
                 firstClick = -1;
                 secondClick = -1;
             }
