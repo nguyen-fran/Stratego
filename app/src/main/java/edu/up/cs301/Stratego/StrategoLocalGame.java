@@ -1,5 +1,7 @@
 package edu.up.cs301.Stratego;
 
+import android.util.Log;
+
 import edu.up.cs301.game.GameFramework.GamePlayer;
 import edu.up.cs301.game.GameFramework.LocalGame;
 import edu.up.cs301.game.GameFramework.actionMessage.GameAction;
@@ -74,10 +76,10 @@ public class StrategoLocalGame extends LocalGame {
 
         //return false if not player's turn or if squareSrc is empty
         //or if src square is not curr player's piece or if dest square is curr player's piece.
-        //the last two conditions should account for if the two squares are the same
+        //the last two lines of the conditions should account for if the two squares are the same
         if (!canMove(gameState.getCurrPlayerIndex()) || squareSrc.getPiece() == null
                 || squareSrc.getPiece().getTeam() != getPlayerIdx(action.getPlayer())
-                || squareDest.getPiece().getTeam() == getPlayerIdx(action.getPlayer())) {
+                || (squareDest.getPiece() != null && squareDest.getPiece().getTeam() == getPlayerIdx(action.getPlayer()))) {
             return false;
         }
 
@@ -247,11 +249,11 @@ public class StrategoLocalGame extends LocalGame {
         int bottomHalf;
 
         topHalf = action.getSquareSrc()/10;
-        bottomHalf = (action.getSquareSrc() - (topHalf*10) - 1);
+        bottomHalf = (action.getSquareSrc() - (topHalf*10));
         BoardSquare squareSrc = gameState.getBoardSquares()[topHalf][bottomHalf];
 
         topHalf = action.getSquareDest()/10;
-        bottomHalf = (action.getSquareDest() - (topHalf*10) - 1);
+        bottomHalf = (action.getSquareDest() - (topHalf*10));
         BoardSquare squareDest = gameState.getBoardSquares()[topHalf][bottomHalf];
 
         //check if there are pieces on the squares to swap
@@ -275,9 +277,9 @@ public class StrategoLocalGame extends LocalGame {
     @Override
     protected String checkIfGameOver() {
         if (gameState.getBlueGY()[11] > 0) {
-            return "Red team has won";
+            return "Red team has won. ";
         } else if (gameState.getRedGY()[11] > 0) {
-            return "Blue team has won";
+            return "Blue team has won. ";
         } else {
             return null;
         }

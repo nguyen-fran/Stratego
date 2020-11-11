@@ -30,7 +30,7 @@ public class StrategoGameState extends GameState {
      * constructor
      */
     public StrategoGameState() {
-        gamePhase = false;
+        gamePhase = true;
         //TODO: figure out how to set up who goes first
         currPlayerIndex = 0;
         //there are zero deaths at the start of a game

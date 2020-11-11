@@ -37,16 +37,28 @@ public class StrategoComputerPlayer extends GameComputerPlayer {
         int randDir = rand.nextInt(4); //randomize which direction to move the gamepiece
         switch (randDir) {
             case 0: //move left
-                squareDest -= 1;
+                //only move left if not on the left side of the board
+                if (squareSrc % 10 != 0) {
+                    squareDest -= 1;
+                }
                 break;
             case 1: //move right
-                squareDest += 1;
+                //only move right if not on the right side of the board
+                if (squareSrc % 10 != 9) {
+                    squareDest += 1;
+                }
                 break;
             case 2: //move up
-                squareDest -= 10;
+                //only move up if not at the top of the board
+                if (squareSrc / 10 != 0) {
+                    squareDest -= 10;
+                }
                 break;
             case 3: //move down
-                squareDest += 10;
+                //only move sown if not at the bottom of the board
+                if (squareSrc / 10 != 9) {
+                    squareDest += 10;
+                }
                 break;
             default:
                 break;
