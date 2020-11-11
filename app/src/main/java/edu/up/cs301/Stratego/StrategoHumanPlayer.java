@@ -253,16 +253,26 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
             // TODO need better way to determine which action is being attempted
             if(tempGameState.getGamePhase()){
                 game.sendAction(new StrategoMoveAction(this, firstClick, secondClick));
+                ImageButton tempp = myActivity.findViewById(firstClick);
+                ImageButton temppp = myActivity.findViewById(secondClick);
+                tempp.setBackgroundColor(Color.WHITE);
+                temppp.setBackgroundColor(Color.WHITE);
                 firstClick = -1;
                 secondClick = -1;
             }
             else{
                 game.sendAction(new StrategoSwapAction(this, firstClick, secondClick));
+                ImageButton tempp = myActivity.findViewById(firstClick);
+                ImageButton temppp = myActivity.findViewById(secondClick);
+                tempp.setBackgroundColor(Color.WHITE);
+                temppp.setBackgroundColor(Color.WHITE);
                 firstClick = -1;
                 secondClick = -1;
             }
         }else{
             firstClick = v.getId();
+            ImageButton temp = myActivity.findViewById(firstClick);
+            temp.setBackgroundColor(Color.GREEN);
         }
     }
 }
