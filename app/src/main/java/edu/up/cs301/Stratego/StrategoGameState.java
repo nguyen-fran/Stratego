@@ -4,6 +4,14 @@ import java.util.Random;
 
 import edu.up.cs301.game.GameFramework.infoMessage.GameState;
 
+/**
+ * Holds data on entire game of Stratego
+ *
+ * @author Gabby Marshak
+ * @author Francisco Nguyen
+ * @author Blake Nygren
+ * @author Jack Volonte
+ */
 public class StrategoGameState extends GameState {
     //Stratego only has two phases: setup and main gameplay
     private boolean gamePhase;  //false if on setup, true if on main gameplay

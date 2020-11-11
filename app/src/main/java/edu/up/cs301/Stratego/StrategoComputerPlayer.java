@@ -5,6 +5,14 @@ import java.util.Random;
 import edu.up.cs301.game.GameFramework.GameComputerPlayer;
 import edu.up.cs301.game.GameFramework.infoMessage.GameInfo;
 
+/**
+ * A not smart computer player to play Stratego
+ *
+ * @author Gabby Marshak
+ * @author Francisco Nguyen
+ * @author Blake Nygren
+ * @author Jack Volonte
+ */
 public class StrategoComputerPlayer extends GameComputerPlayer {
 
     /**

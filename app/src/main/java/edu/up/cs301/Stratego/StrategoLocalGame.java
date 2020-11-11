@@ -6,6 +6,14 @@ import edu.up.cs301.game.GameFramework.GamePlayer;
 import edu.up.cs301.game.GameFramework.LocalGame;
 import edu.up.cs301.game.GameFramework.actionMessage.GameAction;
 
+/**
+ * Runs a Stratego game
+ *
+ * @author Gabby Marshak
+ * @author Francisco Nguyen
+ * @author Blake Nygren
+ * @author Jack Volonte
+ */
 public class StrategoLocalGame extends LocalGame {
     private StrategoGameState gameState;
     private StrategoGameState prevGameState;

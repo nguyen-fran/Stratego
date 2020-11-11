@@ -3,6 +3,14 @@ package edu.up.cs301.Stratego;
 import edu.up.cs301.game.GameFramework.GamePlayer;
 import edu.up.cs301.game.GameFramework.actionMessage.GameAction;
 
+/**
+ * For moving pieces in Stratego
+ *
+ * @author Gabby Marshak
+ * @author Francisco Nguyen
+ * @author Blake Nygren
+ * @author Jack Volonte
+ */
 public class StrategoMoveAction extends GameAction {
     private int squareSrc;
     private int squareDest;

@@ -15,6 +15,14 @@ import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+/**
+ * Class that interacts with human through gui
+ *
+ * @author Gabby Marshak
+ * @author Francisco Nguyen
+ * @author Blake Nygren
+ * @author Jack Volonte
+ */
 public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListener {
 
     private GameMainActivity myActivity;
