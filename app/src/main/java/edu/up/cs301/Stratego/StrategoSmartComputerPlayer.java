@@ -25,10 +25,15 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
         super(name);
     }
 
+    /**
+     * method to determine what move the computer should take
+     * sends either move or swap actions
+     * @param info current state of the game
+     */
     @Override
     protected void receiveInfo(GameInfo info) {
         int squareSrc = -1;
-        int squareDst = -1;
+        int squareDest = -1;
         BoardSquare source = null;
         BoardSquare destination = null;
 
@@ -37,12 +42,14 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
             return;
         }
 
-        //board setup stuff if game state is in setup
+        //TODO: add board setup logic
 
         //case statement for determining what piece to move and where (call helper methods)
         //need to assign source and destination squares (convert from BoardSquare coordinates)
+        //TODO: priority order to finish helper methods is flagAttack > defaultMove > everything else in reverse order of precedence
 
-        //call move action using
+        //call move action
+        game.sendAction(new StrategoMoveAction(this, squareSrc, squareDest));
 
     }
 
@@ -50,10 +57,10 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
      * checks if human player's flag piece is within one square of a computer player's piece
      * checks if in a straight line from a computer player's scouts
      * TODO: add some sort of logic from graveyard counts/visible pieces to determine where the flag is
-     * TODO: set a destination square that can be used by receiveInfo before returning
+     * TODO: set a destination square that can be used by receiveInfo before returning (applies to all helper methods)
      * right now the method is just going to always know where the flag is whether or not it's visible
      * @param gameState current state of the game being analyzed
-     * @return the board square to be moved
+     * @return source square for movement
      */
     public BoardSquare flagAttack(StrategoGameState gameState){
         BoardSquare flag = null;
@@ -95,6 +102,12 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
         return null;
     }
 
+    /**
+     * checks if computer player's flag is reachable by human player's pieces, moves to defend the flag if possible
+     * similar logic to flagAttack for the checks, just with teams swapped around
+     * @param gameState current state of the game
+     * @return source square for movement
+     */
     public BoardSquare flagDefend(StrategoGameState gameState){
         return null;
     }
