@@ -129,9 +129,12 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
                 gameState.getBoardSquares()[i][j].getPiece() == null){ //empty square
             button.setImageResource(R.drawable.empty_space);
         }else if (gameState.getBoardSquares()[i][j].getPiece().getTeam() == StrategoGameState.BLUE){ //blue pieces
+            if (!gameState.getBoardSquares()[i][j].getPiece().getVisible()) {
+                button.setImageResource(R.drawable.blue_unknown);
+            }
             imagePickerBlue(button, gameState, i, j);
         }else if(gameState.getBoardSquares()[i][j].getPiece().getTeam() == StrategoGameState.RED){ //red pieces
-            if(gameState.getBoardSquares()[i][j].getPiece().getVisible() == false){
+            if(!gameState.getBoardSquares()[i][j].getPiece().getVisible()){
                 button.setImageResource(R.drawable.red_unknown);
             }else{
                 imagePickerRed(button, gameState, i, j);
@@ -241,13 +244,13 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
         activity.setContentView(R.layout.stratego_layout);
 
         gameBoardGrid = (ViewGroup) myActivity.findViewById(R.id.gameBoardGrid);
-        ImageButton temp;
+        ImageButton boardSquareButton;
         for (int i = 0; i < 100; i++) {
-            temp = new ImageButton(myActivity);
-            temp.setId(i);
-            temp.setOnClickListener(this);
+            boardSquareButton = new ImageButton(myActivity);
+            boardSquareButton.setId(i);
+            boardSquareButton.setOnClickListener(this);
 
-            gameBoardGrid.addView(temp);
+            gameBoardGrid.addView(boardSquareButton);
         }
 
         this.playerGY = activity.findViewById(R.id.blueGY);
@@ -268,7 +271,6 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
 
         this.settings = myActivity.findViewById(R.id.settingsButton);
         this.settings.setOnClickListener(this);
-
     }
 
     @Override
@@ -283,33 +285,28 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
             quit();
         }else if(v.getId() == settings.getId()){
             settings();
-        }else
-        if(firstClick >= 0){
+        }else if(firstClick >= 0){
             secondClick = v.getId();
             Log.i("testing clicks", "recorded first click " + firstClick + " and made it to record the second" + secondClick);
+            ImageButton firstClickButton = myActivity.findViewById(firstClick);
+            ImageButton secondClickButton = myActivity.findViewById(secondClick);
             // TODO need better way to determine which action is being attempted
             if(gameState.getGamePhase()){
                 game.sendAction(new StrategoMoveAction(this, firstClick, secondClick));
-                ImageButton tempFirst = myActivity.findViewById(firstClick);
-                ImageButton tempSecond = myActivity.findViewById(secondClick);
-                tempFirst.setBackgroundColor(Color.WHITE);
-                tempSecond.setBackgroundColor(Color.WHITE);
                 firstClick = -1;
                 secondClick = -1;
             }
             else{
                 game.sendAction(new StrategoSwapAction(this, firstClick, secondClick));
-                ImageButton tempFirst = myActivity.findViewById(firstClick);
-                ImageButton tempSecond = myActivity.findViewById(secondClick);
-                tempFirst.setBackgroundColor(Color.WHITE);
-                tempSecond.setBackgroundColor(Color.WHITE);
                 firstClick = -1;
                 secondClick = -1;
             }
+            firstClickButton.setBackgroundColor(Color.WHITE);
+            secondClickButton.setBackgroundColor(Color.WHITE);
         }else{
             firstClick = v.getId();
-            ImageButton temp = myActivity.findViewById(firstClick);
-            temp.setBackgroundColor(Color.GREEN);
+            ImageButton firstClickButton = myActivity.findViewById(firstClick);
+            firstClickButton.setBackgroundColor(Color.GREEN);
         }
     }
 

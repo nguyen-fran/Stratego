@@ -60,22 +60,13 @@ public class StrategoLocalGame extends LocalGame {
      * @return  true if move is legal, false if not
      */
     public boolean move(StrategoMoveAction action) {
-
         if (!gameState.getGamePhase()) {
             return false;
         }
 
         //TODO convert the int index coming in into a board square coordinate to get
-        int topHalf;
-        int bottomHalf;
-
-        topHalf = action.getSquareSrc()/10;
-        bottomHalf = action.getSquareSrc() - (topHalf*10);
-        BoardSquare squareSrc = gameState.getBoardSquares()[topHalf][bottomHalf];
-
-        topHalf = action.getSquareDest()/10;
-        bottomHalf = action.getSquareDest() - (topHalf*10);
-        BoardSquare squareDest = gameState.getBoardSquares()[topHalf][bottomHalf];
+        BoardSquare squareSrc = gameState.getBoardSquares()[action.getSquareSrc() / 10][action.getSquareSrc() % 10];
+        BoardSquare squareDest = gameState.getBoardSquares()[action.getSquareDest() / 10][action.getSquareDest() % 10];
 
         //return false if not player's turn or if squareSrc is empty
         //or if src square is not curr player's piece or if dest square is curr player's piece.
@@ -90,7 +81,7 @@ public class StrategoLocalGame extends LocalGame {
         if (squareSrc.getPiece().getRank() == 11 || squareSrc.getPiece().getRank() == 0) { //immobile pieces (cannot move)
             return false;
         } else if (squareSrc.getPiece().getRank() == 2) { //special scout movement
-            //check if not valid scout move
+            //return false if not valid scout move
             if (!scoutMove(squareSrc, squareDest)) {
                 return false;
             }
@@ -109,7 +100,7 @@ public class StrategoLocalGame extends LocalGame {
         if (squareDest.getOccupied() && squareDest.getPiece() == null) { //trying to move into a lake square
             return false;
         } else if (squareDest.getOccupied()) {
-            //check if not valid attack
+            //return false if not valid attack
             if(!attack(squareSrc.getPiece(), squareDest.getPiece())) {
                 return false;
             }
@@ -120,11 +111,10 @@ public class StrategoLocalGame extends LocalGame {
             squareDest.setPiece(null);
             squareDest.setOccupied(false);
         }
-        //check if src square hasn't been captured
+        //move src square if src square hasn't been captured
         if (!squareSrc.getPiece().getCaptured()) {
-            //move src square and set new square to occupied
-            gameState.getBoardSquares()[squareDest.getRow()][squareDest.getCol()].setPiece(squareSrc.getPiece());
-            gameState.getBoardSquares()[squareDest.getRow()][squareDest.getCol()].setOccupied(true);
+            squareDest.setPiece(squareSrc.getPiece());
+            squareDest.setOccupied(true);
         }
         //update src square appropriately
         //TODO: make sure this updates the game state, not the copy that the player is looking at
@@ -255,21 +245,12 @@ public class StrategoLocalGame extends LocalGame {
      * @return true if swap was successful, false otherwise
      */
     public boolean swap(StrategoSwapAction action) {
-
         if (gameState.getGamePhase()) {
             return false;
         }
 
-        int topHalf;
-        int bottomHalf;
-
-        topHalf = action.getSquareSrc()/10;
-        bottomHalf = (action.getSquareSrc() - (topHalf*10));
-        BoardSquare squareSrc = gameState.getBoardSquares()[topHalf][bottomHalf];
-
-        topHalf = action.getSquareDest()/10;
-        bottomHalf = (action.getSquareDest() - (topHalf*10));
-        BoardSquare squareDest = gameState.getBoardSquares()[topHalf][bottomHalf];
+        BoardSquare squareSrc = gameState.getBoardSquares()[action.getSquareSrc() / 10][action.getSquareSrc() % 10];
+        BoardSquare squareDest = gameState.getBoardSquares()[action.getSquareDest() / 10][action.getSquareDest() % 10];
 
         //check if there are pieces on the squares to swap
         if (squareSrc.getPiece() == null || squareDest.getPiece() == null) {
@@ -281,13 +262,14 @@ public class StrategoLocalGame extends LocalGame {
             return false;
         }
 
+        //do the swap
         GamePiece temp = squareSrc.getPiece();
         squareSrc.setPiece(squareDest.getPiece());
         squareDest.setPiece(temp);
         return true;
     }
 
-    //checks if either flag has the 'captured' status (captured = true)
+    //checks if the hidden death count for flag in GYs is greater than zero
     //TODO need to write specific message for who won
     @Override
     protected String checkIfGameOver() {
