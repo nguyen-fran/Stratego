@@ -103,7 +103,9 @@ public class StrategoLocalGame extends LocalGame {
             if (squareDest.getRow() > squareSrc.getRow() + 1 || squareDest.getRow() < squareSrc.getRow() - 1
                     || squareDest.getCol() > squareSrc.getCol() + 1 || squareDest.getCol() < squareSrc.getCol() - 1 ||
                 ( (squareDest.getRow() == squareSrc.getRow() + 1) && (squareDest.getCol() == squareSrc.getCol() + 1) ) ||
-                ( (squareDest.getRow() == squareSrc.getRow() - 1) && (squareDest.getCol() == squareSrc.getCol() - 1) ) ) {
+                ( (squareDest.getRow() == squareSrc.getRow() - 1) && (squareDest.getCol() == squareSrc.getCol() - 1) ) ||
+                ( (squareDest.getRow() == squareSrc.getRow() + 1) && (squareDest.getCol() == squareSrc.getCol() - 1) ) ||
+                ( (squareDest.getRow() == squareSrc.getRow() - 1) && (squareDest.getCol() == squareSrc.getCol() + 1) ) ) {
                 return false;
             }
         }
