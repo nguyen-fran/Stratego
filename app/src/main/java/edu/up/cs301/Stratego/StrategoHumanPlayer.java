@@ -1,5 +1,7 @@
 package edu.up.cs301.Stratego;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +16,7 @@ import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Class that interacts with human through gui
@@ -26,8 +29,11 @@ import android.widget.TextView;
 public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListener {
 
     private GameMainActivity myActivity;
-    private Button swap;
-    private Button move;
+    private Button undo;
+    private Button reset;
+    private Button rules;
+    private Button quit;
+    private Button settings;
     private TextView turnIndicator;
 
     private ViewGroup gameBoardGrid;
@@ -244,36 +250,63 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
             temp = new ImageButton(myActivity);
             temp.setId(i);
             temp.setOnClickListener(this);
+
             gameBoardGrid.addView(temp);
         }
 
         this.playerGY = activity.findViewById(R.id.blueGY);
         this.oppGY = activity.findViewById(R.id.redGY);
         this.turnIndicator = activity.findViewById(R.id.turnIndicator);
+
+        this.undo = myActivity.findViewById(R.id.undoButton);
+        this.undo.setOnClickListener(this);
+
+        this.reset = myActivity.findViewById(R.id.resetButton);
+        this.reset.setOnClickListener(this);
+
+        this.rules = myActivity.findViewById(R.id.rulesButton);
+        this.rules.setOnClickListener(this);
+
+        this.quit = myActivity.findViewById(R.id.quitButton);
+        this.quit.setOnClickListener(this);
+
+        this.settings = myActivity.findViewById(R.id.settingsButton);
+        this.settings.setOnClickListener(this);
+
     }
 
     @Override
     public void onClick(View v) {
+        if(v.getId() == undo.getId()){
+            undo();
+        }else if(v.getId() == reset.getId()){
+            reset();
+        }else if(v.getId() == rules.getId()){
+            rules();
+        }else if(v.getId() == quit.getId()){
+            quit();
+        }else if(v.getId() == settings.getId()){
+            settings();
+        }else
         if(firstClick > 0){
-
             secondClick = v.getId();
             Log.i("testing clicks", "recorded first click " + firstClick + " and made it to record the second" + secondClick);
             // TODO need better way to determine which action is being attempted
             if(tempGameState.getGamePhase()){
                 game.sendAction(new StrategoMoveAction(this, firstClick, secondClick));
-                ImageButton tempp = myActivity.findViewById(firstClick);
-                ImageButton temppp = myActivity.findViewById(secondClick);
-                tempp.setBackgroundColor(Color.WHITE);
-                temppp.setBackgroundColor(Color.WHITE);
+                ImageButton tempFirst = myActivity.findViewById(firstClick);
+                ImageButton tempSecond = myActivity.findViewById(secondClick);
+                tempFirst.setBackgroundColor(Color.WHITE);
+                tempSecond.setBackgroundColor(Color.WHITE);
                 firstClick = -1;
                 secondClick = -1;
             }
             else{
                 game.sendAction(new StrategoSwapAction(this, firstClick, secondClick));
-                ImageButton tempp = myActivity.findViewById(firstClick);
-                ImageButton temppp = myActivity.findViewById(secondClick);
-                tempp.setBackgroundColor(Color.WHITE);
-                temppp.setBackgroundColor(Color.WHITE);
+                ImageButton tempFirst = myActivity.findViewById(firstClick);
+                ImageButton tempSecond = myActivity.findViewById(secondClick);
+                tempFirst.setBackgroundColor(Color.WHITE);
+                tempSecond.setBackgroundColor(Color.WHITE);
                 firstClick = -1;
                 secondClick = -1;
             }
@@ -282,5 +315,39 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
             ImageButton temp = myActivity.findViewById(firstClick);
             temp.setBackgroundColor(Color.GREEN);
         }
+    }
+
+    //TODO need to define which moves can be undone
+    //use Toast to show illegal move?
+    public void undo(){
+        Log.i("testing undo button", "undo clicked");
+        tempGameState.setPrevGameState(tempGameState.getPrevGameState());
+    }
+
+    public void reset(){
+        Log.i("testing reset button", "reset clicked");
+    }
+
+    public void rules(){
+        Log.i("testing rules button", "rules clicked");
+    }
+
+    public void quit(){
+        //TODO need citation here
+        //https://www.tutorialspoint.com/how-to-show-a-dialog-to-confirm-that-the-user-wishes-to-exit-an-android-activity
+
+        new AlertDialog.Builder(myActivity)
+                .setTitle("Closing Activity").setMessage("Are you sure you want to quit?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        myActivity.finish();
+                    }
+                }).setNegativeButton("No", null).show();
+    }
+
+
+    public void settings(){
+        Log.i("testing settings button", "settings clicked");
     }
 }
