@@ -284,7 +284,7 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
         }else if(v.getId() == settings.getId()){
             settings();
         }else
-        if(firstClick > 0){
+        if(firstClick >= 0){
             secondClick = v.getId();
             Log.i("testing clicks", "recorded first click " + firstClick + " and made it to record the second" + secondClick);
             // TODO need better way to determine which action is being attempted
@@ -317,7 +317,7 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
     //use Toast to show illegal move?
     public void undo(){
         Log.i("testing undo button", "undo clicked");
-        tempGameState.setPrevGameState(tempGameState.getPrevGameState());
+        //tempGameState.setPrevGameState(tempGameState.getPrevGameState());
     }
 
     public void reset(){
