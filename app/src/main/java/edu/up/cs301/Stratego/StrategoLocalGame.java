@@ -101,7 +101,11 @@ public class StrategoLocalGame extends LocalGame {
             }
         } else { //all other pieces have normal movement range (check if square is in range, and is moving at all)
             if (squareDest.getRow() > squareSrc.getRow() + 1 || squareDest.getRow() < squareSrc.getRow() - 1
-                    || squareDest.getCol() > squareSrc.getCol() + 1 || squareDest.getCol() < squareSrc.getCol() - 1) {
+                    || squareDest.getCol() > squareSrc.getCol() + 1 || squareDest.getCol() < squareSrc.getCol() - 1 ||
+                ( (squareDest.getRow() == squareSrc.getRow() + 1) && (squareDest.getCol() == squareSrc.getCol() + 1) ) ||
+                ( (squareDest.getRow() == squareSrc.getRow() - 1) && (squareDest.getCol() == squareSrc.getCol() - 1) ) ||
+                ( (squareDest.getRow() == squareSrc.getRow() + 1) && (squareDest.getCol() == squareSrc.getCol() - 1) ) ||
+                ( (squareDest.getRow() == squareSrc.getRow() - 1) && (squareDest.getCol() == squareSrc.getCol() + 1) ) ) {
                 return false;
             }
         }
@@ -144,11 +148,11 @@ public class StrategoLocalGame extends LocalGame {
             defendPiece.setCaptured(true);
         } else if (attackPiece.getRank() == 5 && defendPiece.getRank() == 11) { //miner attacking bomb
             defendPiece.setCaptured(true);
-        } else if(attackPiece.getRank() < defendPiece.getRank()) { //attacker gets captured
+        } else if (attackPiece.getRank() < defendPiece.getRank()) { //attacker gets captured
             attackPiece.setCaptured(true);
         } else if (attackPiece.getRank() > defendPiece.getRank()) { //defender gets captured
             defendPiece.setCaptured(true);
-        }else if(attackPiece.getRank() == defendPiece.getRank()){ //both get captured
+        } else if (attackPiece.getRank() == defendPiece.getRank()) { //both get captured
             attackPiece.setCaptured(true);
             defendPiece.setCaptured(true);
         } else { //some other combination, indicates something went wrong
@@ -179,6 +183,8 @@ public class StrategoLocalGame extends LocalGame {
                 }
             }
         }
+
+
 
         //on attacking or being attacked, pieces will become visible to opponent
         attackPiece.setVisible(true);
