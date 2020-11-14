@@ -122,6 +122,7 @@ public class StrategoLocalGame extends LocalGame {
 
         //check if src square hasn't been captured
         if (!squareSrc.getPiece().getCaptured()) {
+            //move src square and set new square to occupied
             gameState.getBoardSquares()[squareDest.getRow()][squareDest.getCol()].setPiece(squareSrc.getPiece());
             gameState.getBoardSquares()[squareDest.getRow()][squareDest.getCol()].setOccupied(true);
         }
@@ -184,8 +185,6 @@ public class StrategoLocalGame extends LocalGame {
             }
         }
 
-
-
         //on attacking or being attacked, pieces will become visible to opponent
         attackPiece.setVisible(true);
         defendPiece.setVisible(true);
@@ -207,7 +206,7 @@ public class StrategoLocalGame extends LocalGame {
         }
 
         //if the squares are in the same row
-        if (squareSrc.getRow() != squareDest.getRow()) {
+        if (squareSrc.getRow() == squareDest.getRow()) {
             //determine if dest is to the left or right of src
             //use this to determine if step should be +1 or -1 horizontally
             int diff = squareSrc.getCol() - squareDest.getCol();
@@ -219,13 +218,13 @@ public class StrategoLocalGame extends LocalGame {
             }
 
             //use diff for for loop, for each square in the range (NOT inclusive of dest), check if occupied
-            for (int i = squareSrc.getCol(); i < squareDest.getCol(); i += step) {
+            for (int i = squareSrc.getCol() + step; i != squareDest.getCol(); i += step) {
                 //if a square is occupied, then return false
                 if (gameState.getBoardSquares()[squareSrc.getRow()][i].getOccupied()) {
                     return false;
                 }
             }
-        } else {    //if the squares are in the same col
+        } else if (squareSrc.getCol() == squareDest.getCol()) {    //if the squares are in the same col
             int diff = squareSrc.getRow() - squareDest.getRow();
             int step;
             if (diff > 0) { //means dest is south of src (src is moving south)
@@ -235,12 +234,14 @@ public class StrategoLocalGame extends LocalGame {
             }
 
             //use diff for for loop, for each square in the range (NOT inclusive of dest), check if occupied
-            for (int i = squareSrc.getCol(); i < squareDest.getCol(); i += step) {
+            for (int i = squareSrc.getRow() + step; i != squareDest.getRow(); i += step) {
                 //if a square is occupied, then return false
-                if (gameState.getBoardSquares()[squareSrc.getRow()][i].getOccupied()) {
+                if (gameState.getBoardSquares()[i][squareSrc.getCol()].getOccupied()) {
                     return false;
                 }
             }
+        } else {
+            return false;
         }
 
         //should only hit here if new square is a valid movement
