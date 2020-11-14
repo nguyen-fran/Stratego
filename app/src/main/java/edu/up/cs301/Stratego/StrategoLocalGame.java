@@ -118,8 +118,8 @@ public class StrategoLocalGame extends LocalGame {
 
         //check if src square hasn't been captured
         if (!squareSrc.getPiece().getCaptured()) {
-            //TODO: check if this line updates the gamestate correctly
             gameState.getBoardSquares()[squareDest.getRow()][squareDest.getCol()].setPiece(squareSrc.getPiece());
+            gameState.getBoardSquares()[squareDest.getRow()][squareDest.getCol()].setOccupied(true);
         }
         //update src square appropriately
         //TODO: make sure this updates the game state, not the copy that the player is looking at
