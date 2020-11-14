@@ -11,7 +11,6 @@ import edu.up.cs301.game.GameFramework.infoMessage.GameInfo;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -34,13 +33,10 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
     private ViewGroup playerGY;
     private ViewGroup oppGY;
 
-    public static final int BLUE = 0;
-    public static final int RED = 1;
-
     private int firstClick = -1;
     private int secondClick = -1;
 
-    private StrategoGameState tempGameState = null;
+    private StrategoGameState gameState = null;
 
     /**
      * constructor
@@ -65,7 +61,7 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
             return;
         }
 
-        tempGameState = (StrategoGameState) info;
+        gameState = (StrategoGameState) info;
 
         /**
          External Citation
@@ -80,7 +76,7 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
             TextView GY = (TextView)playerGY.getChildAt(i + 11);
             //setting text to whatever value is in graveyard array at that coord
             //might need to adjust +- 1 depending to avoid out of bounds errors
-            GY.setText("" + ((StrategoGameState) info).getBlueGY()[i]);
+            GY.setText("" + ((StrategoGameState) info).getBlueGY()[i] + "/" + StrategoGameState.NUM_OF_PIECES[i + 1]);
         }
 
         //setting up computer graveyard with a loop
@@ -88,7 +84,7 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
             TextView GY = (TextView)oppGY.getChildAt(i + 11);
             //setting text to whatever value is in graveyard array at that coord
             //might need to adjust +- 1 depending to avoid out of bounds errors
-            GY.setText("" + ((StrategoGameState) info).getRedGY()[i]);
+            GY.setText("" + ((StrategoGameState) info).getRedGY()[i] + "/" + StrategoGameState.NUM_OF_PIECES[i + 1]);
         }
 
         //double for loop to update game board from game state
@@ -102,7 +98,7 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
         }
 
         //updating turn indicator
-        if(((StrategoGameState) info).getCurrPlayerIndex() == BLUE){
+        if(((StrategoGameState) info).getCurrPlayerIndex() == StrategoGameState.BLUE){
             turnIndicator.setText("Player's turn");
         }else{
             turnIndicator.setText("Opponent's turn");
@@ -126,9 +122,9 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
         }else if(!gameState.getBoardSquares()[i][j].getOccupied() &&
                 gameState.getBoardSquares()[i][j].getPiece() == null){ //empty square
             button.setImageResource(R.drawable.empty_space);
-        }else if (gameState.getBoardSquares()[i][j].getPiece().getTeam() == BLUE){ //blue pieces
+        }else if (gameState.getBoardSquares()[i][j].getPiece().getTeam() == StrategoGameState.BLUE){ //blue pieces
             imagePickerBlue(button, gameState, i, j);
-        }else if(gameState.getBoardSquares()[i][j].getPiece().getTeam() == RED){ //red pieces
+        }else if(gameState.getBoardSquares()[i][j].getPiece().getTeam() == StrategoGameState.RED){ //red pieces
             if(gameState.getBoardSquares()[i][j].getPiece().getVisible() == false){
                 button.setImageResource(R.drawable.red_unknown);
             }else{
@@ -259,7 +255,7 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
             secondClick = v.getId();
             Log.i("testing clicks", "recorded first click " + firstClick + " and made it to record the second" + secondClick);
             // TODO need better way to determine which action is being attempted
-            if(tempGameState.getGamePhase()){
+            if(gameState.getGamePhase()){
                 game.sendAction(new StrategoMoveAction(this, firstClick, secondClick));
                 ImageButton tempp = myActivity.findViewById(firstClick);
                 ImageButton temppp = myActivity.findViewById(secondClick);

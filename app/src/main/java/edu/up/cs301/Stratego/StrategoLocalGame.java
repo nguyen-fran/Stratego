@@ -18,9 +18,6 @@ public class StrategoLocalGame extends LocalGame {
     private StrategoGameState gameState;
     private StrategoGameState prevGameState;
 
-    public static final int BLUE = 0;
-    public static final int RED = 1;
-
     public StrategoLocalGame(){
         gameState = new StrategoGameState();
     }
@@ -28,13 +25,11 @@ public class StrategoLocalGame extends LocalGame {
     @Override
     protected boolean canMove(int playerIdx) {
         return (gameState.getCurrPlayerIndex() == playerIdx);
-
     }
 
     @Override
     protected void sendUpdatedStateTo(GamePlayer p) {
         p.sendInfo(new StrategoGameState(this.gameState));
-
     }
 
     @Override
@@ -120,6 +115,11 @@ public class StrategoLocalGame extends LocalGame {
             }
         }
 
+        //this conditional is meant as reassurance in the case that two pieces are the same rank
+        if (squareDest.getPiece() != null && squareDest.getPiece().getCaptured()) {
+            squareDest.setPiece(null);
+            squareDest.setOccupied(false);
+        }
         //check if src square hasn't been captured
         if (!squareSrc.getPiece().getCaptured()) {
             //move src square and set new square to occupied
@@ -163,7 +163,7 @@ public class StrategoLocalGame extends LocalGame {
         //updating graveyard(s)
         if (attackPiece.getCaptured()) {
             //check which team the attack piece was
-            if (attackPiece.getTeam() == BLUE) {
+            if (attackPiece.getTeam() == StrategoGameState.BLUE) {
                 gameState.setBlueGYIdx(attackPiece.getRank() - 1, gameState.getBlueGY()[attackPiece.getRank() - 1] + 1);
             } else {
                 gameState.setRedGYIdx(attackPiece.getRank() - 1, gameState.getRedGY()[attackPiece.getRank() - 1] + 1);
@@ -171,13 +171,13 @@ public class StrategoLocalGame extends LocalGame {
         }
         if (defendPiece.getCaptured()) {
             if (defendPiece.getRank() == 0) { //captured a flag game piece
-                if (defendPiece.getTeam() == BLUE) {
+                if (defendPiece.getTeam() == StrategoGameState.BLUE) {
                     gameState.setBlueGYIdx(11, gameState.getBlueGY()[11] + 1);
                 } else {
                     gameState.setRedGYIdx(11, gameState.getRedGY()[11] + 1);
                 }
             } else { //captured regular game piece
-                if (defendPiece.getTeam() == BLUE) {
+                if (defendPiece.getTeam() == StrategoGameState.BLUE) {
                     gameState.setBlueGYIdx(defendPiece.getRank() - 1, gameState.getBlueGY()[defendPiece.getRank() - 1] + 1);
                 } else {
                     gameState.setRedGYIdx(defendPiece.getRank() - 1, gameState.getRedGY()[defendPiece.getRank() - 1] + 1);

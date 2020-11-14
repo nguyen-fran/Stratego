@@ -30,7 +30,7 @@ public class StrategoGameState extends GameState {
     public static final boolean COMP_TURN = false;
 
     //the amount of each type of piece each player has in order of: flag, 1, 2, ..., 9, 10, bomb
-    private static final int[] NUM_OF_PIECES = {1, 1, 8, 5, 4, 4, 4, 3, 2, 1, 1, 6};
+    public static final int[] NUM_OF_PIECES = {1, 1, 8, 5, 4, 4, 4, 3, 2, 1, 1, 6};
     //coordinates for the Lake Squares which can't be occupied
     private static final int[][] LAKE_SQUARES = {{4, 2}, {4, 3}, {5, 2}, {5, 3}, {4, 6}, {4, 7}, {5, 6}, {5, 7}};
 
