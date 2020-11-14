@@ -38,8 +38,7 @@ public class StrategoGameState extends GameState {
      * constructor
      */
     public StrategoGameState() {
-        gamePhase = true;
-        //TODO: figure out how to set up who goes first
+        gamePhase = true;   //TODO: set to false
         currPlayerIndex = 0;
         //there are zero deaths at the start of a game
         for (int i = 0; i < blueGY.length; i++) {
@@ -90,7 +89,8 @@ public class StrategoGameState extends GameState {
         int numOfPiecesIndex = 0;   //this will also signify the rank of the GamePiece being made
 
         //check if making computer's side of the board, computer's pieces' rank should be invisible
-        boolean visible = !(startRow == 0);
+        //boolean visible = !(startRow == 0);
+        boolean visible = true;
 
         //outer 2 for loops used to provide coordinates of the board square being initialized
         for (int i = startRow; i < startRow + 4; i++) {
@@ -131,15 +131,15 @@ public class StrategoGameState extends GameState {
         }
 
         Random rand = new Random();
-        int randXPos, randYPos;
+        int randRow, randCol;
         GamePiece temp;
         for (int i = startRow; i < endRow; i++) {
             for (int j = startCol; j < endCol; j++) {
-                randXPos = rand.nextInt(endRow - startRow) + startRow;
-                randYPos = rand.nextInt(endCol - startCol) + startCol;
+                randRow = rand.nextInt(endRow - startRow) + startRow;
+                randCol = rand.nextInt(endCol - startCol) + startCol;
 
-                temp = boardSquares[randXPos][randYPos].getPiece();
-                boardSquares[randXPos][randYPos].setPiece(boardSquares[i][j].getPiece());
+                temp = boardSquares[randRow][randCol].getPiece();
+                boardSquares[randRow][randCol].setPiece(boardSquares[i][j].getPiece());
                 boardSquares[i][j].setPiece(temp);
             }
         }

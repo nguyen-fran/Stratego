@@ -29,7 +29,7 @@ public class StrategoMainActivity extends GameMainActivity {
          * Problem: Didn't know how to set up the configuration
          *
          * Resource:    https://github.com/cs301up/PigGameStarter
-         * Solution:    I used the code from the project's main activity class, changin some values to fit Stratego
+         * Solution:    I used the code from the project's main activity class, changing some values to fit Stratego
          */
         ArrayList<GamePlayerType> playerTypes = new ArrayList<GamePlayerType>();
 
