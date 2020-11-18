@@ -49,9 +49,10 @@ public class StrategoLocalGame extends LocalGame {
             return true;
         } else if (action instanceof StrategoSwapAction){
             return swap((StrategoSwapAction) action);
-        } else {
-            return false;
+        } else if(action instanceof StrategoStartAction){
+            return (begin((StrategoStartAction) action));
         }
+        return false;
     }
 
     /**
@@ -275,12 +276,13 @@ public class StrategoLocalGame extends LocalGame {
      * @param action    the action being done by a game player
      * @return true if swap was successful, false otherwise
      */
-    public boolean start(StrategoStartAction action) {
+    public boolean begin(StrategoStartAction action) {
         if(gameState.getGamePhase()){
-            return false;
+            return true;
         }
 
-
+        //set game phase signifying that the game has started
+        gameState.setGamePhase(true);
         return true;
     }
 

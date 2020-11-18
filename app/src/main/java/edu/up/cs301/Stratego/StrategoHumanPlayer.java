@@ -28,7 +28,7 @@ import android.widget.Toast;
 public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListener {
 
     private GameMainActivity myActivity;
-    private Button undo;
+    private Button begin;
     private Button reset;
     private Button rules;
     private Button quit;
@@ -257,8 +257,8 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
         this.oppGY = activity.findViewById(R.id.redGY);
         this.turnIndicator = activity.findViewById(R.id.turnIndicator);
 
-        this.undo = myActivity.findViewById(R.id.undoButton);
-        this.undo.setOnClickListener(this);
+        this.begin = myActivity.findViewById(R.id.beginButton);
+        this.begin.setOnClickListener(this);
 
         this.reset = myActivity.findViewById(R.id.resetButton);
         this.reset.setOnClickListener(this);
@@ -275,8 +275,8 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == undo.getId()){
-            undo();
+        if(v.getId() == begin.getId()){
+            begin();
         }else if(v.getId() == reset.getId()){
             reset();
         }else if(v.getId() == rules.getId()){
@@ -287,9 +287,9 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
             settings();
         }else if(firstClick >= 0){
             secondClick = v.getId();
-            Log.i("testing clicks", "recorded first click " + firstClick + " and made it to record the second" + secondClick);
             ImageButton firstClickButton = myActivity.findViewById(firstClick);
             ImageButton secondClickButton = myActivity.findViewById(secondClick);
+
             // TODO need better way to determine which action is being attempted
             if(gameState.getGamePhase()){
                 game.sendAction(new StrategoMoveAction(this, firstClick, secondClick));
@@ -310,25 +310,42 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
         }
     }
 
-    //TODO need to define which moves can be undone
-    //use Toast to show illegal move?
-    public void undo(){
-        Log.i("testing undo button", "undo clicked");
-        //tempGameState.setPrevGameState(tempGameState.getPrevGameState());
+
+    //TODO setup
+    public void begin(){
+        Log.i("testing game phase here", "" + gameState.getGamePhase());
+        if(!gameState.getGamePhase()) {
+            game.sendAction(new StrategoStartAction(this));
+            begin.setAlpha(.5f);
+            //begin.setClickable(false);
+            Log.i("sent start action", "sent");
+        }
+        else{
+            Log.i("trying to switch game phase", "did it work? " + gameState.getGamePhase());
+        }
+        //do nothing if not in setup phase
     }
 
+    //TODO setup
     public void reset(){
         Log.i("testing reset button", "reset clicked");
     }
 
+    //TODO setup
     public void rules(){
         Log.i("testing rules button", "rules clicked");
     }
 
     public void quit(){
-        //TODO need citation here
-        //https://www.tutorialspoint.com/how-to-show-a-dialog-to-confirm-that-the-user-wishes-to-exit-an-android-activity
 
+        /**
+         * External Citation
+         * Date:    17 November 2020
+         * Problem: Needed to create confirmation box to confirm exit from app
+         *
+         * Resource: https://www.tutorialspoint.com/how-to-show-a-dialog-to-confirm-that-the-user-wishes-to-exit-an-android-activity
+         * Solution: I used the example code snippet to create our dialog for the confirmation box
+         */
         new AlertDialog.Builder(myActivity)
                 .setTitle("Closing Activity").setMessage("Are you sure you want to quit?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -339,7 +356,7 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
                 }).setNegativeButton("No", null).show();
     }
 
-
+    //TODO setup
     public void settings(){
         Log.i("testing settings button", "settings clicked");
     }
