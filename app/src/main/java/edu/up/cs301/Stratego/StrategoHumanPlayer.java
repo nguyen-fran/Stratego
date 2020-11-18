@@ -2,6 +2,7 @@ package edu.up.cs301.Stratego;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
@@ -330,12 +331,16 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
         Log.i("testing reset button", "reset clicked");
     }
 
-    //TODO setup
+    //TODO: header comment, citation for https://stackoverflow.com/questions/10936042/how-to-open-layout-on-button-click-android
     public void rules(){
         Log.i("testing rules button", "rules clicked");
+        Intent rulesIntent = new Intent(myActivity.getApplicationContext(), RulesActivity.class);
+        myActivity.startActivity(rulesIntent);
     }
 
     public void quit(){
+        //TODO need citation here
+        //https://www.tutorialspoint.com/how-to-show-a-dialog-to-confirm-that-the-user-wishes-to-exit-an-android-activity
 
         /**
          * External Citation
