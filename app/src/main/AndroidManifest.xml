@@ -12,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="edu.up.cs301.Stratego.StrategoMainActivity">
+        <activity android:name=".Stratego.RulesActivity"></activity>
+        <activity android:name=".Stratego.StrategoMainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

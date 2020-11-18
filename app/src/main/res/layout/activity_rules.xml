@@ -8,7 +8,7 @@
     android:background="#FFFFFF"
     android:gravity="center_horizontal|center_vertical"
     android:orientation="vertical"
-    tools:context=".Stratego.StrategoMainActivity">
+    tools:context=".Stratego.RulesActivity">
 
     <ImageView
         android:id="@+id/board_demo_image"
