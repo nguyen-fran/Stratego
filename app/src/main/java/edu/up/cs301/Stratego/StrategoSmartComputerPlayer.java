@@ -15,7 +15,7 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
 
     public static final int BLUE =  0;
     public static final int RED = 1;
-
+    public boolean shouldDefend = false;
     /**
      * constructor
      *
@@ -68,7 +68,8 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
         //for loop through human player's pieces to find where the flag is
         for(int i = 0; i < 10; i++){
             for(int j = 0; j < 10; j++){
-                if(gameState.getBoardSquares()[i][j].getPiece().getRank() == 0){
+                GamePiece flagg = gameState.getBoardSquares()[i][j].getPiece();
+                if(flagg.getRank() == 0){
                     flag = gameState.getBoardSquares()[i][j];
                 }
             }
@@ -109,6 +110,91 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
      * @return source square for movement
      */
     public BoardSquare flagDefend(StrategoGameState gameState){
+        BoardSquare flag = null;
+        //loop through and find our (the computer players) flag
+        for(int i = 0; i < 10; i++){
+            for(int j = 0; j < 10; j++){
+                GamePiece flagg = gameState.getBoardSquares()[i][j].getPiece();
+                if(flagg.getRank() == 0 && flagg.getTeam() == BLUE) {
+                    flag = gameState.getBoardSquares()[i][j];
+                }
+            }
+        }
+
+        BoardSquare killThisOne = null;
+        //check if the flag can be killed, and get the square of who is attacking the flag
+        if((flag.getRow() - 1 >= 0) &&
+                (gameState.getBoardSquares()[flag.getRow()-1][flag.getCol()].getPiece().getTeam() == RED)){
+            this.shouldDefend = true;
+            killThisOne = gameState.getBoardSquares()[flag.getRow()-1][flag.getCol()];
+        }else if((flag.getRow() + 1 < 10) &&
+                (gameState.getBoardSquares()[flag.getRow()+1][flag.getCol()].getPiece().getTeam() == RED)){
+            this.shouldDefend = true;
+            killThisOne = gameState.getBoardSquares()[flag.getRow()+1][flag.getCol()];
+        }else if((flag.getCol() - 1 >= 0) &&
+                (gameState.getBoardSquares()[flag.getRow()][flag.getCol() - 1].getPiece().getTeam() == RED)){
+            this.shouldDefend = true;
+            killThisOne = gameState.getBoardSquares()[flag.getRow()][flag.getCol() - 1];
+        }else if((flag.getCol() + 1 < 0) &&
+                (gameState.getBoardSquares()[flag.getRow()][flag.getCol() + 1].getPiece().getTeam() == RED)){
+            this.shouldDefend = true;
+            killThisOne = gameState.getBoardSquares()[flag.getRow()][flag.getCol() + 1];
+        }
+
+        //check if we can defend and kill the attacking piece, even a trade is fine here
+        BoardSquare defendWithThis = null;
+        if ( this.shouldDefend = true ) {
+            if((killThisOne.getRow() - 1 >= 0) &&
+                    (gameState.getBoardSquares()[killThisOne.getRow()-1][flag.getCol()].getPiece().getTeam() == BLUE) &&
+                gameState.getBoardSquares()[killThisOne.getRow()-1][flag.getCol()].getPiece().getRank() >= killThisOne.getPiece().getRank()) {
+                defendWithThis = gameState.getBoardSquares()[killThisOne.getRow()-1][flag.getCol()];
+            }else if((flag.getRow() + 1 < 10) &&
+                    (gameState.getBoardSquares()[killThisOne.getRow()+1][flag.getCol()].getPiece().getTeam() == BLUE) &&
+                            gameState.getBoardSquares()[killThisOne.getRow()+1][flag.getCol()].getPiece().getRank() >= killThisOne.getPiece().getRank()){
+               defendWithThis = gameState.getBoardSquares()[killThisOne.getRow()+1][flag.getCol()];
+            }else if((flag.getCol() - 1 >= 0) &&
+                    (gameState.getBoardSquares()[killThisOne.getRow()][flag.getCol() - 1].getPiece().getTeam() == BLUE) &&
+                    gameState.getBoardSquares()[killThisOne.getRow()][flag.getCol() - 1].getPiece().getRank() >= killThisOne.getPiece().getRank()){
+                defendWithThis = gameState.getBoardSquares()[killThisOne.getRow()][flag.getCol() - 1];
+
+            }else if((flag.getCol() + 1 < 0) &&
+                    (gameState.getBoardSquares()[killThisOne.getRow()][flag.getCol() + 1].getPiece().getTeam() == BLUE) &&
+                    gameState.getBoardSquares()[killThisOne.getRow()][flag.getCol() + 1].getPiece().getRank() >= killThisOne.getPiece().getRank()){
+                defendWithThis = gameState.getBoardSquares()[killThisOne.getRow()][flag.getCol() + 1];
+            }
+
+            //so now we have the square where we need to attack, and the square to attack with
+            int defX = defendWithThis.getCol();
+            int defY = defendWithThis.getRow();
+            int attX = killThisOne.getCol();
+            int attY = killThisOne.getRow();
+            int firstClick = 0;
+            int secondClick = 0;
+            if ( defX == 0 && defY == 0 ) {
+                firstClick = 0;
+            } else if ( defY == 0 ) {
+                firstClick = defX;
+            } else if ( defX == 0 ) {
+                firstClick = defY * 10;
+            } else {
+                firstClick = defX * defY;
+            }
+
+            if ( attX == 0 && attY == 0 ) {
+                secondClick = 0;
+            } else if ( attY == 0 ) {
+                secondClick = attX;
+            } else if ( attX == 0 ) {
+                secondClick = attY * 10;
+            } else {
+                secondClick = attX * attY;
+            }
+            game.sendAction(new StrategoMoveAction(this, firstClick, secondClick));
+        }
+
+
+
+
         return null;
     }
 
