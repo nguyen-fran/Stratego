@@ -1,0 +1,62 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rules_page"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="5dp"
+    android:background="#FFFFFF"
+    android:gravity="center_horizontal|center_vertical"
+    android:orientation="vertical"
+    tools:context=".Stratego.StrategoMainActivity">
+
+    <ImageView
+        android:id="@+id/board_demo_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/board_demo" />
+
+    <LinearLayout
+        android:id="@+id/rules"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="50dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/rules_text1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Stratego is a board game, where the goal is to capture the opponent’s flag to win. You begin the game by placing your pieces on your side of the board (piece values are not visible to the opponent initially).  "
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/rules_text2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Moveable pieces: 1 Marshal, 1 General, 2 Colonels, 3 Majors, 4 Captains, 4 Lieutenants, 5 Sergeants, 5 Miners, 6 Scouts, 1 Spy"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/rules_text3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Immobile pieces: 6 Bombs, 1 Flag"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/rules_text4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="On each player’s turn, they can move to or attack an adjacent square with 1 piece (Scouts can move any number of squares, like a rook in chess). When attacking/being attacked, the piece with the lower rank/numerical value is captured (if both are the same rank, then both are taken off the board). When any piece except for a Miner attacks a Bomb, that piece gets captured. Only Miners are able to defuse Bombs and capture them. The Spy is the only piece that can capture the Marshal, but any piece can capture the Spy."
+            android:textSize="24sp" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/back_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back" />
+</LinearLayout>
