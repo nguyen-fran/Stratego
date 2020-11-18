@@ -13,6 +13,7 @@ public class StrategoStartAction extends GameAction {
      * @param player the player who created the action
      */
     public StrategoStartAction(GamePlayer player) {
+
         super(player);
     }
 }
