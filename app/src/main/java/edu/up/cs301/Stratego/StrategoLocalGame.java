@@ -88,11 +88,8 @@ public class StrategoLocalGame extends LocalGame {
             }
         } else { //all other pieces have normal movement range (check if square is in range, and is moving at all)
             if (squareDest.getRow() > squareSrc.getRow() + 1 || squareDest.getRow() < squareSrc.getRow() - 1
-                    || squareDest.getCol() > squareSrc.getCol() + 1 || squareDest.getCol() < squareSrc.getCol() - 1 ||
-                ( (squareDest.getRow() == squareSrc.getRow() + 1) && (squareDest.getCol() == squareSrc.getCol() + 1) ) ||
-                ( (squareDest.getRow() == squareSrc.getRow() - 1) && (squareDest.getCol() == squareSrc.getCol() - 1) ) ||
-                ( (squareDest.getRow() == squareSrc.getRow() + 1) && (squareDest.getCol() == squareSrc.getCol() - 1) ) ||
-                ( (squareDest.getRow() == squareSrc.getRow() - 1) && (squareDest.getCol() == squareSrc.getCol() + 1) ) ) {
+                    || squareDest.getCol() > squareSrc.getCol() + 1 || squareDest.getCol() < squareSrc.getCol() - 1
+                    || squareSrc.getCol() != squareDest.getCol() && squareSrc.getRow() != squareDest.getRow()) {
                 return false;
             }
         }
@@ -283,6 +280,7 @@ public class StrategoLocalGame extends LocalGame {
 
         //set game phase signifying that the game has started
         gameState.setGamePhase(true);
+        gameState.setCurrPlayerIndex(0);
         return true;
     }
 

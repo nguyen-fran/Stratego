@@ -13,7 +13,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".Stratego.RulesActivity"></activity>
-        <activity android:name=".Stratego.StrategoMainActivity">
         <activity android:name="edu.up.cs301.Stratego.StrategoMainActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait">
