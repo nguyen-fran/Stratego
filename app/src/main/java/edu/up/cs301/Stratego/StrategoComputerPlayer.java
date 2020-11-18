@@ -5,6 +5,14 @@ import java.util.Random;
 import edu.up.cs301.game.GameFramework.GameComputerPlayer;
 import edu.up.cs301.game.GameFramework.infoMessage.GameInfo;
 
+/**
+ * A not smart computer player to play Stratego
+ *
+ * @author Gabby Marshak
+ * @author Francisco Nguyen
+ * @author Blake Nygren
+ * @author Jack Volonte
+ */
 public class StrategoComputerPlayer extends GameComputerPlayer {
 
     /**
@@ -32,22 +40,33 @@ public class StrategoComputerPlayer extends GameComputerPlayer {
 
         Random rand = new Random();
         //getting random coordinates to make a move with a random square
-        int randRow = rand.nextInt(StrategoGameState.BOARD_SIZE);
-        int randCol = rand.nextInt(StrategoGameState.BOARD_SIZE);
+        int squareSrc = rand.nextInt(100);
+        int squareDest = squareSrc;
         int randDir = rand.nextInt(4); //randomize which direction to move the gamepiece
-        int[] dir = {0, 0}; //the dir to move a gamepiece
         switch (randDir) {
             case 0: //move left
-                dir[0] = -1;
+                //only move left if not on the left side of the board
+                if (squareSrc % 10 != 0) {
+                    squareDest -= 1;
+                }
                 break;
             case 1: //move right
-                dir[0] = 1;
+                //only move right if not on the right side of the board
+                if (squareSrc % 10 != 9) {
+                    squareDest += 1;
+                }
                 break;
             case 2: //move up
-                dir[1] = -1;
+                //only move up if not at the top of the board
+                if (squareSrc / 10 != 0) {
+                    squareDest -= 10;
+                }
                 break;
             case 3: //move down
-                dir[1] = 1;
+                //only move sown if not at the bottom of the board
+                if (squareSrc / 10 != 9) {
+                    squareDest += 10;
+                }
                 break;
             default:
                 break;
@@ -55,8 +74,7 @@ public class StrategoComputerPlayer extends GameComputerPlayer {
 
         //don't need to error check the move, if a move fails the local game won't move to the player
         //which means this comp player would get another shot
-        //TODO: convert board square coordinates to int, or refactor how the move action handles picking coords
-        game.sendAction(new StrategoMoveAction(this, gameState.getBoardSquares()[randRow][randCol], gameState.getBoardSquares()[randRow + dir[0]][randCol + dir[1]]));
+        game.sendAction(new StrategoMoveAction(this, squareSrc, squareDest));
     }
-    
+
 }

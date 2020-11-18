@@ -8,6 +8,14 @@ import edu.up.cs301.game.GameFramework.LocalGame;
 import edu.up.cs301.game.GameFramework.gameConfiguration.GameConfig;
 import edu.up.cs301.game.GameFramework.gameConfiguration.GamePlayerType;
 
+/**
+ * Main activity class
+ *
+ * @author Gabby Marshak
+ * @author Francisco Nguyen
+ * @author Blake Nygren
+ * @author Jack Volonte
+ */
 public class StrategoMainActivity extends GameMainActivity {
 
     private static final int PORT_NUMBER = 2278;
@@ -21,7 +29,7 @@ public class StrategoMainActivity extends GameMainActivity {
          * Problem: Didn't know how to set up the configuration
          *
          * Resource:    https://github.com/cs301up/PigGameStarter
-         * Solution:    I used the code from the project's main activity class, changin some values to fit Stratego
+         * Solution:    I used the code from the project's main activity class, changing some values to fit Stratego
          */
         ArrayList<GamePlayerType> playerTypes = new ArrayList<GamePlayerType>();
 

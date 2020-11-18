@@ -4,6 +4,14 @@ import java.util.Random;
 
 import edu.up.cs301.game.GameFramework.infoMessage.GameState;
 
+/**
+ * Holds data on entire game of Stratego
+ *
+ * @author Gabby Marshak
+ * @author Francisco Nguyen
+ * @author Blake Nygren
+ * @author Jack Volonte
+ */
 public class StrategoGameState extends GameState {
     //Stratego only has two phases: setup and main gameplay
     private boolean gamePhase;  //false if on setup, true if on main gameplay
@@ -18,11 +26,9 @@ public class StrategoGameState extends GameState {
     public static final int BOARD_SIZE = 10;
     public static final int BLUE = 0;   //team blue will always go first
     public static final int RED = 1;    //team red will always go second
-    public static final boolean HUMAN_TURN = true;
-    public static final boolean COMP_TURN = false;
 
     //the amount of each type of piece each player has in order of: flag, 1, 2, ..., 9, 10, bomb
-    private static final int[] NUM_OF_PIECES = {1, 1, 8, 5, 4, 4, 4, 3, 2, 1, 1, 6};
+    public static final int[] NUM_OF_PIECES = {1, 1, 8, 5, 4, 4, 4, 3, 2, 1, 1, 6};
     //coordinates for the Lake Squares which can't be occupied
     private static final int[][] LAKE_SQUARES = {{4, 2}, {4, 3}, {5, 2}, {5, 3}, {4, 6}, {4, 7}, {5, 6}, {5, 7}};
 
@@ -30,15 +36,13 @@ public class StrategoGameState extends GameState {
      * constructor
      */
     public StrategoGameState() {
-        gamePhase = false;
-        //TODO: figure out how to set up who goes first
+        gamePhase = true;   //TODO: set to false
         currPlayerIndex = 0;
         //there are zero deaths at the start of a game
         for (int i = 0; i < blueGY.length; i++) {
             blueGY[i] = 0;
             redGY[i] = 0;
         }
-
 
         //making the BoardSquares that start empty
         for (int j = 4; j < 6; j++) {
@@ -66,9 +70,6 @@ public class StrategoGameState extends GameState {
         //the game starts with a randomized board
         randomize(0, 4, 0, 10);
         randomize(6, 10, 0, 10);
-
-        //this will be used for the undo action later in StrategoLocalGame, but for this checkpoint it is just null to avoid infinite recursion
-        prevGameState = null;
     }
 
     /**
@@ -82,7 +83,8 @@ public class StrategoGameState extends GameState {
         int numOfPiecesIndex = 0;   //this will also signify the rank of the GamePiece being made
 
         //check if making computer's side of the board, computer's pieces' rank should be invisible
-        boolean visible = !(startRow == 0);
+        //boolean visible = !(startRow == 0);
+        boolean visible = true;
 
         //outer 2 for loops used to provide coordinates of the board square being initialized
         for (int i = startRow; i < startRow + 4; i++) {
@@ -123,15 +125,15 @@ public class StrategoGameState extends GameState {
         }
 
         Random rand = new Random();
-        int randXPos, randYPos;
+        int randRow, randCol;
         GamePiece temp;
         for (int i = startRow; i < endRow; i++) {
             for (int j = startCol; j < endCol; j++) {
-                randXPos = rand.nextInt(endRow - startRow) + startRow;
-                randYPos = rand.nextInt(endCol - startCol) + startCol;
+                randRow = rand.nextInt(endRow - startRow) + startRow;
+                randCol = rand.nextInt(endCol - startCol) + startCol;
 
-                temp = boardSquares[randXPos][randYPos].getPiece();
-                boardSquares[randXPos][randYPos].setPiece(boardSquares[i][j].getPiece());
+                temp = boardSquares[randRow][randCol].getPiece();
+                boardSquares[randRow][randCol].setPiece(boardSquares[i][j].getPiece());
                 boardSquares[i][j].setPiece(temp);
             }
         }
@@ -177,9 +179,6 @@ public class StrategoGameState extends GameState {
     public BoardSquare[][] getBoardSquares() {
         return boardSquares;
     }
-    public StrategoGameState getPrevGameState() {
-        return prevGameState;
-    }
 
     //setters
     public void setGamePhase(boolean gamePhase){
@@ -191,7 +190,7 @@ public class StrategoGameState extends GameState {
     public void setBlueGY(int[] blueGY) {
         this.blueGY = blueGY;
     }
-    public void setPlayerGYIdx(int index, int val){
+    public void setBlueGYIdx(int index, int val){
         if(index >= 0 && index < blueGY.length ){
             this.blueGY[index] = val;
         }
@@ -199,16 +198,13 @@ public class StrategoGameState extends GameState {
     public void setRedGY(int[] redGY) {
         this.redGY = redGY;
     }
-    public void setOppGYIdx(int index, int val){
+    public void setRedGYIdx(int index, int val){
         if(index >= 0 && index < redGY.length ){
             this.redGY[index] = val;
         }
     }
     public void setBoardSquares(BoardSquare[][] boardSquares) {
         this.boardSquares = boardSquares;
-    }
-    public void setPrevGameState(StrategoGameState prevGameState) {
-        this.prevGameState = new StrategoGameState(prevGameState);
     }
 }
 

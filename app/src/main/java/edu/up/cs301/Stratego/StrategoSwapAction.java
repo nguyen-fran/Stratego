@@ -3,6 +3,14 @@ package edu.up.cs301.Stratego;
 import edu.up.cs301.game.GameFramework.GamePlayer;
 import edu.up.cs301.game.GameFramework.actionMessage.GameAction;
 
+/**
+ * For swapping pieces in Stratego
+ *
+ * @author Gabby Marshak
+ * @author Francisco Nguyen
+ * @author Blake Nygren
+ * @author Jack Volonte
+ */
 public class StrategoSwapAction extends GameAction {
     private int squareSrc;
     private int squareDest;
@@ -19,7 +27,6 @@ public class StrategoSwapAction extends GameAction {
     }
 
     //getters and setters
-
 
     public int getSquareSrc() {
         return squareSrc;
