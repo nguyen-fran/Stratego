@@ -36,7 +36,7 @@ public class StrategoGameState extends GameState {
      * constructor
      */
     public StrategoGameState() {
-        gamePhase = true;   //TODO: set to false
+        gamePhase = false;
         currPlayerIndex = 0;
         //there are zero deaths at the start of a game
         for (int i = 0; i < blueGY.length; i++) {
