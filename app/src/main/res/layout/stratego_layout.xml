@@ -50,89 +50,89 @@
                     android:id="@+id/blue1_image"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:src="@drawable/blue1"
                     app:layout_column="0"
-                    app:layout_row="0"
-                    android:src="@drawable/blue1" />
+                    app:layout_row="0" />
 
                 <ImageView
                     android:id="@+id/blue2_image"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:src="@drawable/blue2"
                     app:layout_column="1"
-                    app:layout_row="0"
-                    android:src="@drawable/blue2" />
+                    app:layout_row="0" />
 
                 <ImageView
                     android:id="@+id/blue3_image"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:src="@drawable/blue3"
                     app:layout_column="2"
-                    app:layout_row="0"
-                    android:src="@drawable/blue3" />
+                    app:layout_row="0" />
 
                 <ImageView
                     android:id="@+id/blue4_image"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:src="@drawable/blue4"
                     app:layout_column="3"
-                    app:layout_row="0"
-                    android:src="@drawable/blue4" />
+                    app:layout_row="0" />
 
                 <ImageView
                     android:id="@+id/blue5_image"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:src="@drawable/blue5"
                     app:layout_column="4"
-                    app:layout_row="0"
-                    android:src="@drawable/blue5" />
+                    app:layout_row="0" />
 
                 <ImageView
                     android:id="@+id/blue6_image"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:src="@drawable/blue6"
                     app:layout_column="5"
-                    app:layout_row="0"
-                    android:src="@drawable/blue6" />
+                    app:layout_row="0" />
 
                 <ImageView
                     android:id="@+id/blue7_image"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:src="@drawable/blue7"
                     app:layout_column="6"
-                    app:layout_row="0"
-                    android:src="@drawable/blue7" />
+                    app:layout_row="0" />
 
                 <ImageView
                     android:id="@+id/blue8_image"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:src="@drawable/blue8"
                     app:layout_column="7"
-                    app:layout_row="0"
-                    android:src="@drawable/blue8" />
+                    app:layout_row="0" />
 
                 <ImageView
                     android:id="@+id/blue9_image"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:src="@drawable/blue9"
                     app:layout_column="8"
-                    app:layout_row="0"
-                    android:src="@drawable/blue9" />
+                    app:layout_row="0" />
 
                 <ImageView
                     android:id="@+id/blue10_image"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:src="@drawable/blue10"
                     app:layout_column="9"
-                    app:layout_row="0"
-                    android:src="@drawable/blue10" />
+                    app:layout_row="0" />
 
                 <ImageView
                     android:id="@+id/blueb_image"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:src="@drawable/blueb"
                     app:layout_column="10"
-                    app:layout_row="0"
-                    android:src="@drawable/blueb" />
+                    app:layout_row="0" />
 
                 <TextView
                     android:id="@+id/blue1_dead"

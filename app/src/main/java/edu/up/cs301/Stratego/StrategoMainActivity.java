@@ -22,6 +22,15 @@ public class StrategoMainActivity extends GameMainActivity {
 
     @Override
     public GameConfig createDefaultConfig() {
+        /**
+         * External Citation
+         * Date:    17 November 2020
+         * Problem: Need screen to be kept in portrait mode
+         *
+         * Resource:    https://stackoverflow.com/questions/3723823/i-want-my-android-application-to-be-only-run-in-portrait-mode
+         * Solution:    I put the solution in the Manifest file. The comment is here so that there's
+         *              not a big comment block in the Manifest file.
+         */
 
         /**
          * External Citation
