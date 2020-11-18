@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * Class that interacts with human through gui
@@ -55,7 +54,7 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
 
     @Override
     public View getTopView() {
-        return myActivity.findViewById(R.id.top_view);
+        return myActivity.findViewById(R.id.rules_page);
     }
 
     @Override
