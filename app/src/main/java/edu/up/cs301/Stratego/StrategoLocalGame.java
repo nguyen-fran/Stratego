@@ -285,7 +285,23 @@ public class StrategoLocalGame extends LocalGame {
         squareSrc.setPiece(squareDest.getPiece());
         squareDest.setPiece(temp);
         return true;
+    } //StrategoSwapAction
+
+    /**
+     * Begin the game once the setup phase is over
+     *
+     * @param action    the action being done by a game player
+     * @return true if swap was successful, false otherwise
+     */
+    public boolean start(StrategoStartAction action) {
+        if(gameState.getGamePhase()){
+            return false;
+        }
+
+
+        return true;
     }
+
 
     //checks if either flag has the 'captured' status (captured = true)
     //TODO need to write specific message for who won
