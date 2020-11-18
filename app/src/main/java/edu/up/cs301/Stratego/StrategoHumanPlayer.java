@@ -13,7 +13,6 @@ import edu.up.cs301.game.GameFramework.infoMessage.GameInfo;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,13 +39,10 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
     private ViewGroup playerGY;
     private ViewGroup oppGY;
 
-    public static final int BLUE = 0;
-    public static final int RED = 1;
-
     private int firstClick = -1;
     private int secondClick = -1;
 
-    private StrategoGameState tempGameState = null;
+    private StrategoGameState gameState = null;
 
     /**
      * constructor
@@ -71,7 +67,7 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
             return;
         }
 
-        tempGameState = (StrategoGameState) info;
+        gameState = (StrategoGameState) info;
 
         /**
          External Citation
@@ -86,7 +82,7 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
             TextView GY = (TextView)playerGY.getChildAt(i + 11);
             //setting text to whatever value is in graveyard array at that coord
             //might need to adjust +- 1 depending to avoid out of bounds errors
-            GY.setText("" + ((StrategoGameState) info).getBlueGY()[i]);
+            GY.setText("" + ((StrategoGameState) info).getBlueGY()[i] + "/" + StrategoGameState.NUM_OF_PIECES[i + 1]);
         }
 
         //setting up computer graveyard with a loop
@@ -94,7 +90,7 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
             TextView GY = (TextView)oppGY.getChildAt(i + 11);
             //setting text to whatever value is in graveyard array at that coord
             //might need to adjust +- 1 depending to avoid out of bounds errors
-            GY.setText("" + ((StrategoGameState) info).getRedGY()[i]);
+            GY.setText("" + ((StrategoGameState) info).getRedGY()[i] + "/" + StrategoGameState.NUM_OF_PIECES[i + 1]);
         }
 
         //double for loop to update game board from game state
@@ -108,7 +104,7 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
         }
 
         //updating turn indicator
-        if(((StrategoGameState) info).getCurrPlayerIndex() == BLUE){
+        if(((StrategoGameState) info).getCurrPlayerIndex() == StrategoGameState.BLUE){
             turnIndicator.setText("Player's turn");
         }else{
             turnIndicator.setText("Opponent's turn");
@@ -132,10 +128,13 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
         }else if(!gameState.getBoardSquares()[i][j].getOccupied() &&
                 gameState.getBoardSquares()[i][j].getPiece() == null){ //empty square
             button.setImageResource(R.drawable.empty_space);
-        }else if (gameState.getBoardSquares()[i][j].getPiece().getTeam() == BLUE){ //blue pieces
+        }else if (gameState.getBoardSquares()[i][j].getPiece().getTeam() == StrategoGameState.BLUE){ //blue pieces
+            if (!gameState.getBoardSquares()[i][j].getPiece().getVisible()) {
+                button.setImageResource(R.drawable.blue_unknown);
+            }
             imagePickerBlue(button, gameState, i, j);
-        }else if(gameState.getBoardSquares()[i][j].getPiece().getTeam() == RED){ //red pieces
-            if(gameState.getBoardSquares()[i][j].getPiece().getVisible() == false){
+        }else if(gameState.getBoardSquares()[i][j].getPiece().getTeam() == StrategoGameState.RED){ //red pieces
+            if(!gameState.getBoardSquares()[i][j].getPiece().getVisible()){
                 button.setImageResource(R.drawable.red_unknown);
             }else{
                 imagePickerRed(button, gameState, i, j);
@@ -245,13 +244,13 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
         activity.setContentView(R.layout.stratego_layout);
 
         gameBoardGrid = (ViewGroup) myActivity.findViewById(R.id.gameBoardGrid);
-        ImageButton temp;
+        ImageButton boardSquareButton;
         for (int i = 0; i < 100; i++) {
-            temp = new ImageButton(myActivity);
-            temp.setId(i);
-            temp.setOnClickListener(this);
+            boardSquareButton = new ImageButton(myActivity);
+            boardSquareButton.setId(i);
+            boardSquareButton.setOnClickListener(this);
 
-            gameBoardGrid.addView(temp);
+            gameBoardGrid.addView(boardSquareButton);
         }
 
         this.playerGY = activity.findViewById(R.id.blueGY);
@@ -272,7 +271,6 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
 
         this.settings = myActivity.findViewById(R.id.settingsButton);
         this.settings.setOnClickListener(this);
-
     }
 
     @Override
@@ -287,33 +285,28 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
             quit();
         }else if(v.getId() == settings.getId()){
             settings();
-        }else
-        if(firstClick > 0){
+        }else if(firstClick >= 0){
             secondClick = v.getId();
             Log.i("testing clicks", "recorded first click " + firstClick + " and made it to record the second" + secondClick);
+            ImageButton firstClickButton = myActivity.findViewById(firstClick);
+            ImageButton secondClickButton = myActivity.findViewById(secondClick);
             // TODO need better way to determine which action is being attempted
-            if(tempGameState.getGamePhase()){
+            if(gameState.getGamePhase()){
                 game.sendAction(new StrategoMoveAction(this, firstClick, secondClick));
-                ImageButton tempFirst = myActivity.findViewById(firstClick);
-                ImageButton tempSecond = myActivity.findViewById(secondClick);
-                tempFirst.setBackgroundColor(Color.WHITE);
-                tempSecond.setBackgroundColor(Color.WHITE);
                 firstClick = -1;
                 secondClick = -1;
             }
             else{
                 game.sendAction(new StrategoSwapAction(this, firstClick, secondClick));
-                ImageButton tempFirst = myActivity.findViewById(firstClick);
-                ImageButton tempSecond = myActivity.findViewById(secondClick);
-                tempFirst.setBackgroundColor(Color.WHITE);
-                tempSecond.setBackgroundColor(Color.WHITE);
                 firstClick = -1;
                 secondClick = -1;
             }
+            firstClickButton.setBackgroundColor(Color.WHITE);
+            secondClickButton.setBackgroundColor(Color.WHITE);
         }else{
             firstClick = v.getId();
-            ImageButton temp = myActivity.findViewById(firstClick);
-            temp.setBackgroundColor(Color.GREEN);
+            ImageButton firstClickButton = myActivity.findViewById(firstClick);
+            firstClickButton.setBackgroundColor(Color.GREEN);
         }
     }
 
@@ -321,7 +314,7 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
     //use Toast to show illegal move?
     public void undo(){
         Log.i("testing undo button", "undo clicked");
-        tempGameState.setPrevGameState(tempGameState.getPrevGameState());
+        //tempGameState.setPrevGameState(tempGameState.getPrevGameState());
     }
 
     public void reset(){

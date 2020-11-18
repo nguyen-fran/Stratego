@@ -28,7 +28,6 @@ public class StrategoSwapAction extends GameAction {
 
     //getters and setters
 
-
     public int getSquareSrc() {
         return squareSrc;
     }

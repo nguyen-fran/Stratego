@@ -26,11 +26,9 @@ public class StrategoGameState extends GameState {
     public static final int BOARD_SIZE = 10;
     public static final int BLUE = 0;   //team blue will always go first
     public static final int RED = 1;    //team red will always go second
-    public static final boolean HUMAN_TURN = true;
-    public static final boolean COMP_TURN = false;
 
     //the amount of each type of piece each player has in order of: flag, 1, 2, ..., 9, 10, bomb
-    private static final int[] NUM_OF_PIECES = {1, 1, 8, 5, 4, 4, 4, 3, 2, 1, 1, 6};
+    public static final int[] NUM_OF_PIECES = {1, 1, 8, 5, 4, 4, 4, 3, 2, 1, 1, 6};
     //coordinates for the Lake Squares which can't be occupied
     private static final int[][] LAKE_SQUARES = {{4, 2}, {4, 3}, {5, 2}, {5, 3}, {4, 6}, {4, 7}, {5, 6}, {5, 7}};
 
@@ -45,7 +43,6 @@ public class StrategoGameState extends GameState {
             blueGY[i] = 0;
             redGY[i] = 0;
         }
-
 
         //making the BoardSquares that start empty
         for (int j = 4; j < 6; j++) {
@@ -73,9 +70,6 @@ public class StrategoGameState extends GameState {
         //the game starts with a randomized board
         randomize(0, 4, 0, 10);
         randomize(6, 10, 0, 10);
-
-        //this will be used for the undo action later in StrategoLocalGame, but for this checkpoint it is just null to avoid infinite recursion
-        prevGameState = null;
     }
 
     /**
@@ -185,9 +179,6 @@ public class StrategoGameState extends GameState {
     public BoardSquare[][] getBoardSquares() {
         return boardSquares;
     }
-    public StrategoGameState getPrevGameState() {
-        return prevGameState;
-    }
 
     //setters
     public void setGamePhase(boolean gamePhase){
@@ -214,9 +205,6 @@ public class StrategoGameState extends GameState {
     }
     public void setBoardSquares(BoardSquare[][] boardSquares) {
         this.boardSquares = boardSquares;
-    }
-    public void setPrevGameState(StrategoGameState prevGameState) {
-        this.prevGameState = new StrategoGameState(prevGameState);
     }
 }
 
