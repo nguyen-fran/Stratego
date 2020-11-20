@@ -334,8 +334,23 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
     //TODO: header comment, citation for https://stackoverflow.com/questions/10936042/how-to-open-layout-on-button-click-android
     public void rules(){
         Log.i("testing rules button", "rules clicked");
-        Intent rulesIntent = new Intent(myActivity.getApplicationContext(), RulesActivity.class);
-        myActivity.startActivity(rulesIntent);
+
+        String rulesText = "Stratego is a board game, where the goal is to capture the opponent’s " +
+                "flag to win. You begin the game by placing your pieces on your side of the board " +
+                "(piece values are not visible to the opponent initially)" +
+                "\n\nMoveable pieces: 1 Marshal, 1 General, 2 Colonels, 3 Majors, 4 Captains, " +
+                "4 Lieutenants, 5 Sergeants, 5 Miners, 6 Scouts, 1 Spy" +
+                "\nImmobile pieces: 6 Bombs, 1 Flag" +
+                "\n\nOn each player’s turn, they can move to or attack an adjacent square with 1 piece " +
+                "(Scouts can move any number of squares, like a rook in chess). When attacking/being " +
+                "attacked, the piece with the lower rank/numerical value is captured (if both are " +
+                "the same rank, then both are taken off the board). When any piece except for a " +
+                "Miner attacks a Bomb, that piece gets captured. Only Miners are able to defuse Bombs " +
+                "and capture them. The Spy is the only piece that can capture the Marshal, " +
+                "but any piece can capture the Spy.";
+        new AlertDialog.Builder(myActivity)
+                .setTitle("Rules").setMessage(rulesText)
+                .setNegativeButton("Back", null).show();
     }
 
     public void quit(){

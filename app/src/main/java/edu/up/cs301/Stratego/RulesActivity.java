@@ -12,7 +12,6 @@ import edu.up.cs301.R;
 
 /**
  * loads up the rules page xml
- * TODO: set up onClickListener for back button so you can go back to main activity
  *
  * @author Gabby Marshak
  * @author Francisco Nguyen
