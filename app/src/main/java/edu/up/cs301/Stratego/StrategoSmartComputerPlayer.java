@@ -198,8 +198,65 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
         return null;
     }
 
-    public BoardSquare specialCaseAttack(StrategoGameState gameState){
+    /**
+     * Smart AI makes move to get closer to or attack opp marshall or bomb if either is visible
+     * TODO: choose specific bomb or marshall to attack
+     *
+     * @param gameState
+     * @return
+     */
+    public BoardSquare specialCaseAttack(StrategoGameState gameState) {
+        boolean visibleBomb = false, visibleMarshall = false;
+        int squareDest;
+
+        //look for visible opp marshall or bomb
+        for (int i = 0; i < StrategoGameState.BOARD_SIZE; i++) {
+            for (int j = 0; j < StrategoGameState.BOARD_SIZE; j++) {
+                BoardSquare currSquareAnalyze = gameState.getBoardSquares()[i][j];
+                if (gameState.getBoardSquares()[i][j].getPiece() != null
+                        && gameState.getBoardSquares()[i][j].getPiece().getTeam() != playerNum && gameState.getBoardSquares()[i][j].getPiece().getVisible()) {
+                    if (gameState.getBoardSquares()[i][j].getPiece().getRank() == GamePiece.BOMB) { //found a bom
+                        visibleBomb = true;
+                        if (reachableSquare(gameState, i, j)) {
+                            squareDest = 1 *10 +j;
+                        }
+                    } else if (gameState.getBoardSquares()[i][j].getPiece().getRank() == 10) {  //found a marshall
+                        visibleMarshall = true;
+                        if (reachableSquare(gameState, i, j)) {
+                            squareDest = 1 *10 +j;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (visibleBomb) {
+            for (int i = 0; i < StrategoGameState.BOARD_SIZE; i++) {
+                for (int j = 0; j < StrategoGameState.BOARD_SIZE; j++) {
+                    
+                }
+            }
+        }
+
         return null;
+    }
+
+    /**
+     * Checks to see if a square has an unoccupied square next to it
+     *
+     * @param gameState
+     * @param i row of squareDest
+     * @param j col of squareDest
+     * @return  true if there is a square to top, bottom, left, or right of squareDest
+     */
+    private boolean reachableSquare(StrategoGameState gameState, int i, int j) {
+        if ((gameState.getBoardSquares()[i][j].getRow() < StrategoGameState.BOARD_SIZE && gameState.getBoardSquares()[i + 1][j].getPiece() == null)
+            || (gameState.getBoardSquares()[i][j].getRow() > 0 && gameState.getBoardSquares()[i - 1][j].getPiece() == null)
+            || (gameState.getBoardSquares()[i][j].getCol() < StrategoGameState.BOARD_SIZE && gameState.getBoardSquares()[i][j + 1].getPiece() == null)
+            || (gameState.getBoardSquares()[i][j].getCol() > 0 && gameState.getBoardSquares()[i][j - 1].getPiece() == null)) {
+            return true;
+        }
+        return false;
     }
 
     public BoardSquare scoutAttack(StrategoGameState gameState){

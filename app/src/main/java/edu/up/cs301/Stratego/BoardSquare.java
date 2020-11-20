@@ -11,7 +11,6 @@ package edu.up.cs301.Stratego;
  */
 public class BoardSquare {
     private boolean occupied;
-    private boolean highlight;
     private int row;
     private int col;
 
@@ -26,7 +25,6 @@ public class BoardSquare {
      */
     public BoardSquare(boolean occupied, int row, int col, GamePiece piece){
         this.occupied = occupied;
-        this.highlight = false;
         this.row = row;
         this.col = col;
 
@@ -39,7 +37,6 @@ public class BoardSquare {
      */
     public BoardSquare(BoardSquare orig) {
         this.occupied = orig.occupied;
-        this.highlight = orig.highlight;
         this.row = orig.row;
         this.col = orig.col;
 
@@ -54,9 +51,6 @@ public class BoardSquare {
     public boolean getOccupied(){
         return occupied;
     }
-    public boolean getHighlight(){
-        return highlight;
-    }
     public int getRow(){
         return row;
     }
@@ -69,9 +63,6 @@ public class BoardSquare {
 
     public void setOccupied(boolean occupied) {
         this.occupied = occupied;
-    }
-    public void setHighlight(boolean highlight) {
-        this.highlight = highlight;
     }
     public void setRow(int row) {
         this.row = row;

@@ -20,7 +20,6 @@ public class StrategoGameState extends GameState {
     private int[] blueGY = new int[12];
     private int[] redGY = new int[12];
 
-    private StrategoGameState prevGameState;
     private BoardSquare[][] boardSquares = new BoardSquare[10][10];
 
     public static final int BOARD_SIZE = 10;
@@ -83,8 +82,6 @@ public class StrategoGameState extends GameState {
         int numOfPiecesIndex = 0;   //this will also signify the rank of the GamePiece being made
 
         //check if making computer's side of the board, computer's pieces' rank should be invisible
-        //boolean visible = !(startRow == 0);
-        boolean visible = true;
 
         //outer 2 for loops used to provide coordinates of the board square being initialized
         for (int i = startRow; i < startRow + 4; i++) {
@@ -96,7 +93,7 @@ public class StrategoGameState extends GameState {
                         i++;
                         j = 0;
                     }
-                    boardSquares[i][j] = new BoardSquare(true, i, j, new GamePiece(numOfPiecesIndex, team, visible, false));
+                    boardSquares[i][j] = new BoardSquare(true, i, j, new GamePiece(numOfPiecesIndex, team, false, false));
 
                     //only increment j if there is another piece to make
                     //this avoids j being incremented twice: once on the last piece and again when re-entering the middle for loop

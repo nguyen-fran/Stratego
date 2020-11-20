@@ -16,7 +16,6 @@ import edu.up.cs301.game.GameFramework.actionMessage.GameAction;
  */
 public class StrategoLocalGame extends LocalGame {
     private StrategoGameState gameState;
-    private StrategoGameState prevGameState;
 
     public StrategoLocalGame(){
         gameState = new StrategoGameState();
@@ -36,8 +35,6 @@ public class StrategoLocalGame extends LocalGame {
     protected boolean makeMove(GameAction action) {
         if (action instanceof StrategoMoveAction){
             //TODO: make sure action updates gamestate when moving
-            prevGameState = new StrategoGameState(this.gameState);
-
             //if the move was successful, go on to the next player
             if (move((StrategoMoveAction) action)) {
                 if (gameState.getCurrPlayerIndex() == 0) {
@@ -50,7 +47,7 @@ public class StrategoLocalGame extends LocalGame {
         } else if (action instanceof StrategoSwapAction){
             return swap((StrategoSwapAction) action);
         } else if(action instanceof StrategoStartAction){
-            return (begin((StrategoStartAction) action));
+            return (begin());
         }
         return false;
     }
@@ -72,14 +69,14 @@ public class StrategoLocalGame extends LocalGame {
         //return false if not player's turn or if squareSrc is empty
         //or if src square is not curr player's piece or if dest square is curr player's piece.
         //the last two lines of the conditions should account for if the two squares are the same
-        if (!canMove(gameState.getCurrPlayerIndex()) || squareSrc.getPiece() == null
+        if (!canMove(getPlayerIdx(action.getPlayer())) || squareSrc.getPiece() == null
                 || squareSrc.getPiece().getTeam() != getPlayerIdx(action.getPlayer())
                 || (squareDest.getPiece() != null && squareDest.getPiece().getTeam() == getPlayerIdx(action.getPlayer()))) {
             return false;
         }
 
         //check if coordinates you want to move to are valid for piece (special exception for scout range, and immobile pieces)
-        if (squareSrc.getPiece().getRank() == 11 || squareSrc.getPiece().getRank() == 0) { //immobile pieces (cannot move)
+        if (squareSrc.getPiece().getRank() == GamePiece.BOMB || squareSrc.getPiece().getRank() == GamePiece.FLAG) { //immobile pieces (cannot move)
             return false;
         } else if (squareSrc.getPiece().getRank() == 2) { //special scout movement
             //return false if not valid scout move
@@ -135,7 +132,7 @@ public class StrategoLocalGame extends LocalGame {
         //first check for special cases (spy, miner)
         if (attackPiece.getRank() == 1 && defendPiece.getRank() == 10) { //spy attacking marshal
             defendPiece.setCaptured(true);
-        } else if (attackPiece.getRank() == 5 && defendPiece.getRank() == 11) { //miner attacking bomb
+        } else if (attackPiece.getRank() == 5 && defendPiece.getRank() == GamePiece.BOMB) { //miner attacking bomb
             defendPiece.setCaptured(true);
         } else if (attackPiece.getRank() < defendPiece.getRank()) { //attacker gets captured
             attackPiece.setCaptured(true);
@@ -158,7 +155,7 @@ public class StrategoLocalGame extends LocalGame {
             }
         }
         if (defendPiece.getCaptured()) {
-            if (defendPiece.getRank() == 0) { //captured a flag game piece
+            if (defendPiece.getRank() == GamePiece.FLAG) { //captured a flag game piece
                 if (defendPiece.getTeam() == StrategoGameState.BLUE) {
                     gameState.setBlueGYIdx(11, gameState.getBlueGY()[11] + 1);
                 } else {
@@ -181,18 +178,13 @@ public class StrategoLocalGame extends LocalGame {
 
     /**
      * Helper method to determine if selected square is a valid move for a scout piece.
-     * Assumes the two squares in param are valid for a move action (different squares, different teams)
+     * Assumes the two squares in param are valid for a move action (different squares, different teams, same row/col)
      *
      * @param squareSrc     initial board square that the scout piece is on
      * @param squareDest    new square scout might move to
      * @return true if movement is valid, false if not
      */
     public boolean scoutMove(BoardSquare squareSrc, BoardSquare squareDest) {
-        //check if dest is not in straight line from src
-        if (squareSrc.getRow() != squareDest.getRow() && squareSrc.getCol() != squareDest.getCol()) {
-            return false;
-        }
-
         //if the squares are in the same row
         if (squareSrc.getRow() == squareDest.getRow()) {
             //determine if dest is to the left or right of src
@@ -265,16 +257,15 @@ public class StrategoLocalGame extends LocalGame {
         squareSrc.setPiece(squareDest.getPiece());
         squareDest.setPiece(temp);
         return true;
-    } //StrategoSwapAction
+    }
 
     /**
      * Begin the game once the setup phase is over
      *
-     * @param action    the action being done by a game player
      * @return true if swap was successful, false otherwise
      */
-    public boolean begin(StrategoStartAction action) {
-        if(gameState.getGamePhase()){
+    public boolean begin() {
+        if (gameState.getGamePhase()) {
             return true;
         }
 
@@ -289,9 +280,9 @@ public class StrategoLocalGame extends LocalGame {
     @Override
     protected String checkIfGameOver() {
         if (gameState.getBlueGY()[11] > 0) {
-            return "Red team has won. ";
+            return "" + playerNames[1] + " has won. ";
         } else if (gameState.getRedGY()[11] > 0) {
-            return "Blue team has won. ";
+            return "" + playerNames[0] + " has won. ";
         } else {
             return null;
         }

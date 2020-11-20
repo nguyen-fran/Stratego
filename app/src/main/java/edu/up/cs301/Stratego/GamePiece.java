@@ -14,6 +14,9 @@ public class GamePiece {
     private boolean visible;
     private boolean captured;
 
+    public static final int FLAG = 0;
+    public static final int BOMB = 11;
+
     /**
      * constructor, creates new game piece and sets values to the ones given
      *

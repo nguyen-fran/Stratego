@@ -129,16 +129,14 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
                 gameState.getBoardSquares()[i][j].getPiece() == null){ //empty square
             button.setImageResource(R.drawable.empty_space);
         }else if (gameState.getBoardSquares()[i][j].getPiece().getTeam() == StrategoGameState.BLUE){ //blue pieces
-            if (!gameState.getBoardSquares()[i][j].getPiece().getVisible()) {
-                button.setImageResource(R.drawable.blue_unknown);
-            }
             imagePickerBlue(button, gameState, i, j);
         }else if(gameState.getBoardSquares()[i][j].getPiece().getTeam() == StrategoGameState.RED){ //red pieces
-            if(!gameState.getBoardSquares()[i][j].getPiece().getVisible()){
-                button.setImageResource(R.drawable.red_unknown);
-            }else{
-                imagePickerRed(button, gameState, i, j);
-            }
+//            if(!gameState.getBoardSquares()[i][j].getPiece().getVisible()){
+//                button.setImageResource(R.drawable.red_unknown);
+//            }else{
+//                imagePickerRed(button, gameState, i, j);
+//            }
+            imagePickerRed(button, gameState, i, j);
         }
     }
 
@@ -293,14 +291,11 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
             // TODO need better way to determine which action is being attempted
             if(gameState.getGamePhase()){
                 game.sendAction(new StrategoMoveAction(this, firstClick, secondClick));
-                firstClick = -1;
-                secondClick = -1;
-            }
-            else{
+            }else{
                 game.sendAction(new StrategoSwapAction(this, firstClick, secondClick));
-                firstClick = -1;
-                secondClick = -1;
             }
+            firstClick = -1;
+            secondClick = -1;
             firstClickButton.setBackgroundColor(Color.WHITE);
             secondClickButton.setBackgroundColor(Color.WHITE);
         }else{
