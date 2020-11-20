@@ -64,10 +64,12 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
      */
     public BoardSquare flagAttack(StrategoGameState gameState){
         BoardSquare flag = null;
+        BoardSquare source = null;
 
         //for loop through human player's pieces to find where the flag is
         for(int i = 0; i < 10; i++){
             for(int j = 0; j < 10; j++){
+                //TODO: potentially rename this gamepiece to something more indicative
                 GamePiece flagg = gameState.getBoardSquares()[i][j].getPiece();
                 if(flagg.getRank() == 0){
                     flag = gameState.getBoardSquares()[i][j];
@@ -84,21 +86,30 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
         //destination squares for these if statements should be the flag square
         if((flag.getRow() - 1 >= 0) &&
            (gameState.getBoardSquares()[flag.getRow()-1][flag.getCol()].getPiece().getTeam() == RED)){
-            return gameState.getBoardSquares()[flag.getRow()-1][flag.getCol()];
+            source = gameState.getBoardSquares()[flag.getRow()-1][flag.getCol()];
         }else if((flag.getRow() + 1 < 10) &&
                 (gameState.getBoardSquares()[flag.getRow()+1][flag.getCol()].getPiece().getTeam() == RED)){
-            return gameState.getBoardSquares()[flag.getRow()+1][flag.getCol()];
+            source = gameState.getBoardSquares()[flag.getRow()+1][flag.getCol()];
         }else if((flag.getCol() - 1 >= 0) &&
                 (gameState.getBoardSquares()[flag.getRow()][flag.getCol() - 1].getPiece().getTeam() == RED)){
-            return gameState.getBoardSquares()[flag.getRow()][flag.getCol() - 1];
+            source = gameState.getBoardSquares()[flag.getRow()][flag.getCol() - 1];
         }else if((flag.getCol() + 1 < 0) &&
                 (gameState.getBoardSquares()[flag.getRow()][flag.getCol() + 1].getPiece().getTeam() == RED)){
-            return gameState.getBoardSquares()[flag.getRow()][flag.getCol() + 1];
+            source = gameState.getBoardSquares()[flag.getRow()][flag.getCol() + 1];
         }
 
         //check in straight lines from the human flag until it hits another piece or goes off the board
+        //make a helper method for this
+
         //if the piece is a red scout, destination should be the flag square
+        if(source.getPiece().getTeam() == RED && source.getPiece().getRank() == 2){
+
+        }
         //if the piece is any other mobile red piece, destination should be moving one square towards the flag
+        else if(source.getPiece().getTeam() == RED &&
+                !(source.getPiece().getRank() == 0 || source.getPiece().getRank() == 11)){
+
+        }
 
         return null;
     }
@@ -108,6 +119,7 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
      * similar logic to flagAttack for the checks, just with teams swapped around
      * @param gameState current state of the game
      * @return source square for movement
+     * TODO: maybe break this up into helper methods
      */
     public BoardSquare flagDefend(StrategoGameState gameState){
         BoardSquare flag = null;
@@ -191,9 +203,6 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
             }
             game.sendAction(new StrategoMoveAction(this, firstClick, secondClick));
         }
-
-
-
 
         return null;
     }

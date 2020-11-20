@@ -113,26 +113,35 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
 
     /**
      * helper method to pick out image for a given image button based on the game state
-     * there is absolutely a better way to do this but i don't know what it is
      * @param button button to update the image of
      * @param gameState current state of the game
      * @param i row of game board array to pull from
      * @param j col of game board array to pull from
      */
     public void boardImagePicker(ImageButton button, StrategoGameState gameState, int i, int j){
-        //lakes/empty spaces
+        //setting image for lake squares
         if(gameState.getBoardSquares()[i][j].getOccupied() &&
-                gameState.getBoardSquares()[i][j].getPiece() == null){ //lake
+                gameState.getBoardSquares()[i][j].getPiece() == null){
             button.setImageResource(R.drawable.lake);
-        }else if(!gameState.getBoardSquares()[i][j].getOccupied() &&
-                gameState.getBoardSquares()[i][j].getPiece() == null){ //empty square
+        }
+
+        //setting image for empty spaces
+        else if(!gameState.getBoardSquares()[i][j].getOccupied() &&
+                gameState.getBoardSquares()[i][j].getPiece() == null){
             button.setImageResource(R.drawable.empty_space);
-        }else if (gameState.getBoardSquares()[i][j].getPiece().getTeam() == StrategoGameState.BLUE){ //blue pieces
+        }
+
+        //setting image for blue pieces (depending on visibility)
+        else if (gameState.getBoardSquares()[i][j].getPiece().getTeam() == StrategoGameState.BLUE){
             if (!gameState.getBoardSquares()[i][j].getPiece().getVisible()) {
                 button.setImageResource(R.drawable.blue_unknown);
+            }else{
+                imagePickerBlue(button, gameState, i, j);
             }
-            imagePickerBlue(button, gameState, i, j);
-        }else if(gameState.getBoardSquares()[i][j].getPiece().getTeam() == StrategoGameState.RED){ //red pieces
+        }
+
+        //setting image for red pieces (depending on visibility)
+        else if(gameState.getBoardSquares()[i][j].getPiece().getTeam() == StrategoGameState.RED){
             if(!gameState.getBoardSquares()[i][j].getPiece().getVisible()){
                 button.setImageResource(R.drawable.red_unknown);
             }else{
@@ -306,7 +315,9 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
     }
 
 
-    //TODO setup
+    /**
+     * switches the game phase from setup to main gameplay loop
+     */
     public void begin(){
         Log.i("testing game phase here", "" + gameState.getGamePhase());
         if(!gameState.getGamePhase()) {
@@ -322,7 +333,7 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
     }
 
     /**
-     * button that lets you reset the game via alert dialog
+     * resets the game via alert dialog
      *
      * External Citation
      * Date:    19 November 2020
@@ -344,7 +355,7 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
     }
 
     /**
-     * button that displays the rules of stratego in an alert dialog
+     * displays the rules of stratego in an alert dialog
      */
     public void rules(){
         Log.i("testing rules button", "rules clicked");
@@ -368,7 +379,7 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
     }
 
     /**
-     * button that lets you quit the game via alert dialog
+     * lets you quit the game via alert dialog
      *
      * External Citation
      * Date:    17 November 2020
