@@ -32,7 +32,6 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
     private Button reset;
     private Button rules;
     private Button quit;
-    private Button settings;
     private TextView turnIndicator;
 
     private ViewGroup gameBoardGrid;
@@ -114,23 +113,34 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
 
     /**
      * helper method to pick out image for a given image button based on the game state
-     * there is absolutely a better way to do this but i don't know what it is
+     *
      * @param button button to update the image of
      * @param gameState current state of the game
      * @param i row of game board array to pull from
      * @param j col of game board array to pull from
      */
     public void boardImagePicker(ImageButton button, StrategoGameState gameState, int i, int j){
-        //lakes/empty spaces
+        //setting image for lake squares
         if(gameState.getBoardSquares()[i][j].getOccupied() &&
-                gameState.getBoardSquares()[i][j].getPiece() == null){ //lake
+                gameState.getBoardSquares()[i][j].getPiece() == null){
             button.setImageResource(R.drawable.lake);
-        }else if(!gameState.getBoardSquares()[i][j].getOccupied() &&
-                gameState.getBoardSquares()[i][j].getPiece() == null){ //empty square
+        }
+        //setting image for empty spaces
+        else if(!gameState.getBoardSquares()[i][j].getOccupied() &&
+                gameState.getBoardSquares()[i][j].getPiece() == null){
             button.setImageResource(R.drawable.empty_space);
-        }else if (gameState.getBoardSquares()[i][j].getPiece().getTeam() == StrategoGameState.BLUE){ //blue pieces
+        }
+        //setting image for blue pieces (depending on visibility)
+        else if (gameState.getBoardSquares()[i][j].getPiece().getTeam() == StrategoGameState.BLUE){
+//            if (!gameState.getBoardSquares()[i][j].getPiece().getVisible()) {
+//                button.setImageResource(R.drawable.blue_unknown);
+//            }else{
+//                imagePickerBlue(button, gameState, i, j);
+//            }
             imagePickerBlue(button, gameState, i, j);
-        }else if(gameState.getBoardSquares()[i][j].getPiece().getTeam() == StrategoGameState.RED){ //red pieces
+        }
+        //setting image for red pieces (depending on visibility)
+        else if(gameState.getBoardSquares()[i][j].getPiece().getTeam() == StrategoGameState.RED){
 //            if(!gameState.getBoardSquares()[i][j].getPiece().getVisible()){
 //                button.setImageResource(R.drawable.red_unknown);
 //            }else{
@@ -267,8 +277,6 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
         this.quit = myActivity.findViewById(R.id.quitButton);
         this.quit.setOnClickListener(this);
 
-        this.settings = myActivity.findViewById(R.id.settingsButton);
-        this.settings.setOnClickListener(this);
     }
 
     @Override
@@ -281,8 +289,6 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
             rules();
         }else if(v.getId() == quit.getId()){
             quit();
-        }else if(v.getId() == settings.getId()){
-            settings();
         }else if(firstClick >= 0){
             secondClick = v.getId();
             ImageButton firstClickButton = myActivity.findViewById(firstClick);
@@ -306,7 +312,9 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
     }
 
 
-    //TODO setup
+    /**
+     * switches the game phase from setup to main gameplay loop
+     */
     public void begin(){
         Log.i("testing game phase here", "" + gameState.getGamePhase());
         if(!gameState.getGamePhase()) {
@@ -321,30 +329,63 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
         //do nothing if not in setup phase
     }
 
-    //TODO setup
+    /**
+     * resets the game via alert dialog
+     *
+     * External Citation
+     * Date:    19 November 2020
+     * Problem: Needed to be able to reset the game
+     *
+     * Resource: https://developer.android.com/reference/android/app/Activity.html#recreate%28%29
+     * Solution: used this method that activity has
+     */
     public void reset(){
         Log.i("testing reset button", "reset clicked");
+        new AlertDialog.Builder(myActivity)
+                .setTitle("Reset").setMessage("Are you sure you want to reset the game?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        myActivity.recreate();
+                    }
+                }).setNegativeButton("No", null).show();
     }
 
-    //TODO: header comment, citation for https://stackoverflow.com/questions/10936042/how-to-open-layout-on-button-click-android
+    /**
+     * displays the rules of stratego in an alert dialog
+     */
     public void rules(){
         Log.i("testing rules button", "rules clicked");
-        Intent rulesIntent = new Intent(myActivity.getApplicationContext(), RulesActivity.class);
-        myActivity.startActivity(rulesIntent);
+
+        String rulesText = "Stratego is a board game, where the goal is to capture the opponent’s " +
+                "flag to win. You begin the game by placing your pieces on your side of the board " +
+                "(piece values are not visible to the opponent initially)" +
+                "\n\nMoveable pieces: 1 Marshal, 1 General, 2 Colonels, 3 Majors, 4 Captains, " +
+                "4 Lieutenants, 5 Sergeants, 5 Miners, 6 Scouts, 1 Spy" +
+                "\nImmobile pieces: 6 Bombs, 1 Flag" +
+                "\n\nOn each player’s turn, they can move to or attack an adjacent square with 1 piece " +
+                "(Scouts can move any number of squares, like a rook in chess). When attacking/being " +
+                "attacked, the piece with the lower rank/numerical value is captured (if both are " +
+                "the same rank, then both are taken off the board). When any piece except for a " +
+                "Miner attacks a Bomb, that piece gets captured. Only Miners are able to defuse Bombs " +
+                "and capture them. The Spy is the only piece that can capture the Marshal, " +
+                "but any piece can capture the Spy.";
+        new AlertDialog.Builder(myActivity)
+                .setTitle("Rules").setMessage(rulesText)
+                .setNegativeButton("Back", null).show();
     }
 
+    /**
+     * lets you quit the game via alert dialog
+     *
+     * External Citation
+     * Date:    17 November 2020
+     * Problem: Needed to create confirmation box to confirm exit from app
+     *
+     * Resource: https://www.tutorialspoint.com/how-to-show-a-dialog-to-confirm-that-the-user-wishes-to-exit-an-android-activity
+     * Solution: I used the example code snippet to create our dialog for the confirmation box
+     */
     public void quit(){
-        //TODO need citation here
-        //https://www.tutorialspoint.com/how-to-show-a-dialog-to-confirm-that-the-user-wishes-to-exit-an-android-activity
-
-        /**
-         * External Citation
-         * Date:    17 November 2020
-         * Problem: Needed to create confirmation box to confirm exit from app
-         *
-         * Resource: https://www.tutorialspoint.com/how-to-show-a-dialog-to-confirm-that-the-user-wishes-to-exit-an-android-activity
-         * Solution: I used the example code snippet to create our dialog for the confirmation box
-         */
         new AlertDialog.Builder(myActivity)
                 .setTitle("Closing Activity").setMessage("Are you sure you want to quit?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -355,8 +396,4 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
                 }).setNegativeButton("No", null).show();
     }
 
-    //TODO setup
-    public void settings(){
-        Log.i("testing settings button", "settings clicked");
-    }
 }
