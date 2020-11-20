@@ -331,7 +331,6 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
         Log.i("testing reset button", "reset clicked");
     }
 
-    //TODO: header comment, citation for https://stackoverflow.com/questions/10936042/how-to-open-layout-on-button-click-android
     public void rules(){
         Log.i("testing rules button", "rules clicked");
 
@@ -354,9 +353,6 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
     }
 
     public void quit(){
-        //TODO need citation here
-        //https://www.tutorialspoint.com/how-to-show-a-dialog-to-confirm-that-the-user-wishes-to-exit-an-android-activity
-
         /**
          * External Citation
          * Date:    17 November 2020
