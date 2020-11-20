@@ -15,7 +15,7 @@ import edu.up.cs301.game.GameFramework.infoMessage.GameState;
 public class StrategoGameState extends GameState {
     //Stratego only has two phases: setup and main gameplay
     private boolean gamePhase;  //false if on setup, true if on main gameplay
-    private int currPlayerIndex; //true if human's turn, false if com's turn
+    private int currPlayerIndex;
     //these arrays holds the number of deaths of each type of piece in order of: 1, 2, ..., 9, 10, bomb, flag (ie.index = piece's rank - 1, except for flag)
     private int[] blueGY = new int[12];
     private int[] redGY = new int[12];
@@ -80,8 +80,6 @@ public class StrategoGameState extends GameState {
      */
     private void makeTeam(int startRow, int team) {
         int numOfPiecesIndex = 0;   //this will also signify the rank of the GamePiece being made
-
-        //check if making computer's side of the board, computer's pieces' rank should be invisible
 
         //outer 2 for loops used to provide coordinates of the board square being initialized
         for (int i = startRow; i < startRow + 4; i++) {

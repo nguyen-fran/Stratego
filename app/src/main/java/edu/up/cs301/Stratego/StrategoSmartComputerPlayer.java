@@ -239,6 +239,7 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
             }
         }
 
+        //find rank 5 piece to attack bomb
         if (visibleBomb) {
             for (int i = 0; i < StrategoGameState.BOARD_SIZE; i++) {
                 for (int j = 0; j < StrategoGameState.BOARD_SIZE; j++) {

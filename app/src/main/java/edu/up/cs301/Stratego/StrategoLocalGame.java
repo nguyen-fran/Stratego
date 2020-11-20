@@ -62,7 +62,6 @@ public class StrategoLocalGame extends LocalGame {
             return false;
         }
 
-        //TODO convert the int index coming in into a board square coordinate to get
         BoardSquare squareSrc = gameState.getBoardSquares()[action.getSquareSrc() / 10][action.getSquareSrc() % 10];
         BoardSquare squareDest = gameState.getBoardSquares()[action.getSquareDest() / 10][action.getSquareDest() % 10];
 
@@ -283,8 +282,8 @@ public class StrategoLocalGame extends LocalGame {
         for ( int i = 0; i < 10; i++ ) {
             for ( int j = 0; j < 10; j++ ) {
                 if ( gameState.getBoardSquares()[i][j].getPiece() != null ) {
-                    if ((gameState.getBoardSquares()[i][j].getPiece().getRank() != 0 && gameState.getBoardSquares()[i][j].getPiece().getTeam() == 1) &&
-                            (gameState.getBoardSquares()[i][j].getPiece().getRank() != 11 && gameState.getBoardSquares()[i][j].getPiece().getTeam() == 1)) {
+                    if (gameState.getBoardSquares()[i][j].getPiece().getTeam() == StrategoGameState.RED && gameState.getBoardSquares()[i][j].getPiece().getRank() != 0
+                        && gameState.getBoardSquares()[i][j].getPiece().getRank() != 11) {
                         redCanMove = true;
                     }
                 }
@@ -295,14 +294,13 @@ public class StrategoLocalGame extends LocalGame {
         for ( int i = 0; i < 10; i++ ) {
             for ( int j = 0; j < 10; j++ ) {
                 if ( gameState.getBoardSquares()[i][j].getPiece() != null ) {
-                    if ((gameState.getBoardSquares()[i][j].getPiece().getRank() != 0 && gameState.getBoardSquares()[i][j].getPiece().getTeam() == 0) &&
-                            (gameState.getBoardSquares()[i][j].getPiece().getRank() != 11 && gameState.getBoardSquares()[i][j].getPiece().getTeam() == 0)) {
+                    if (gameState.getBoardSquares()[i][j].getPiece().getTeam() == StrategoGameState.BLUE && gameState.getBoardSquares()[i][j].getPiece().getRank() != 0
+                            && gameState.getBoardSquares()[i][j].getPiece().getRank() != 11) {
                         blueCanMove = true;
                     }
                 }
             }
         }
-
 
         if (gameState.getBlueGY()[11] > 0) {
             return "" + playerNames[1] + " has won. ";
