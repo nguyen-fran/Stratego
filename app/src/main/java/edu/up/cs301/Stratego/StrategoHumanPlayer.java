@@ -32,7 +32,6 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
     private Button reset;
     private Button rules;
     private Button quit;
-    private Button settings;
     private TextView turnIndicator;
 
     private ViewGroup gameBoardGrid;
@@ -269,8 +268,6 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
         this.quit = myActivity.findViewById(R.id.quitButton);
         this.quit.setOnClickListener(this);
 
-        this.settings = myActivity.findViewById(R.id.settingsButton);
-        this.settings.setOnClickListener(this);
     }
 
     @Override
@@ -283,8 +280,6 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
             rules();
         }else if(v.getId() == quit.getId()){
             quit();
-        }else if(v.getId() == settings.getId()){
-            settings();
         }else if(firstClick >= 0){
             secondClick = v.getId();
             ImageButton firstClickButton = myActivity.findViewById(firstClick);
@@ -326,9 +321,26 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
         //do nothing if not in setup phase
     }
 
-    //TODO setup
+    /**
+     * button that lets you reset the game via alert dialog
+     *
+     * External Citation
+     * Date:    19 November 2020
+     * Problem: Needed to be able to reset the game
+     *
+     * Resource: https://developer.android.com/reference/android/app/Activity.html#recreate%28%29
+     * Solution: used this method that activity has
+     */
     public void reset(){
         Log.i("testing reset button", "reset clicked");
+        new AlertDialog.Builder(myActivity)
+                .setTitle("Reset").setMessage("Are you sure you want to reset the game?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        myActivity.recreate();
+                    }
+                }).setNegativeButton("No", null).show();
     }
 
     /**
@@ -376,8 +388,4 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
                 }).setNegativeButton("No", null).show();
     }
 
-    //TODO setup
-    public void settings(){
-        Log.i("testing settings button", "settings clicked");
-    }
 }
