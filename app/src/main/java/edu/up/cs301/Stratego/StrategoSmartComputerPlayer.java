@@ -214,7 +214,48 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
         return null;
     }
 
-    public BoardSquare defaultMove(StrategoGameState gameState){
+    public BoardSquare defaultMove(StrategoGameState gameState) {
+        //find the furthest move piece towards the other player, (down the board if computer player is only player 2)
+        BoardSquare moveThisOne = null;
+
+        //loop through the board and find the piece for this player that can move the most forward
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                if (gameState.getBoardSquares()[i][j].getPiece().getRank() != 0 && gameState.getBoardSquares()[i][j].getPiece().getRank() != 11) {
+                    if (gameState.getBoardSquares()[i][j].getPiece().getTeam() == BLUE) {
+                        if (gameState.getBoardSquares()[i][j + 1].getPiece() != null) {
+                            moveThisOne = gameState.getBoardSquares()[i][j];
+                        }
+                    }
+                }
+
+            }
+        }
+        //if we cant find a piece to move forward, then we gotta move left or right with a piece
+        if ( moveThisOne == null ) {
+            //update this later to reflect last comment ^^
+        }
+
+
+        //get the int value of the piece we want to move
+        int moveX = moveThisOne.getCol();
+        int moveY = moveThisOne.getRow();
+        int firstClick = 0;
+        int secondClick = 0;
+        if ( moveX == 0 && moveY == 0 ) {
+            firstClick = 0;
+        } else if ( moveY == 0 ) {
+            firstClick = moveX;
+        } else if ( moveX == 0 ) {
+            firstClick = moveY * 10;
+        } else {
+            firstClick = moveX * moveY;
+        }
+        //make the piece move down
+        secondClick = firstClick + 10;
+        //send the move action
+        game.sendAction(new StrategoMoveAction(this, firstClick, secondClick));
         return null;
     }
+
 }
