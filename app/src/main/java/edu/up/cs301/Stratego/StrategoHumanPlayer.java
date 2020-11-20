@@ -331,6 +331,9 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
         Log.i("testing reset button", "reset clicked");
     }
 
+    /**
+     * button that displays the rules of stratego in an alert dialog
+     */
     public void rules(){
         Log.i("testing rules button", "rules clicked");
 
@@ -352,15 +355,17 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
                 .setNegativeButton("Back", null).show();
     }
 
+    /**
+     * button that lets you quit the game via alert dialog
+     *
+     * External Citation
+     * Date:    17 November 2020
+     * Problem: Needed to create confirmation box to confirm exit from app
+     *
+     * Resource: https://www.tutorialspoint.com/how-to-show-a-dialog-to-confirm-that-the-user-wishes-to-exit-an-android-activity
+     * Solution: I used the example code snippet to create our dialog for the confirmation box
+     */
     public void quit(){
-        /**
-         * External Citation
-         * Date:    17 November 2020
-         * Problem: Needed to create confirmation box to confirm exit from app
-         *
-         * Resource: https://www.tutorialspoint.com/how-to-show-a-dialog-to-confirm-that-the-user-wishes-to-exit-an-android-activity
-         * Solution: I used the example code snippet to create our dialog for the confirmation box
-         */
         new AlertDialog.Builder(myActivity)
                 .setTitle("Closing Activity").setMessage("Are you sure you want to quit?")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
