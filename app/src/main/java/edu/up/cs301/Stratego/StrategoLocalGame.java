@@ -290,11 +290,40 @@ public class StrategoLocalGame extends LocalGame {
     //TODO need to write specific message for who won
     @Override
     protected String checkIfGameOver() {
+        boolean redCanMove = false;
+        for ( int i = 0; i < 10; i++ ) {
+            for ( int j = 0; j < 10; j++ ) {
+                if ( gameState.getBoardSquares()[i][j].getPiece() != null ) {
+                    if ((gameState.getBoardSquares()[i][j].getPiece().getRank() != 0 && gameState.getBoardSquares()[i][j].getPiece().getTeam() == 1) &&
+                            (gameState.getBoardSquares()[i][j].getPiece().getRank() != 11 && gameState.getBoardSquares()[i][j].getPiece().getTeam() == 1)) {
+                        redCanMove = true;
+                    }
+                }
+            }
+        }
+
+        boolean blueCanMove = false;
+        for ( int i = 0; i < 10; i++ ) {
+            for ( int j = 0; j < 10; j++ ) {
+                if ( gameState.getBoardSquares()[i][j].getPiece() != null ) {
+                    if ((gameState.getBoardSquares()[i][j].getPiece().getRank() != 0 && gameState.getBoardSquares()[i][j].getPiece().getTeam() == 0) &&
+                            (gameState.getBoardSquares()[i][j].getPiece().getRank() != 11 && gameState.getBoardSquares()[i][j].getPiece().getTeam() == 0)) {
+                        blueCanMove = true;
+                    }
+                }
+            }
+        }
+
+
         if (gameState.getBlueGY()[11] > 0) {
             return "Red team has won. ";
         } else if (gameState.getRedGY()[11] > 0) {
             return "Blue team has won. ";
-        } else {
+        }  else if ( redCanMove == false ) {
+            return "Red team has won. ";
+        } else if ( blueCanMove == false ) {
+            return "Red team has won. ";
+        }else {
             return null;
         }
     }
