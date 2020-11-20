@@ -206,12 +206,42 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
         return null;
     }
 
+    //i think this method should return the firstCLick and secondClick that the computer wants to move on, in the case of the piece being hidden, these can be called
+    //into the hiddenPieceAttack method
     public BoardSquare normalAttack(StrategoGameState gameState){
         return null;
     }
 
-    public BoardSquare hiddenPieceAttack(StrategoGameState gameState){
-        return null;
+    public boolean hiddenPieceAttack(StrategoGameState gameState, int rowFirst, int colFirst) {
+        //getting the graveyard
+        int[] redGY = gameState.getRedGY();
+        int[] pieceNumbers = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+
+        //setting up doubles/ints for math later
+        double chanceOfWinning = 0;
+        double chanceOfLosing = 0;
+        int totalDead = 0;
+        int weCanWin = 0;
+        int weWillLose = 0;
+
+        //getting square we want to attack with
+        BoardSquare attackingSquare = gameState.getBoardSquares()[rowFirst][colFirst];
+        for ( int i = 0; i < redGY.length; i++ ) {
+                if ( pieceNumbers[i] < attackingSquare.getPiece().getRank() ) {
+                    weWillLose+=redGY[i];
+                } else {
+                    weCanWin+=redGY[i];
+                }
+                totalDead++;
+        }
+
+        //doing math for winning/losing
+        chanceOfWinning = Math.abs((totalDead) / (weCanWin));
+        chanceOfLosing = Math.abs((totalDead) / (weWillLose));
+        if ( chanceOfWinning > chanceOfLosing ) {
+            return true;
+        }
+        return false;
     }
 
     public BoardSquare defaultMove(StrategoGameState gameState) {
