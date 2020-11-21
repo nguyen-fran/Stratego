@@ -72,7 +72,7 @@ public class StrategoComputerPlayer extends GameComputerPlayer {
                 }
                 break;
             case 3: //move down
-                //only move sown if not at the bottom of the board
+                //only move down if not at the bottom of the board
                 if (squareSrc / 10 != 9) {
                     squareDest += 10;
                 }

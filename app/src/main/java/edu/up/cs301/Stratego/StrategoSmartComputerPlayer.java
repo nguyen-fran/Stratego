@@ -209,45 +209,93 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
 
     /**
      * Smart AI makes move to get closer to or attack opp marshall or bomb if either is visible
-     * TODO: choose specific bomb or marshall to attack
      *
      * @param gameState
      * @return
      */
     public BoardSquare specialCaseAttack(StrategoGameState gameState) {
-        boolean visibleBomb = false, visibleMarshall = false;
-        int squareDest;
+        boolean reachableBomb = false;
+        boolean reachableMarshall = false;
+        int squareSrc = -1;
+        int squareDest = -1;
+        int aBomb = -1;
+        int aMarshall = -1;
 
-        //look for visible opp marshall or bomb
+        //look for visible and reachable opp marshall or bomb
+        //TODO: choose specific bomb or marshall to attack
         for (int i = 0; i < StrategoGameState.BOARD_SIZE; i++) {
             for (int j = 0; j < StrategoGameState.BOARD_SIZE; j++) {
-                BoardSquare currSquareAnalyze = gameState.getBoardSquares()[i][j];
+                //look for opp's piece that is visible
                 if (gameState.getBoardSquares()[i][j].getPiece() != null
-                        && gameState.getBoardSquares()[i][j].getPiece().getTeam() != playerNum && gameState.getBoardSquares()[i][j].getPiece().getVisible()) {
-                    if (gameState.getBoardSquares()[i][j].getPiece().getRank() == GamePiece.BOMB) { //found a bom
-                        visibleBomb = true;
-                        if (reachableSquare(gameState, i, j)) {
-                            squareDest = 1 *10 +j;
-                        }
-                    } else if (gameState.getBoardSquares()[i][j].getPiece().getRank() == 10) {  //found a marshall
-                        visibleMarshall = true;
-                        if (reachableSquare(gameState, i, j)) {
-                            squareDest = 1 *10 +j;
-                        }
+                    && gameState.getBoardSquares()[i][j].getPiece().getTeam() != playerNum && gameState.getBoardSquares()[i][j].getPiece().getVisible()) {
+                    if (gameState.getBoardSquares()[i][j].getPiece().getRank() == GamePiece.BOMB && reachableSquare(gameState, i, j)) { //found a bomb
+                        reachableBomb = true;
+                        aBomb = 1 *10 +j;
+                    } else if (gameState.getBoardSquares()[i][j].getPiece().getRank() == 10 && reachableSquare(gameState, i, j)) {  //found a marshall
+                        reachableMarshall = true;
+                        aMarshall = 1 *10 +j;
                     }
                 }
             }
         }
 
-        if (visibleBomb) {
+        //TODO: might make what to do if found a bomb into helper method
+        if (reachableBomb) {
+            //check if smart comp has any miner to attack bomb
+            if (playerNum == 0 && gameState.getBlueGY()[5-1] == StrategoGameState.NUM_OF_PIECES[5]
+                || playerNum == 1 && gameState.getRedGY()[5-1] == StrategoGameState.NUM_OF_PIECES[5]) {
+                return;
+            }
+
+            int closestMiner = -1;
+            //looking for a miner
             for (int i = 0; i < StrategoGameState.BOARD_SIZE; i++) {
                 for (int j = 0; j < StrategoGameState.BOARD_SIZE; j++) {
-                    
+                    if (gameState.getBoardSquares()[i][j].getPiece() != null
+                        && gameState.getBoardSquares()[i][j].getPiece().getRank() == 5) {
+                        squareSrc = i * 10 + j;
+                    }
+                    //check if new squareSrc is closer to bomb than old closestMiner
+                    if (closestMiner < 0 || closestSquare(squareSrc, closestMiner, aBomb)) {
+                        closestMiner = squareSrc;
+                    }
                 }
             }
+            //at this point squareSrc should have the closest miner to the bomb
+
+            //find which move will get the miner even closer to the bomb
+            //TODO: check if miner will attack if it moves in certain dir
+            if (gameState.squareOnBoard(squareSrc + 10) && closestSquare(squareSrc + 10, squareSrc, aBomb)) {   //move down
+                squareDest = squareSrc + 10;
+            } else if (gameState.squareOnBoard(squareSrc - 10) && closestSquare(squareSrc - 10, squareSrc, aBomb)) {    //move up
+                squareDest = squareSrc - 10;
+            } else if (gameState.squareOnBoard(squareSrc + 1) && closestSquare(squareSrc + 1, squareSrc, aBomb)) {  //move right
+                squareDest = squareSrc + 1;
+            } else if (gameState.squareOnBoard(squareSrc - 1) && closestSquare(squareSrc - 1, squareSrc, aBomb)) {  //move left
+                squareDest = squareSrc - 1;
+            }
+        }
+        //TODO: do almost everything I did for bomb but for marshall
+        if (reachableMarshall) {
+
         }
 
+        game.sendAction(new StrategoMoveAction(this, squareSrc, squareDest));
         return null;
+    }
+
+    /**
+     * finds which of two src squares is closer to given dest square
+     *
+     * @param squareSrc1    first src square to compare distance from dest square
+     * @param squareSrc2    second src square to compare distance from dest square
+     * @param squareDest    dest square
+     * @return  true if squareSrc1 is closer to squareDest than squareSrc2 or they're equidistant from squareDest
+     */
+    private boolean closestSquare(int squareSrc1, int squareSrc2, int squareDest) {
+        double src1ToDestDist = Math.sqrt(Math.pow((squareSrc1 / 10) -  (squareDest / 10), 2) + Math.pow((squareSrc1 % 10) -  (squareDest % 10), 2));
+        double src2ToDestDist = Math.sqrt(Math.pow((squareSrc2 / 10) -  (squareDest / 10), 2) + Math.pow((squareSrc2 % 10) -  (squareDest % 10), 2));
+        return (src1ToDestDist <= src2ToDestDist);
     }
 
     /**
