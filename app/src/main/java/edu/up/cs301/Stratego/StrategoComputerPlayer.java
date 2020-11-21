@@ -29,16 +29,22 @@ public class StrategoComputerPlayer extends GameComputerPlayer {
      * The dumb comp player is dumb, so it will not do swaps. It will just use what it got.
      * Also, the comp only moves pieces 1 space even if the piece is a scout
      *
-     * @param info
+     * @param info  current gamestate after an action's been made
      */
     @Override
     protected void receiveInfo(GameInfo info) {
+        if (!(info instanceof StrategoGameState)) {
+            return;
+        }
+
         StrategoGameState gameState = new StrategoGameState((StrategoGameState) info);
         if (gameState.getCurrPlayerIndex() != playerNum) {
             return;
         }
+        //dummy swap in case comp player is first player
         if (!gameState.getGamePhase()) {
             game.sendAction(new StrategoSwapAction(this, -1, -1));
+            return;
         }
 
         Random rand = new Random();
@@ -66,7 +72,7 @@ public class StrategoComputerPlayer extends GameComputerPlayer {
                 }
                 break;
             case 3: //move down
-                //only move down if not at the bottom of the board
+                //only move sown if not at the bottom of the board
                 if (squareSrc / 10 != 9) {
                     squareDest += 10;
                 }
@@ -75,7 +81,7 @@ public class StrategoComputerPlayer extends GameComputerPlayer {
                 break;
         }
 
-        //don't need to error check the move, if a move fails the local game won't move to the player
+        //don't need to error check the move, if a move fails the local game won't move to the next player
         //which means this comp player would get another shot
         game.sendAction(new StrategoMoveAction(this, squareSrc, squareDest));
     }

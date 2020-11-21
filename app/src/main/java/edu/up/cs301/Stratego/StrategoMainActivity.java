@@ -60,8 +60,8 @@ public class StrategoMainActivity extends GameMainActivity {
         });
 
         GameConfig defaultConfig = new GameConfig(playerTypes, 2, 2, "Stratego", PORT_NUMBER);
-        defaultConfig.addPlayer("Human", 0);
-        defaultConfig.addPlayer("Computer", 1);
+        defaultConfig.addPlayer("Blue", 0);
+        defaultConfig.addPlayer("Red", 1);
         defaultConfig.setRemoteData("Remote Human Player", "", 0);
         return defaultConfig;
     }

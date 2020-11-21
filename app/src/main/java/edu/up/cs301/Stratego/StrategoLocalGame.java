@@ -31,6 +31,12 @@ public class StrategoLocalGame extends LocalGame {
         p.sendInfo(new StrategoGameState(this.gameState));
     }
 
+    /**
+     * holds logic for what action players make and updates gamestate
+     *
+     * @param action    The move that the player has sent to the game
+     * @return  if successful/legal action
+     */
     @Override
     protected boolean makeMove(GameAction action) {
         if (action instanceof StrategoMoveAction){
@@ -67,8 +73,8 @@ public class StrategoLocalGame extends LocalGame {
      * @return  true if move is legal, false if not
      */
     public boolean move(StrategoMoveAction action) {
-        //correct phase and correct checking
-        if ((!gameState.getGamePhase()) || (!canMove(getPlayerIdx(action.getPlayer())))) {
+        //correct phase and turn checking
+        if (!gameState.getGamePhase() || !canMove(getPlayerIdx(action.getPlayer()))) {
             return false;
         }
         //bounds checking
@@ -80,7 +86,7 @@ public class StrategoLocalGame extends LocalGame {
         BoardSquare squareDest = gameState.getBoardSquares()[action.getSquareDest() / 10][action.getSquareDest() % 10];
 
         //return false if squareSrc is empty or if src square is not curr player's piece or if dest square is curr player's piece.
-        //this should also account for if the two squares are the same
+        //this should account for if the two squares are the same as well
         if (squareSrc.getPiece() == null || squareSrc.getPiece().getTeam() != getPlayerIdx(action.getPlayer())
                 || (squareDest.getPiece() != null && squareDest.getPiece().getTeam() == getPlayerIdx(action.getPlayer()))) {
             return false;
@@ -246,7 +252,7 @@ public class StrategoLocalGame extends LocalGame {
      * @return true if swap was successful, false otherwise
      */
     public boolean swap(StrategoSwapAction action) {
-        //correct phase and correct checking
+        //correct phase and turn checking
         if (gameState.getGamePhase() || !canMove(getPlayerIdx(action.getPlayer()))) {
             return false;
         }
@@ -293,6 +299,13 @@ public class StrategoLocalGame extends LocalGame {
 
     //checks if the hidden death count for flag in GYs is greater than zero
     //TODO need to write specific message for who won
+
+    /**
+     * check if a game is over by checking if a flag has been captured or
+     * if a player has run out of movable pieces
+     *
+     * @return  unique string if there is a winner
+     */
     @Override
     protected String checkIfGameOver() {
         boolean redCanMove = false;

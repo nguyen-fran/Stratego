@@ -32,6 +32,11 @@ public class GamePiece {
         this.captured = captured;
     }
 
+    /**
+     * deep copy constructor
+     *
+     * @param orig  original GamePiece to copy
+     */
     public GamePiece(GamePiece orig) {
         this.rank = orig.getRank();
         this.team = orig.getTeam();
@@ -39,7 +44,7 @@ public class GamePiece {
         this.captured = orig.getCaptured();
     }
 
-    //getters and setters
+    /* getters and setters */
     public int getRank(){
         return rank;
     }

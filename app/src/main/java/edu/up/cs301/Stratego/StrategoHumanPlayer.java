@@ -38,8 +38,8 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
     private ViewGroup playerGY;
     private ViewGroup oppGY;
 
-    private int firstClick = -1;
-    private int secondClick = -1;
+    private int firstClick = -1;    //will hold id of first button clicked for move or swap action
+    private int secondClick = -1;   //will hold id of second button clicked for move or swap action
 
     private StrategoGameState gameState = null;
 
@@ -57,12 +57,17 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
         return myActivity.findViewById(R.id.rules_page);
     }
 
+    /**
+     * updates gui to represent gamestate given by param
+     *
+     * @param info  current gamestate after an action's been made
+     */
     @Override
     public void receiveInfo(GameInfo info) {
         Log.i("human player", "recieveInfo called");
 
         if(!(info instanceof StrategoGameState)){
-            flash(Color.RED, 100);
+            flash(Color.RED, 10);
             return;
         }
 
@@ -246,6 +251,11 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
         }
     }
 
+    /**
+     * finds all views in gme layout and makes all the buttons for the gameboard
+     *
+     * @param activity  main game activity
+     */
     @Override
     public void setAsGui(GameMainActivity activity) {
         myActivity = activity;
@@ -279,6 +289,11 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
 
     }
 
+    /**
+     * determines how to act based on what button was pressed
+     *
+     * @param v button pressed
+     */
     @Override
     public void onClick(View v) {
         if(v.getId() == begin.getId()){

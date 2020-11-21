@@ -18,6 +18,7 @@ public class BoardSquare {
 
     /**
      * constructor for BoardSquare, sets instance variables to given values
+     *
      * @param occupied whether the square should be occupied or not
      * @param piece game piece on the square (null if none exists)
      * @param row x coordinate of the square on the board
@@ -32,7 +33,8 @@ public class BoardSquare {
     }
 
     /**
-     * copy constructor for BoardSquare
+     * deep copy constructor for BoardSquare
+     *
      * @param orig original square being copied
      */
     public BoardSquare(BoardSquare orig) {
@@ -47,7 +49,7 @@ public class BoardSquare {
         }
     }
 
-    //getters and setters
+    /* getters and setters */
     public boolean getOccupied(){
         return occupied;
     }
