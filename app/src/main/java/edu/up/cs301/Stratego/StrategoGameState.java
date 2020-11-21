@@ -20,11 +20,11 @@ public class StrategoGameState extends GameState {
     private int[] blueGY = new int[12];
     private int[] redGY = new int[12];
 
-    private BoardSquare[][] boardSquares = new BoardSquare[10][10];
-
     public static final int BOARD_SIZE = 10;
     public static final int BLUE = 0;   //team blue will always go first
     public static final int RED = 1;    //team red will always go second
+
+    private BoardSquare[][] boardSquares = new BoardSquare[BOARD_SIZE][BOARD_SIZE];
 
     //the amount of each type of piece each player has in order of: flag, 1, 2, ..., 9, 10, bomb
     public static final int[] NUM_OF_PIECES = {1, 1, 8, 5, 4, 4, 4, 3, 2, 1, 1, 6};

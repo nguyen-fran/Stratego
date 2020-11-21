@@ -40,7 +40,6 @@ public class StrategoLocalGame extends LocalGame {
     @Override
     protected boolean makeMove(GameAction action) {
         if (action instanceof StrategoMoveAction){
-            //TODO: make sure action updates gamestate when moving
             //if the move was successful, go on to the next player
             if (move((StrategoMoveAction) action)) {
                 if (gameState.getCurrPlayerIndex() == 0) {
