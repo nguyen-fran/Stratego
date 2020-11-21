@@ -42,9 +42,18 @@ public class StrategoLocalGame extends LocalGame {
                 } else {
                     gameState.setCurrPlayerIndex(0);
                 }
+                return true;
             }
-            return true;
+            return false;
         } else if (action instanceof StrategoSwapAction){
+            //change curr player if comp tries to swap, this avoid app freezing if comp is first player
+            if (action.getPlayer() instanceof StrategoComputerPlayer) {
+                if (gameState.getCurrPlayerIndex() == 0) {
+                    gameState.setCurrPlayerIndex(1);
+                } else {
+                    gameState.setCurrPlayerIndex(0);
+                }
+            }
             return swap((StrategoSwapAction) action);
         } else if(action instanceof StrategoStartAction){
             return (begin());
@@ -58,18 +67,21 @@ public class StrategoLocalGame extends LocalGame {
      * @return  true if move is legal, false if not
      */
     public boolean move(StrategoMoveAction action) {
-        if (!gameState.getGamePhase()) {
+        //correct phase and correct checking
+        if ((!gameState.getGamePhase()) || (!canMove(getPlayerIdx(action.getPlayer())))) {
+            return false;
+        }
+        //bounds checking
+        if (action.getSquareSrc() < 0 || action.getSquareSrc() >= 100 || action.getSquareDest() < 0 || action.getSquareDest() >= 100) {
             return false;
         }
 
         BoardSquare squareSrc = gameState.getBoardSquares()[action.getSquareSrc() / 10][action.getSquareSrc() % 10];
         BoardSquare squareDest = gameState.getBoardSquares()[action.getSquareDest() / 10][action.getSquareDest() % 10];
 
-        //return false if not player's turn or if squareSrc is empty
-        //or if src square is not curr player's piece or if dest square is curr player's piece.
-        //the last two lines of the conditions should account for if the two squares are the same
-        if (!canMove(getPlayerIdx(action.getPlayer())) || squareSrc.getPiece() == null
-                || squareSrc.getPiece().getTeam() != getPlayerIdx(action.getPlayer())
+        //return false if squareSrc is empty or if src square is not curr player's piece or if dest square is curr player's piece.
+        //this should also account for if the two squares are the same
+        if (squareSrc.getPiece() == null || squareSrc.getPiece().getTeam() != getPlayerIdx(action.getPlayer())
                 || (squareDest.getPiece() != null && squareDest.getPiece().getTeam() == getPlayerIdx(action.getPlayer()))) {
             return false;
         }
@@ -234,7 +246,12 @@ public class StrategoLocalGame extends LocalGame {
      * @return true if swap was successful, false otherwise
      */
     public boolean swap(StrategoSwapAction action) {
-        if (gameState.getGamePhase()) {
+        //correct phase and correct checking
+        if (gameState.getGamePhase() || !canMove(getPlayerIdx(action.getPlayer()))) {
+            return false;
+        }
+        //bounds checking
+        if (action.getSquareSrc() < 0 || action.getSquareSrc() >= 100 || action.getSquareDest() < 0 || action.getSquareDest() >= 100) {
             return false;
         }
 

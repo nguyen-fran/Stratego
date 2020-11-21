@@ -37,6 +37,9 @@ public class StrategoComputerPlayer extends GameComputerPlayer {
         if (gameState.getCurrPlayerIndex() != playerNum) {
             return;
         }
+        if (!gameState.getGamePhase()) {
+            game.sendAction(new StrategoSwapAction(this, -1, -1));
+        }
 
         Random rand = new Random();
         //getting random coordinates to make a move with a random square
@@ -63,7 +66,7 @@ public class StrategoComputerPlayer extends GameComputerPlayer {
                 }
                 break;
             case 3: //move down
-                //only move sown if not at the bottom of the board
+                //only move down if not at the bottom of the board
                 if (squareSrc / 10 != 9) {
                     squareDest += 10;
                 }

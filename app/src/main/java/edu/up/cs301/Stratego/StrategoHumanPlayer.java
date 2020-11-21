@@ -62,7 +62,7 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
         Log.i("human player", "recieveInfo called");
 
         if(!(info instanceof StrategoGameState)){
-            flash(Color.RED, 10);
+            flash(Color.RED, 100);
             return;
         }
 
