@@ -291,12 +291,11 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
     /**
      * Smart AI makes move to get closer to or attack opp marshall or bomb if either is visible
      *
-     * @param gameState
+     * @param gameState current state of the game
      */
     public void specialCaseAttack(StrategoGameState gameState) {
         boolean reachableBomb = false;
         boolean reachableMarshall = false;
-        int squareDest;
         int squareSrc = -1;
         int squareDest = -1;
         int aBomb = -1;
@@ -311,10 +310,10 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
                     && gameState.getBoardSquares()[i][j].getPiece().getTeam() != playerNum && gameState.getBoardSquares()[i][j].getPiece().getVisible()) {
                     if (gameState.getBoardSquares()[i][j].getPiece().getRank() == GamePiece.BOMB && reachableSquare(gameState, i, j)) { //found a bomb
                         reachableBomb = true;
-                        aBomb = 1 *10 +j;
+                        aBomb = i *10 +j;
                     } else if (gameState.getBoardSquares()[i][j].getPiece().getRank() == 10 && reachableSquare(gameState, i, j)) {  //found a marshall
                         reachableMarshall = true;
-                        aMarshall = 1 *10 +j;
+                        aMarshall = i *10 +j;
                     }
                 }
             }
