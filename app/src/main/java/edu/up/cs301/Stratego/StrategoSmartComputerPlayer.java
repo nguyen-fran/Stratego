@@ -14,6 +14,7 @@ import edu.up.cs301.game.GameFramework.infoMessage.GameInfo;
 public class StrategoSmartComputerPlayer extends GameComputerPlayer {
 
     public boolean shouldDefend = false;
+    private StrategoGameState gameState;
     /**
      * constructor
      *
@@ -30,19 +31,19 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
      */
     @Override
     protected void receiveInfo(GameInfo info) {
-        int squareSrc = -1;
-        int squareDest = -1;
-        BoardSquare source = null;
-        BoardSquare destination = null;
-
-        StrategoGameState gameState = new StrategoGameState((StrategoGameState) info);
+        gameState = new StrategoGameState((StrategoGameState) info);
         if (gameState.getCurrPlayerIndex() != playerNum) {
             return;
         }
 
-        //TODO: add board setup logic
+        //determining if smart computer player should make moves or set up the board depending on game phase
+        if(gameState.getGamePhase()){
+            //case statement for determining what piece to move and where (call helper methods)
+            //run helper methods in order of priority until one works?
+        }else{
+            //TODO: add board setup
 
-        //case statement for determining what piece to move and where (call helper methods)
+        }
 
     }
 
@@ -51,9 +52,8 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
      * checks if in a straight line from a computer player's scouts
      * TODO: add some sort of logic from graveyard counts/visible pieces to determine where the flag is
      * right now the method is just going to always know where the flag is whether or not it's visible
-     * @param gameState current state of the game being analyzed
      */
-    public void flagAttack(StrategoGameState gameState){
+    public void flagAttack(){
         BoardSquare flag = null;
         BoardSquare source = null;
         BoardSquare dest = null;
@@ -78,7 +78,7 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
         }
 
         //check in straight lines from the human flag until it hits another piece or goes off the board
-        source = straightLineChecker(flag, gameState);
+        source = straightLineChecker(flag);
 
         //if there are no computer pieces in straight lines from the flag, then return and do something else
         if(source == null){
@@ -126,10 +126,9 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
      * decides what to return by prioritising the first scout it finds
      * otherwise just the first occupied board square it finds
      * @param square board square we are checking around
-     * @param gameState current state of the game
      * @return square with piece that we want to move on it
      */
-    public BoardSquare straightLineChecker(BoardSquare square, StrategoGameState gameState){
+    public BoardSquare straightLineChecker(BoardSquare square){
         BoardSquare north = null;
         BoardSquare south = null;
         BoardSquare east = null;
@@ -200,11 +199,9 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
     /**
      * checks if computer player's flag is reachable by human player's pieces, moves to defend the flag if possible
      * similar logic to flagAttack for the checks, just with teams swapped around
-     * @param gameState current state of the game
-     * @return source square for movement
      * TODO: maybe break this up into helper methods
      */
-    public void flagDefend(StrategoGameState gameState){
+    public void flagDefend(){
         BoardSquare flag = null;
         //loop through and find our (the computer players) flag
         for(int i = 0; i < StrategoGameState.BOARD_SIZE; i++){
@@ -290,10 +287,8 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
 
     /**
      * Smart AI makes move to get closer to or attack opp marshall or bomb if either is visible
-     *
-     * @param gameState current state of the game
      */
-    public void specialCaseAttack(StrategoGameState gameState) {
+    public void specialCaseAttack() {
         boolean reachableBomb = false;
         boolean reachableMarshall = false;
         int squareSrc = -1;
@@ -308,10 +303,10 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
                 //look for opp's piece that is visible
                 if (gameState.getBoardSquares()[i][j].getPiece() != null
                     && gameState.getBoardSquares()[i][j].getPiece().getTeam() != playerNum && gameState.getBoardSquares()[i][j].getPiece().getVisible()) {
-                    if (gameState.getBoardSquares()[i][j].getPiece().getRank() == GamePiece.BOMB && reachableSquare(gameState, i, j)) { //found a bomb
+                    if (gameState.getBoardSquares()[i][j].getPiece().getRank() == GamePiece.BOMB && reachableSquare(i, j)) { //found a bomb
                         reachableBomb = true;
                         aBomb = i *10 +j;
-                    } else if (gameState.getBoardSquares()[i][j].getPiece().getRank() == 10 && reachableSquare(gameState, i, j)) {  //found a marshall
+                    } else if (gameState.getBoardSquares()[i][j].getPiece().getRank() == 10 && reachableSquare(i, j)) {  //found a marshall
                         reachableMarshall = true;
                         aMarshall = i *10 +j;
                     }
@@ -379,13 +374,11 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
 
     /**
      * Checks to see if a square has an unoccupied square next to it
-     *
-     * @param gameState current state of the game board
      * @param i row of squareDest
      * @param j col of squareDest
      * @return  true if there is a square to top, bottom, left, or right of squareDest
      */
-    private boolean reachableSquare(StrategoGameState gameState, int i, int j) {
+    private boolean reachableSquare(int i, int j) {
         if ((gameState.getBoardSquares()[i][j].getRow() < StrategoGameState.BOARD_SIZE && gameState.getBoardSquares()[i + 1][j].getPiece() == null)
             || (gameState.getBoardSquares()[i][j].getRow() > 0 && gameState.getBoardSquares()[i - 1][j].getPiece() == null)
             || (gameState.getBoardSquares()[i][j].getCol() < StrategoGameState.BOARD_SIZE && gameState.getBoardSquares()[i][j + 1].getPiece() == null)
@@ -397,18 +390,27 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
 
     /**
      * method to attack enemy scouts
-     * @param gameState current state of the game
      */
-    public void scoutAttack(StrategoGameState gameState){
+    public void scoutAttack(){
 
     }
 
     //i think this method should return the firstCLick and secondClick that the computer wants to move on, in the case of the piece being hidden, these can be called
     //into the hiddenPieceAttack method
-    public void normalAttack(StrategoGameState gameState){
+
+    /**
+     *
+     */
+    public void normalAttack(){
     }
 
-    public boolean hiddenPieceAttack(StrategoGameState gameState, int rowFirst, int colFirst) {
+    /**
+     *calculates odds of successfully attacking a piece that has not been revealed to the computer player
+     * @param rowFirst
+     * @param colFirst
+     * @return true if the computer will attack the piece, false if it will not
+     */
+    public boolean hiddenPieceAttack(int rowFirst, int colFirst) {
         //getting the graveyard
         int[] redGY = gameState.getRedGY();
         int[] pieceNumbers = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
@@ -440,7 +442,10 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
         return false;
     }
 
-    public void defaultMove(StrategoGameState gameState) {
+    /**
+     * default movement action (used if no other type of movment can be done)
+     */
+    public void defaultMove() {
         //find the furthest move piece towards the other player, (down the board if computer player is only player 2)
         BoardSquare moveThisOne = null;
 
