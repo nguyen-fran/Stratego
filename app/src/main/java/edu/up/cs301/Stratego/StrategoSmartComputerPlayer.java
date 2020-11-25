@@ -37,7 +37,11 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
      */
     @Override
     protected void receiveInfo(GameInfo info) {
+        if (!(info instanceof StrategoGameState)) {
+            return;
+        }
         gameState = new StrategoGameState((StrategoGameState) info);
+
         if (gameState.getCurrPlayerIndex() != playerNum) {
             return;
         }
@@ -51,11 +55,11 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
         if(gameState.getGamePhase()){
             //going down the list of different types of moves to make until one actually works
             //TODO: find more efficient way to call these/check/structure this
-            flagAttack();
+            /*flagAttack();
             if(moveSuccessful){
                 Log.i("smart ai movement", "attacked/moved towards human player's flag");
                 return;
-            }
+            }*/
 
             flagDefend();
             if(moveSuccessful){
@@ -271,33 +275,64 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
     public void flagDefend(){
         BoardSquare flag = null;
         //loop through and find our (the computer players) flag
+        BoardSquare current = null;
         for(int i = 0; i < StrategoGameState.BOARD_SIZE; i++){
             for(int j = 0; j < StrategoGameState.BOARD_SIZE; j++){
-                GamePiece flagg = gameState.getBoardSquares()[i][j].getPiece();
-                if(flagg.getRank() == 0 && flagg.getTeam() == StrategoGameState.BLUE) {
-                    flag = gameState.getBoardSquares()[i][j];
+                current = gameState.getBoardSquares()[i][j];
+
+                if(current.getOccupied() && current.getPiece() != null){
+                    if(current.getPiece().getRank() == 0
+                            && current.getPiece().getTeam() == StrategoGameState.BLUE) {
+                        flag = gameState.getBoardSquares()[i][j];
+                        break;
+                    }
                 }
+
             }
+        }
+
+        //if we did not find the flag, then something went wrong here
+        if(flag == null){
+            Log.i("flagDefend", "could not find flag");
+            return;
         }
 
         BoardSquare killThisOne = null;
         //check if the flag can be killed, and get the square of who is attacking the flag
+        //checking that square is on board, and is occupied by a piece from the opponent (not a lake square)
+        //TODO: ensure that teams for pieces to attack/use are checked for properly
         if((flag.getRow() - 1 >= 0) &&
-                (gameState.getBoardSquares()[flag.getRow()-1][flag.getCol()].getPiece().getTeam() == StrategoGameState.RED)){
+                (gameState.getBoardSquares()[flag.getRow() - 1][flag.getCol()].getOccupied()) &&
+                (gameState.getBoardSquares()[flag.getRow() - 1][flag.getCol()].getPiece() != null) &&
+                (gameState.getBoardSquares()[flag.getRow() - 1][flag.getCol()].getPiece().getTeam() == StrategoGameState.RED)){
             this.shouldDefend = true;
             killThisOne = gameState.getBoardSquares()[flag.getRow()-1][flag.getCol()];
-        }else if((flag.getRow() + 1 < StrategoGameState.BOARD_SIZE) &&
-                (gameState.getBoardSquares()[flag.getRow()+1][flag.getCol()].getPiece().getTeam() == StrategoGameState.RED)){
+        }
+        else if((flag.getRow() + 1 < StrategoGameState.BOARD_SIZE) &&
+                (gameState.getBoardSquares()[flag.getRow() + 1][flag.getCol()].getOccupied()) &&
+                (gameState.getBoardSquares()[flag.getRow() + 1][flag.getCol()].getPiece() != null) &&
+                (gameState.getBoardSquares()[flag.getRow() + 1][flag.getCol()].getPiece().getTeam() == StrategoGameState.RED)){
             this.shouldDefend = true;
             killThisOne = gameState.getBoardSquares()[flag.getRow()+1][flag.getCol()];
-        }else if((flag.getCol() - 1 >= 0) &&
+        }
+        else if((flag.getCol() - 1 >= 0) &&
+                (gameState.getBoardSquares()[flag.getRow()][flag.getCol() - 1].getOccupied()) &&
+                (gameState.getBoardSquares()[flag.getRow()][flag.getCol() - 1].getPiece() != null) &&
                 (gameState.getBoardSquares()[flag.getRow()][flag.getCol() - 1].getPiece().getTeam() == StrategoGameState.RED)){
             this.shouldDefend = true;
             killThisOne = gameState.getBoardSquares()[flag.getRow()][flag.getCol() - 1];
-        }else if((flag.getCol() + 1 < StrategoGameState.BOARD_SIZE) &&
+        }
+        else if((flag.getCol() + 1 < StrategoGameState.BOARD_SIZE) &&
+                (gameState.getBoardSquares()[flag.getRow()][flag.getCol() + 1].getOccupied()) &&
+                (gameState.getBoardSquares()[flag.getRow()][flag.getCol() + 1].getPiece() != null) &&
                 (gameState.getBoardSquares()[flag.getRow()][flag.getCol() + 1].getPiece().getTeam() == StrategoGameState.RED)){
             this.shouldDefend = true;
             killThisOne = gameState.getBoardSquares()[flag.getRow()][flag.getCol() + 1];
+        }
+
+        if(killThisOne == null){
+            Log.i("flagDefend", "could not enemy piece to kill");
+            return;
         }
 
         //check if we can defend and kill the attacking piece, even a trade is fine here
@@ -320,6 +355,11 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
                     (gameState.getBoardSquares()[killThisOne.getRow()][flag.getCol() + 1].getPiece().getTeam() == StrategoGameState.BLUE) &&
                     gameState.getBoardSquares()[killThisOne.getRow()][flag.getCol() + 1].getPiece().getRank() >= killThisOne.getPiece().getRank()){
                 defendWithThis = gameState.getBoardSquares()[killThisOne.getRow()][flag.getCol() + 1];
+            }
+
+            if(defendWithThis == null){
+                Log.i("flagDefend", "could not find piece to defend flag with");
+                return;
             }
 
             //so now we have the square where we need to attack, and the square to attack with
