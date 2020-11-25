@@ -1,5 +1,9 @@
 package edu.up.cs301.Stratego;
 
+import android.util.Log;
+
+import java.util.Random;
+
 import edu.up.cs301.game.GameFramework.GameComputerPlayer;
 import edu.up.cs301.game.GameFramework.infoMessage.GameInfo;
 
@@ -15,6 +19,8 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
 
     public boolean shouldDefend = false;
     private StrategoGameState gameState;
+    private boolean moveSuccessful;
+
     /**
      * constructor
      *
@@ -36,15 +42,69 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
             return;
         }
 
+        /*moveSuccess is used to determine if some kind of move has been made successfully and
+        * should be changed to true before any move sending happens, so we can know whether to call
+        * another helper method to attempt another type of move, or to return (reset to false every turn)*/
+        moveSuccessful = false;
+
         //determining if smart computer player should make moves or set up the board depending on game phase
         if(gameState.getGamePhase()){
-            //case statement for determining what piece to move and where (call helper methods)
-            //run helper methods in order of priority until one works?
+            //going down the list of different types of moves to make until one actually works
+            //TODO: find more efficient way to call these/check/structure this
+            flagAttack();
+            if(moveSuccessful){
+                Log.i("smart ai movement", "attacked/moved towards human player's flag");
+                return;
+            }
+
+            flagDefend();
+            if(moveSuccessful){
+                Log.i("smart ai movement", "defended computer player's flag");
+                return;
+            }
+
+            specialCaseAttack();
+            if(moveSuccessful){
+                Log.i("smart ai movement", "made special case attack");
+                return;
+            }
+
+            scoutAttack();
+            if(moveSuccessful){
+                Log.i("smart ai movement", "made scout attack");
+                return;
+            }
+
+            normalAttack();
+            if(moveSuccessful){
+                Log.i("smart ai movement", "made normal attack");
+                return;
+            }
+
+            defaultMove();
+            if(moveSuccessful){
+                Log.i("smart ai movement", "made default move");
+            }else{
+                Log.i("smart ai movement", "could not make move. something went wrong");
+            }
+
         }else{
-            //TODO: add board setup
+            //TODO: add initial board setup
 
+            //make between 1 and 7 swaps between random pieces on the board
+            //may need to add error checking
+            Random rand = new Random();
+            int swapNum = rand.nextInt(7) + 1;
+            int swap1;
+            int swap2;
+
+            for(int i = 0; i < swapNum; i++){
+                swap1 = rand.nextInt(100);
+                swap2 = rand.nextInt(100);
+                game.sendAction(new StrategoSwapAction(this, swap1, swap2));
+                Log.i("smart ai setup", "swapped " + swap1 + " and " + swap2);
+            }
         }
-
     }
 
     /**
@@ -117,6 +177,7 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
         sourceCoord = coordConverter(source);
         destCoord = coordConverter(dest);
 
+        moveSuccessful = true;
         game.sendAction(new StrategoMoveAction(this, sourceCoord, destCoord));
     }
 
@@ -281,6 +342,8 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
             } else {
                 secondClick = attX * attY;
             }
+
+            moveSuccessful = true;
             game.sendAction(new StrategoMoveAction(this, firstClick, secondClick));
         }
     }
@@ -355,6 +418,7 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
 
         }
 
+        moveSuccessful = true;
         game.sendAction(new StrategoMoveAction(this, squareSrc, squareDest));
     }
 
@@ -485,6 +549,7 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
         //make the piece move down
         secondClick = firstClick + 10;
         //send the move action
+        moveSuccessful = true;
         game.sendAction(new StrategoMoveAction(this, firstClick, secondClick));
     }
 
