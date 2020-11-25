@@ -160,8 +160,9 @@ public class StrategoGameState extends GameState {
      * @param square    coordinates for a board square
      * @return true if square is within range of the board, false if not
      */
-    public boolean squareOnBoard(int square) {
-        return !(square / 10 >= BOARD_SIZE || square % 10 >= BOARD_SIZE || square / 10 < 0 || square % 10 < 0);
+    public boolean squareOnBoard(BoardSquare square) {
+        return (square.getRow() < BOARD_SIZE && square.getRow() >= 0
+                && square.getCol() < BOARD_SIZE && square.getCol() >= 0);
     }
 
     /**
@@ -170,9 +171,9 @@ public class StrategoGameState extends GameState {
      * @param square    coordinates for a board square
      * @return true is square is a lake square
      */
-    public boolean isLakeSquare(int square) {
-        for (int[] coord : LAKE_SQUARES) {
-            if (square / 10 == coord[0] && square % 10 == coord[1]) {
+    public boolean isLakeSquare(BoardSquare square) {
+      for (int[] coord : LAKE_SQUARES) {
+            if (square.getRow() == coord[0] && square.getCol() == coord[1]) {
                 return true;
             }
         }
