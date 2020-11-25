@@ -155,13 +155,28 @@ public class StrategoGameState extends GameState {
     }
 
     /**
-     * helper method to determine if given square is on the board or not
+     * determine if given square is on the board or not
      *
      * @param square    coordinates for a board square
      * @return true if square is within range of the board, false if not
      */
-    public boolean squareOnBoard(int square){
+    public boolean squareOnBoard(int square) {
         return !(square / 10 >= BOARD_SIZE || square % 10 >= BOARD_SIZE || square / 10 < 0 || square % 10 < 0);
+    }
+
+    /**
+     * determine if given square is a lake square
+     *
+     * @param square    coordinates for a board square
+     * @return true is square is a lake square
+     */
+    public boolean isLakeSquare(int square) {
+        for (int[] coord : LAKE_SQUARES) {
+            if (square / 10 == coord[0] && square % 10 == coord[1]) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /*
