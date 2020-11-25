@@ -122,13 +122,19 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
         int destCoord;
 
         //for loop through human player's pieces to find where the flag is
+        BoardSquare current = null;
         for(int i = 0; i < StrategoGameState.BOARD_SIZE; i++){
             for(int j = 0; j < StrategoGameState.BOARD_SIZE; j++){
-                //TODO: potentially rename this gamepiece to something more indicative
-                GamePiece flagg = gameState.getBoardSquares()[i][j].getPiece();
-                if(flagg.getRank() == 0){
-                    flag = gameState.getBoardSquares()[i][j];
+                current = gameState.getBoardSquares()[i][j];
+
+                if(current.getOccupied() && current.getPiece() != null){
+                    if(current.getPiece().getRank() == 0
+                            && current.getPiece().getTeam() == StrategoGameState.BLUE) {
+                        flag = gameState.getBoardSquares()[i][j];
+                        break;
+                    }
                 }
+
             }
         }
 
