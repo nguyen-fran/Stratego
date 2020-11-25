@@ -136,19 +136,29 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
             button.setImageResource(R.drawable.empty_space);
         }
         //setting image for blue pieces (depending on visibility)
-        else if (gameState.getBoardSquares()[i][j].getPiece().getTeam() == StrategoGameState.BLUE){
-//            if (!gameState.getBoardSquares()[i][j].getPiece().getVisible()) {
-//                button.setImageResource(R.drawable.blue_unknown);
-//            }else{
+        else if (gameState.getBoardSquares()[i][j].getPiece().getTeam() == StrategoGameState.BLUE) {
+            //don't draw blue pieces invisible if human player is blue
+            if (playerNum == StrategoGameState.BLUE) {
                 imagePickerBlue(button, gameState, i, j);
-            //}
+            } else {
+                if (!gameState.getBoardSquares()[i][j].getPiece().getVisible()){
+                    button.setImageResource(R.drawable.blue_unknown);
+                } else {
+                    imagePickerBlue(button, gameState, i, j);
+                }
+            }
         }
         //setting image for red pieces (depending on visibility)
         else if(gameState.getBoardSquares()[i][j].getPiece().getTeam() == StrategoGameState.RED){
-            if(!gameState.getBoardSquares()[i][j].getPiece().getVisible()){
-                button.setImageResource(R.drawable.red_unknown);
-            }else{
+            //don't draw red pieces invisible if human player is red
+            if (playerNum == StrategoGameState.RED) {
                 imagePickerRed(button, gameState, i, j);
+            } else {
+                if (!gameState.getBoardSquares()[i][j].getPiece().getVisible()){
+                    button.setImageResource(R.drawable.red_unknown);
+                } else {
+                    imagePickerRed(button, gameState, i, j);
+                }
             }
         }
     }

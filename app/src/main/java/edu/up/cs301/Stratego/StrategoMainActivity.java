@@ -19,9 +19,6 @@ import edu.up.cs301.game.GameFramework.gameConfiguration.GamePlayerType;
  * cut due to settings (like for the player names/ai settings) being handled in the game framework menus instead
  *
  * Known Issues:
- * -hiding pieces only works for human being the blue team and computer being the red team
- *  we would need to add another check for which team the computer player is on when drawing the board to add to the conditionals
- *
  * -smart ai is fairly buggy and runs into situations where it can't decide on a move to make, freezing the game
  *  the default move in the smart computer player class should mitigate this, but can fail (particularly if
  *  pieces are enclosed on three sides). One way to help keep this from happening would be to enable the ai to move
