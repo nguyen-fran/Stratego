@@ -544,13 +544,12 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
 
     }
 
-    //i think this method should return the firstCLick and secondClick that the computer wants to move on, in the case of the piece being hidden, these can be called
-    //into the hiddenPieceAttack method
+
 
     /**
      *
      */
-    public void normalAttack(){
+    public void normalAttack() {
     }
 
     /**
@@ -597,6 +596,7 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
     public void defaultMove() {
         //find the furthest move piece towards the other player, (down the board if computer player is only player 2)
         BoardSquare moveThisOne = null;
+        boolean moveForward = false;
 
         //loop through the board and find the piece for this player that can move the most forward
         for (int i = 0; i < StrategoGameState.BOARD_SIZE; i++) {
@@ -607,36 +607,49 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
                         (gameState.getBoardSquares()[i][j].getPiece().getRank() != 0) &&
                         (gameState.getBoardSquares()[i][j].getPiece().getRank() != 11) &&
                         (gameState.getBoardSquares()[i][j].getPiece().getTeam() == StrategoGameState.BLUE)){
-                            moveThisOne = gameState.getBoardSquares()[i][j];
+                            if ( gameState.getBoardSquares()[i+1][j] != null ) {
+                                moveThisOne = gameState.getBoardSquares()[i][j];
+                                moveForward = true;
+                            }
                 }
             }
         }
         //if we cant find a piece to move forward, then we gotta move left or right with a piece
-        if ( moveThisOne == null ) {
+        boolean moveLeft = false;
+        boolean moveRight = false;
+        //if can move left or right, set that boardSquare to a variable
+        //if you cant move forward, then find one that can move left or right
+        if ( moveForward == false ) {
             //TODO: update this later to reflect last comment ^^
+            for ( int k = 0; k < StrategoGameState.BOARD_SIZE; k++ ) {
+                for ( int m = 0; m < StrategoGameState.BOARD_SIZE; m++ ) {
+                    BoardSquare a = gameState.getBoardSquares()[k][m];
+                    if ( a.getPiece().getTeam() == gameState.BLUE ) {
+                        if ( gameState.getBoardSquares()[a.getRow() ][a.getCol() + 1] != null ) {
+                            moveLeft = true;
+                            moveRight = false;
+                            moveThisOne = gameState.getBoardSquares()[a.getRow()][a.getCol()];
+                        }
+                        if ( gameState.getBoardSquares()[a.getRow() ][a.getCol() + 1] != null ) {
+                            moveRight = true;
+                            moveLeft = false;
+                            moveThisOne = gameState.getBoardSquares()[a.getRow()][a.getCol()];
+                        }
+                    }
+                }
+            }
         }
 
+        //checks for move forward, left, or right
+        //depending on the outcome, send the right moveAction
+       if ( moveForward ) {
+           game.sendAction(new StrategoMoveAction(this, coordConverter(moveThisOne), coordConverter(gameState.getBoardSquares()[moveThisOne.getRow()+1][moveThisOne.getCol()])));
+       } else if ( moveLeft ) {
+           game.sendAction(new StrategoMoveAction(this, coordConverter(moveThisOne), coordConverter(gameState.getBoardSquares()[moveThisOne.getRow()][moveThisOne.getCol()-1])));
+       } else if ( moveRight ) {
+           game.sendAction(new StrategoMoveAction(this, coordConverter(moveThisOne), coordConverter(gameState.getBoardSquares()[moveThisOne.getRow()][moveThisOne.getCol()+1])));
+       }
 
-        //get the int value of the piece we want to move
-        int moveX = moveThisOne.getCol();
-        int moveY = moveThisOne.getRow();
-        int firstClick = 0;
-        int secondClick = 0;
-        if ( moveX == 0 && moveY == 0 ) {
-            firstClick = 0;
-        } else if ( moveY == 0 ) {
-            firstClick = moveX;
-        } else if ( moveX == 0 ) {
-            firstClick = moveY * 10;
-        } else {
-            firstClick = moveX * moveY;
-        }
-        //make the piece move down
-        secondClick = firstClick + 10;
-
-        //send the move action
-        moveSuccessful = true;
-        game.sendAction(new StrategoMoveAction(this, firstClick, secondClick));
     }
 
     /**
