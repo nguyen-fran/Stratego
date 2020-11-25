@@ -140,18 +140,16 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
 //            if (!gameState.getBoardSquares()[i][j].getPiece().getVisible()) {
 //                button.setImageResource(R.drawable.blue_unknown);
 //            }else{
-//                imagePickerBlue(button, gameState, i, j);
-//            }
-            imagePickerBlue(button, gameState, i, j);
+                imagePickerBlue(button, gameState, i, j);
+            //}
         }
         //setting image for red pieces (depending on visibility)
         else if(gameState.getBoardSquares()[i][j].getPiece().getTeam() == StrategoGameState.RED){
-//            if(!gameState.getBoardSquares()[i][j].getPiece().getVisible()){
-//                button.setImageResource(R.drawable.red_unknown);
-//            }else{
-//                imagePickerRed(button, gameState, i, j);
-//            }
-            imagePickerRed(button, gameState, i, j);
+            if(!gameState.getBoardSquares()[i][j].getPiece().getVisible()){
+                button.setImageResource(R.drawable.red_unknown);
+            }else{
+                imagePickerRed(button, gameState, i, j);
+            }
         }
     }
 
