@@ -37,6 +37,10 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
      */
     @Override
     protected void receiveInfo(GameInfo info) {
+        if (!(info instanceof StrategoGameState)) {
+            return;
+        }
+
         gameState = new StrategoGameState((StrategoGameState) info);
         if (gameState.getCurrPlayerIndex() != playerNum) {
             return;
@@ -374,10 +378,10 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
                     && gameState.getBoardSquares()[i][j].getPiece().getTeam() != playerNum && gameState.getBoardSquares()[i][j].getPiece().getVisible()) {
                     if (gameState.getBoardSquares()[i][j].getPiece().getRank() == GamePiece.BOMB && lonelySquare(i, j)) { //found a bomb
                         reachableBomb = true;
-                        aBomb = i *10 + j;
+                        aBomb = i * 10 + j;
                     } else if (gameState.getBoardSquares()[i][j].getPiece().getRank() == 10 && lonelySquare(i, j)) {  //found a marshall
                         reachableMarshall = true;
-                        aMarshall = i *10 + j;
+                        aMarshall = i * 10 + j;
                     }
                 }
             }
@@ -387,11 +391,9 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
             foundReachableBomb(squareSrc, squareDest, aBomb);
         }
         //TODO: do almost everything I did for bomb but for marshall
-        if (reachableMarshall) {
+        else if (reachableMarshall) {
 
         }
-
-        game.sendAction(new StrategoMoveAction(this, squareSrc, squareDest));
     }
 
     /**
