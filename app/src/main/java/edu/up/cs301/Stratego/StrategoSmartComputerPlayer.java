@@ -433,7 +433,7 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
         } else if (reachableMarshall) {
             foundReachableMarshall(theMarshall);
         } else {
-            Log.i("special case attack", "did not find bomb or marshall");
+            Log.i("special case attack", "did not find bomb or marshall to move");
             return;
         }
     }
@@ -584,11 +584,11 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
                 && !coordToSquareConverter(coordConverter(squareSrc) - 1).getOccupied()) {  //move left
             squareDest = coordToSquareConverter(coordConverter(squareSrc) - 1);
         } else {
-            squareDest = null;
+            return null;
         }
 
         //if trying to move squareSrc piece into a lake square, move it right or left (whichever is closer to goal)
-        if (gameState.isLakeSquare(squareDest)) {
+        if (squareDest != null && gameState.isLakeSquare(squareDest)) {
             //if there are pieces to the left and right of squareSrc, don't move because the only move left is backwards
             if (!coordToSquareConverter(coordConverter(squareSrc) + 1).getOccupied() && !coordToSquareConverter(coordConverter(squareSrc) - 1).getOccupied()) {
                 return null;
@@ -715,7 +715,7 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
                     if((j+1 < StrategoGameState.BOARD_SIZE) && isPlayerPiece(gameState.getBoardSquares()[i][j+1])){
                         //checking visibility/rank
                         if((current.getPiece().getVisible() && gameState.getBoardSquares()[i][j+1].getPiece().getRank() > current.getPiece().getRank())
-                            || (!current.getPiece().getVisible() &&hiddenPieceAttack(gameState.getBoardSquares()[i][j+1]))){
+                            || (!current.getPiece().getVisible() && hiddenPieceAttack(gameState.getBoardSquares()[i][j+1]))){
                             source = gameState.getBoardSquares()[i][j+1];
                             dest = current;
                         }
@@ -725,7 +725,7 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
                     if((j-1 >= 0) && isPlayerPiece(gameState.getBoardSquares()[i][j-1])){
                         //checking visibility/rank
                         if((current.getPiece().getVisible() && gameState.getBoardSquares()[i][j-1].getPiece().getRank() > current.getPiece().getRank())
-                            || (!current.getPiece().getVisible() &&hiddenPieceAttack(gameState.getBoardSquares()[i][j-1]))){
+                            || (!current.getPiece().getVisible() && hiddenPieceAttack(gameState.getBoardSquares()[i][j-1]))){
                             source = gameState.getBoardSquares()[i][j-1];
                             dest = current;
                         }
@@ -793,6 +793,7 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
             }
         }
 
+        Log.i("hiddenPieceAttack", "calculated hidden piece odds:" + oddsOfWinning);
         return (oddsOfWinning > 0);
     }
 
