@@ -151,15 +151,15 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
         //setting image for red pieces (depending on visibility)
         else if(gameState.getBoardSquares()[i][j].getPiece().getTeam() == StrategoGameState.RED){
             //don't draw red pieces invisible if human player is red
-            if (playerNum == StrategoGameState.RED) {
+            //if (playerNum == StrategoGameState.RED) {
                 imagePickerRed(button, gameState, i, j);
-            } else {
-                if (!gameState.getBoardSquares()[i][j].getPiece().getVisible()){
-                    button.setImageResource(R.drawable.red_unknown);
-                } else {
-                    imagePickerRed(button, gameState, i, j);
-                }
-            }
+//            } else {
+//                if (!gameState.getBoardSquares()[i][j].getPiece().getVisible()){
+//                    button.setImageResource(R.drawable.red_unknown);
+//                } else {
+//                    imagePickerRed(button, gameState, i, j);
+//                }
+            //}
         }
     }
 

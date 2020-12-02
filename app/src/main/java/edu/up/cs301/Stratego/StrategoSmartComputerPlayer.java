@@ -9,6 +9,7 @@ import edu.up.cs301.game.GameFramework.infoMessage.GameInfo;
 
 /**
  * A smarter computer player to play Stratego
+ * TODO: replace all checks for BLUE/RED so they will work with both blue player and red player configurations
  *
  * @author Gabby Marshak
  * @author Francisco Nguyen
@@ -54,12 +55,6 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
         //determining if smart computer player should make moves or set up the board depending on game phase
         if(gameState.getGamePhase()){
             //going down the list of different types of moves to make until one actually works
-            //TODO: find more efficient way to call these/check/structure this
-            /*flagAttack();
-            if(moveSuccessful){
-                Log.i("smart ai movement", "attacked/moved towards human player's flag");
-                return;
-            }*/
 
             flagDefend();
             if(moveSuccessful){
@@ -620,7 +615,69 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
      * method to attack enemy scouts
      */
     public void scoutAttack(){
-        //TODO: specifically look for/prioritise scouts
+        BoardSquare source = null;
+        BoardSquare dest = null;
+        BoardSquare current = null;
+        int sourceCoord;
+        int destCoord;
+
+        //double for loop through board for human player's scouts (rank 2)
+        for (int i = 0; i < StrategoGameState.BOARD_SIZE; i++) {
+            for (int j = 0; j < StrategoGameState.BOARD_SIZE; j++) {
+                current = gameState.getBoardSquares()[i][j];
+
+                //checks first the the current piece is a visible scout owned by the human player
+                if((current.getOccupied()) && (current.getPiece() != null) &&
+                        (current.getPiece().getTeam() == StrategoGameState.BLUE) &&
+                        (current.getPiece().getRank() == 2) && (current.getPiece().getVisible())){
+                    //check for adjacent occupied squares with red pieces, then check visibility of current piece
+
+                    //north
+                    if((i+1 < StrategoGameState.BOARD_SIZE) &&
+                            (gameState.getBoardSquares()[i+1][j].getPiece() != null) &&
+                            (gameState.getBoardSquares()[i+1][j].getPiece().getTeam() == StrategoGameState.RED)){
+                            source = gameState.getBoardSquares()[i+1][j];
+                            dest = current;
+                    }
+
+                    //south
+                    if((i-1 >= 0) &&
+                            (gameState.getBoardSquares()[i-1][j].getPiece() != null) &&
+                            (gameState.getBoardSquares()[i-1][j].getPiece().getTeam() == StrategoGameState.RED)){
+                            source = gameState.getBoardSquares()[i-1][j];
+                            dest = current;
+                    }
+
+                    //east
+                    if((j+1 < StrategoGameState.BOARD_SIZE) &&
+                            (gameState.getBoardSquares()[i][j+1].getPiece() != null) &&
+                            (gameState.getBoardSquares()[i][j+1].getPiece().getTeam() == StrategoGameState.RED)){
+                            source = gameState.getBoardSquares()[i][j+1];
+                            dest = current;
+                    }
+
+                    //west
+                    if((j-1 >= 0) &&
+                            (gameState.getBoardSquares()[i][j-1].getPiece() != null) &&
+                            (gameState.getBoardSquares()[i][j-1].getPiece().getTeam() == StrategoGameState.RED)){
+                            source = gameState.getBoardSquares()[i][j-1];
+                            dest = current;
+                    }
+                }
+            }
+        }
+
+        if(source == null || dest == null){
+            Log.i("scoutAttack", "source or destination square was null");
+            return;
+        }
+
+        //send info
+        sourceCoord = coordConverter(source);
+        destCoord = coordConverter(dest);
+
+        moveSuccessful = true;
+        game.sendAction(new StrategoMoveAction(this, sourceCoord, destCoord));
     }
 
     /**

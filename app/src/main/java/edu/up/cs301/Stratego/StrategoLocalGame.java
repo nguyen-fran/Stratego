@@ -128,7 +128,6 @@ public class StrategoLocalGame extends LocalGame {
             squareDest.setOccupied(true);
         }
         //update src square appropriately
-        //TODO: make sure this updates the game state, not the copy that the player is looking at
         squareSrc.setPiece(null);
         squareSrc.setOccupied(false);
 
@@ -297,7 +296,6 @@ public class StrategoLocalGame extends LocalGame {
     }
 
     //checks if the hidden death count for flag in GYs is greater than zero
-    //TODO need to write specific message for who won
 
     /**
      * check if a game is over by checking if a flag has been captured or
@@ -311,8 +309,9 @@ public class StrategoLocalGame extends LocalGame {
         for ( int i = 0; i < 10; i++ ) {
             for ( int j = 0; j < 10; j++ ) {
                 if ( gameState.getBoardSquares()[i][j].getPiece() != null ) {
-                    if (gameState.getBoardSquares()[i][j].getPiece().getTeam() == StrategoGameState.RED && gameState.getBoardSquares()[i][j].getPiece().getRank() != 0
-                        && gameState.getBoardSquares()[i][j].getPiece().getRank() != 11) {
+                    if (gameState.getBoardSquares()[i][j].getPiece().getTeam() == StrategoGameState.RED &&
+                            gameState.getBoardSquares()[i][j].getPiece().getRank() != 0 &&
+                            gameState.getBoardSquares()[i][j].getPiece().getRank() != 11) {
                         redCanMove = true;
                     }
                 }
@@ -323,8 +322,9 @@ public class StrategoLocalGame extends LocalGame {
         for ( int i = 0; i < 10; i++ ) {
             for ( int j = 0; j < 10; j++ ) {
                 if ( gameState.getBoardSquares()[i][j].getPiece() != null ) {
-                    if (gameState.getBoardSquares()[i][j].getPiece().getTeam() == StrategoGameState.BLUE && gameState.getBoardSquares()[i][j].getPiece().getRank() != 0
-                            && gameState.getBoardSquares()[i][j].getPiece().getRank() != 11) {
+                    if (gameState.getBoardSquares()[i][j].getPiece().getTeam() == StrategoGameState.BLUE &&
+                            gameState.getBoardSquares()[i][j].getPiece().getRank() != 0 &&
+                            gameState.getBoardSquares()[i][j].getPiece().getRank() != 11) {
                         blueCanMove = true;
                     }
                 }
