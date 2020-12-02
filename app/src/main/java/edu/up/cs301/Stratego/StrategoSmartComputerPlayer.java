@@ -687,58 +687,45 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
             for (int j = 0; j < StrategoGameState.BOARD_SIZE; j++) {
                 current = gameState.getBoardSquares()[i][j];
 
-                if((current.getOccupied()) && (current.getPiece() != null) &&
-                        (current.getPiece().getTeam() == StrategoGameState.BLUE)){
-                    //check for adjacent occupied squares with red pieces, then check rank and visibility of current piece
-                    //if the current piece is visible, then use the hidden piece attack
+                if(isOppPiece(current)){
+                    //check for adjacent occupied squares with comp pieces, then check rank and visibility of current piece
+                    //if the current piece is invisible, then use the hidden piece attack
 
                     //north
-                    if((i+1 < StrategoGameState.BOARD_SIZE) &&
-                            (gameState.getBoardSquares()[i+1][j].getPiece() != null) &&
-                            (gameState.getBoardSquares()[i+1][j].getPiece().getTeam() == StrategoGameState.RED)){
+                    if((i+1 < StrategoGameState.BOARD_SIZE) && isPlayerPiece(gameState.getBoardSquares()[i+1][j])){
                         //checking visibility/rank
-                        if((gameState.getBoardSquares()[i+1][j].getPiece().getVisible() &&
-                                gameState.getBoardSquares()[i+1][j].getPiece().getRank() > current.getPiece().getRank()) ||
-                                (hiddenPieceAttack(i+1, j))){
+                        if((current.getPiece().getVisible() && gameState.getBoardSquares()[i+1][j].getPiece().getRank() > current.getPiece().getRank())
+                            || (!current.getPiece().getVisible() && hiddenPieceAttack(gameState.getBoardSquares()[i+1][j]))){
                             source = gameState.getBoardSquares()[i+1][j];
                             dest = current;
                         }
                     }
 
                     //south
-                    if((i-1 >= 0) &&
-                            (gameState.getBoardSquares()[i-1][j].getPiece() != null) &&
-                            (gameState.getBoardSquares()[i-1][j].getPiece().getTeam() == StrategoGameState.RED)){
+                    if((i-1 >= 0) && isPlayerPiece(gameState.getBoardSquares()[i-1][j])){
                         //checking visibility/rank
-                        if((gameState.getBoardSquares()[i-1][j].getPiece().getVisible() &&
-                                gameState.getBoardSquares()[i-1][j].getPiece().getRank() > current.getPiece().getRank()) ||
-                                (hiddenPieceAttack(i-1, j))){
+                        if((current.getPiece().getVisible() && gameState.getBoardSquares()[i-1][j].getPiece().getRank() > current.getPiece().getRank())
+                            || (!current.getPiece().getVisible() && hiddenPieceAttack(gameState.getBoardSquares()[i-1][j]))){
                             source = gameState.getBoardSquares()[i-1][j];
                             dest = current;
                         }
                     }
 
                     //east
-                    if((j+1 < StrategoGameState.BOARD_SIZE) &&
-                            (gameState.getBoardSquares()[i][j+1].getPiece() != null) &&
-                            (gameState.getBoardSquares()[i][j+1].getPiece().getTeam() == StrategoGameState.RED)){
+                    if((j+1 < StrategoGameState.BOARD_SIZE) && isPlayerPiece(gameState.getBoardSquares()[i][j+1])){
                         //checking visibility/rank
-                        if((gameState.getBoardSquares()[i][j+1].getPiece().getVisible() &&
-                                gameState.getBoardSquares()[i][j+1].getPiece().getRank() > current.getPiece().getRank()) ||
-                                (hiddenPieceAttack(i, j+1))){
+                        if((current.getPiece().getVisible() && gameState.getBoardSquares()[i][j+1].getPiece().getRank() > current.getPiece().getRank())
+                            || (!current.getPiece().getVisible() &&hiddenPieceAttack(gameState.getBoardSquares()[i][j+1]))){
                             source = gameState.getBoardSquares()[i][j+1];
                             dest = current;
                         }
                     }
 
                     //west
-                    if((j-1 >= 0) &&
-                            (gameState.getBoardSquares()[i][j-1].getPiece() != null) &&
-                            (gameState.getBoardSquares()[i][j-1].getPiece().getTeam() == StrategoGameState.RED)){
+                    if((j-1 >= 0) && isPlayerPiece(gameState.getBoardSquares()[i][j-1])){
                         //checking visibility/rank
-                        if((gameState.getBoardSquares()[i][j-1].getPiece().getVisible() &&
-                                gameState.getBoardSquares()[i][j-1].getPiece().getRank() > current.getPiece().getRank()) ||
-                                (hiddenPieceAttack(i, j-1))){
+                        if((current.getPiece().getVisible() && gameState.getBoardSquares()[i][j-1].getPiece().getRank() > current.getPiece().getRank())
+                            || (!current.getPiece().getVisible() &&hiddenPieceAttack(gameState.getBoardSquares()[i][j-1]))){
                             source = gameState.getBoardSquares()[i][j-1];
                             dest = current;
                         }
@@ -761,45 +748,52 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
 
     /**
      *calculates odds of successfully attacking a piece that has not been revealed to the computer player
-     * @param rowFirst row of the piece the computer is attacking with
-     * @param colFirst col of piece the computer is attacking with
+     *
+     * @param attackSquare   a comp square that is adjacent to a square with an invisible opp piece
      * @return true if the computer will attack the piece, false if it will not
      */
-    public boolean hiddenPieceAttack(int rowFirst, int colFirst) {
+    public boolean hiddenPieceAttack(BoardSquare attackSquare) {
+        int attackPieceRank = attackSquare.getPiece().getRank();
         //getting the graveyard
-        int[] redGY = gameState.getRedGY();
-        int[] pieceNumbers = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+        int[] oppGY;
+        if (playerNum == StrategoGameState.BLUE) {
+            oppGY = gameState.getRedGY();
+        } else {
+            oppGY = gameState.getBlueGY();
+        }
+        /*will increment for every opp piece alive whose rank is less than attackPieceRank
+        and decrement for every opp piece alive whose rank is greater than or equal to attackPieceRank
+        if by the end oddOfWinning is > 0, comp can probably win*/
+        int oddsOfWinning = 0;
 
-        //setting up doubles/ints for math later
-        double chanceOfWinning = 0;
-        double chanceOfLosing = 0;
-        int totalDead = 0;
-        int weCanWin = 0;
-        int weWillLose = 0;
+        //adjusting oddsOfWinning based on all of opp's alive pieces
+        for (int i = 0; i < oppGY.length - 1; i++) {
+            //REMINDER: index in GY array = piece's rank - 1 (ex. rank 5 piece deaths are counted in oppGY[4])
+            //'i' right now is index in GY array, so piece rank to compare is (i + 1)
+            if (i + 1 < attackPieceRank) {
+                //add num of pieces of rank (i + 1) to oddsOfWinning because comp would win if it attacked them
+                oddsOfWinning += StrategoGameState.NUM_OF_PIECES[i + 1] - oppGY[i];
+            } else {
+                //subtract num of pieces of rank (i + 1) from oddsOfWinning because comp would lose if it attacked them
+                oddsOfWinning -= StrategoGameState.NUM_OF_PIECES[i + 1] - oppGY[i];
+            }
+        }
 
-        //getting square we want to attack with
-        BoardSquare attackingSquare = gameState.getBoardSquares()[rowFirst][colFirst];
-        for ( int i = 0; i < redGY.length-1; i++ ) {
-                if ( pieceNumbers[i] < attackingSquare.getPiece().getRank() ) {
-                    weWillLose+=redGY[i];
-                } else {
-                    weCanWin+=redGY[i];
+        //account for all the opp pieces that are visible
+        for (int i = 0; i < StrategoGameState.BOARD_SIZE; i++) {
+            for (int j = 0; j < StrategoGameState.BOARD_SIZE; j++) {
+                if (isOppPiece(gameState.getBoardSquares()[i][j]) && gameState.getBoardSquares()[i][j].getPiece().getVisible()) {
+                    //if there is an opp piece of greater rank that is visible, comp knows that it isn't attacking it
+                    if (gameState.getBoardSquares()[i][j].getPiece().getRank() >= attackPieceRank) {
+                        oddsOfWinning++;
+                    } else {
+                        oddsOfWinning--;
+                    }
                 }
-                totalDead++;
+            }
         }
 
-        //need to avoid the divide by zero error
-        if(weCanWin == 0 || weWillLose == 0){
-            return true;
-        }
-
-        //doing math for winning/losing
-        chanceOfWinning = Math.abs((totalDead) / (weCanWin));
-        chanceOfLosing = Math.abs((totalDead) / (weWillLose));
-        if ( chanceOfWinning > chanceOfLosing ) {
-            return true;
-        }
-        return false;
+        return (oddsOfWinning > 0);
     }
 
     /**
