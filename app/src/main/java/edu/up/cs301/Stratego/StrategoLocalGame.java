@@ -102,13 +102,13 @@ public class StrategoLocalGame extends LocalGame {
         } else { //all other pieces have normal movement range (check if square is in range, and is moving at all)
             if (squareDest.getRow() > squareSrc.getRow() + 1 || squareDest.getRow() < squareSrc.getRow() - 1
                     || squareDest.getCol() > squareSrc.getCol() + 1 || squareDest.getCol() < squareSrc.getCol() - 1
-                    || squareSrc.getCol() != squareDest.getCol() && squareSrc.getRow() != squareDest.getRow()) {
+                    || (squareSrc.getCol() != squareDest.getCol() && squareSrc.getRow() != squareDest.getRow())) {
                 return false;
             }
         }
 
         //if dest occupied by another piece (ie. is not null), then attack
-        if (squareDest.getOccupied() && squareDest.getPiece() == null) { //trying to move into a lake square
+        if (gameState.isLakeSquare(squareDest)) { //trying to move into a lake square
             return false;
         } else if (squareDest.getOccupied()) {
             //return false if not valid attack
@@ -295,8 +295,6 @@ public class StrategoLocalGame extends LocalGame {
         return true;
     }
 
-    //checks if the hidden death count for flag in GYs is greater than zero
-
     /**
      * check if a game is over by checking if a flag has been captured or
      * if a player has run out of movable pieces
@@ -306,39 +304,33 @@ public class StrategoLocalGame extends LocalGame {
     @Override
     protected String checkIfGameOver() {
         boolean redCanMove = false;
-        for ( int i = 0; i < 10; i++ ) {
-            for ( int j = 0; j < 10; j++ ) {
-                if ( gameState.getBoardSquares()[i][j].getPiece() != null ) {
-                    if (gameState.getBoardSquares()[i][j].getPiece().getTeam() == StrategoGameState.RED &&
-                            gameState.getBoardSquares()[i][j].getPiece().getRank() != 0 &&
-                            gameState.getBoardSquares()[i][j].getPiece().getRank() != 11) {
-                        redCanMove = true;
-                    }
+        for ( int i = 0; i < StrategoGameState.BOARD_SIZE; i++ ) {
+            for ( int j = 0; j < StrategoGameState.BOARD_SIZE; j++ ) {
+                if ( gameState.getBoardSquares()[i][j].getPiece() != null &&
+                        gameState.getBoardSquares()[i][j].getPiece().getTeam() == StrategoGameState.RED &&
+                        gameState.getBoardSquares()[i][j].getPiece().getRank() != GamePiece.BOMB &&
+                        gameState.getBoardSquares()[i][j].getPiece().getRank() != GamePiece.FLAG) {
+                    redCanMove = true;
                 }
             }
         }
 
         boolean blueCanMove = false;
-        for ( int i = 0; i < 10; i++ ) {
-            for ( int j = 0; j < 10; j++ ) {
-                if ( gameState.getBoardSquares()[i][j].getPiece() != null ) {
-                    if (gameState.getBoardSquares()[i][j].getPiece().getTeam() == StrategoGameState.BLUE &&
-                            gameState.getBoardSquares()[i][j].getPiece().getRank() != 0 &&
-                            gameState.getBoardSquares()[i][j].getPiece().getRank() != 11) {
-                        blueCanMove = true;
-                    }
+        for ( int i = 0; i < StrategoGameState.BOARD_SIZE; i++ ) {
+            for ( int j = 0; j < StrategoGameState.BOARD_SIZE; j++ ) {
+                if ( gameState.getBoardSquares()[i][j].getPiece() != null &&
+                        gameState.getBoardSquares()[i][j].getPiece().getTeam() == StrategoGameState.BLUE &&
+                        gameState.getBoardSquares()[i][j].getPiece().getRank() != GamePiece.BOMB &&
+                        gameState.getBoardSquares()[i][j].getPiece().getRank() != GamePiece.FLAG) {
+                    blueCanMove = true;
                 }
             }
         }
 
-        if (gameState.getBlueGY()[11] > 0) {
+        if (gameState.getBlueGY()[11] > 0 || !blueCanMove) {
             return "" + playerNames[1] + " has won. ";
-        } else if (gameState.getRedGY()[11] > 0) {
+        } else if (gameState.getRedGY()[11] > 0 || !redCanMove) {
             return "" + playerNames[0] + " has won. ";
-        } else if (!redCanMove) {
-            return "Red team has won. ";
-        } else if (!blueCanMove) {
-            return "Red team has won. ";
         } else {
             return null;
         }

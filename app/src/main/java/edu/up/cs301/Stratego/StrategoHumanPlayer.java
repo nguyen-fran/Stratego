@@ -2,7 +2,6 @@ package edu.up.cs301.Stratego;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
@@ -35,8 +34,8 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
     private TextView turnIndicator;
 
     private ViewGroup gameBoardGrid;
-    private ViewGroup playerGY;
-    private ViewGroup oppGY;
+    private ViewGroup blueGY;
+    private ViewGroup redGY;
 
     private int firstClick = -1;    //will hold id of first button clicked for move or swap action
     private int secondClick = -1;   //will hold id of second button clicked for move or swap action
@@ -64,10 +63,10 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
      */
     @Override
     public void receiveInfo(GameInfo info) {
-        Log.i("human player", "recieveInfo called");
+        Log.i("human player", "receiveInfo called");
 
         if(!(info instanceof StrategoGameState)){
-            flash(Color.RED, 10);
+            flash(Color.RED, 20);
             return;
         }
 
@@ -82,8 +81,8 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
          */
 
         //setting up player graveyard with a loop
-        for (int i = 0; i < 11; i++){
-            TextView GY = (TextView)playerGY.getChildAt(i + 11);
+        for (int i = 0; i < gameState.getBlueGY().length - 1; i++){
+            TextView GY = (TextView) blueGY.getChildAt(i + 11);
             //setting text to whatever value is in graveyard array at that coord
             //might need to adjust +- 1 depending to avoid out of bounds errors
             GY.setText("" + ((StrategoGameState) info).getBlueGY()[i] + "/" + StrategoGameState.NUM_OF_PIECES[i + 1]);
@@ -91,15 +90,15 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
 
         //setting up computer graveyard with a loop
         for (int i = 0; i < 11; i++){
-            TextView GY = (TextView)oppGY.getChildAt(i + 11);
+            TextView GY = (TextView) redGY.getChildAt(i + 11);
             //setting text to whatever value is in graveyard array at that coord
             //might need to adjust +- 1 depending to avoid out of bounds errors
             GY.setText("" + ((StrategoGameState) info).getRedGY()[i] + "/" + StrategoGameState.NUM_OF_PIECES[i + 1]);
         }
 
         //double for loop to update game board from game state
-        for (int i = 0; i < 10; i++){
-            for (int j = 0; j < 10; j++){
+        for (int i = 0; i < StrategoGameState.BOARD_SIZE; i++){
+            for (int j = 0; j < StrategoGameState.BOARD_SIZE; j++){
                 //using this to be able to get from the board grid at the correct place
                 int gridCoord = (i*10) + j;
                 ImageButton square = (ImageButton)gameBoardGrid.getChildAt(gridCoord);
@@ -108,7 +107,7 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
         }
 
         //updating turn indicator
-        if(((StrategoGameState) info).getCurrPlayerIndex() == StrategoGameState.BLUE){
+        if(((StrategoGameState) info).getCurrPlayerIndex() == playerNum){
             turnIndicator.setText("Player's turn");
         }else{
             turnIndicator.setText("Opponent's turn");
@@ -279,8 +278,8 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
             gameBoardGrid.addView(boardSquareButton);
         }
 
-        this.playerGY = activity.findViewById(R.id.blueGY);
-        this.oppGY = activity.findViewById(R.id.redGY);
+        this.blueGY = activity.findViewById(R.id.blueGY);
+        this.redGY = activity.findViewById(R.id.redGY);
         this.turnIndicator = activity.findViewById(R.id.turnIndicator);
 
         this.begin = myActivity.findViewById(R.id.beginButton);
@@ -317,7 +316,6 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
             ImageButton firstClickButton = myActivity.findViewById(firstClick);
             ImageButton secondClickButton = myActivity.findViewById(secondClick);
 
-            // TODO need better way to determine which action is being attempted
             if(gameState.getGamePhase()){
                 game.sendAction(new StrategoMoveAction(this, firstClick, secondClick));
             }else{
