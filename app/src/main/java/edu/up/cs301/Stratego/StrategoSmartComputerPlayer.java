@@ -56,8 +56,7 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
         if(gameState.getGamePhase()){
             //going down the list of different types of moves to make until one actually works
             //TODO: find more efficient way to call these/check/structure this
-
-
+            
             flagDefend();
             if(moveSuccessful){
                 Log.i("smart ai movement", "defended computer player's flag");
@@ -102,7 +101,13 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
             if(moveSuccessful){
                 Log.i("smart ai movement", "made default move");
                 return;
-            }else{
+            }
+
+            lastResortMove();
+            if (moveSuccessful) {
+                Log.i("smart ai movement", "made last resort move");
+            }
+            else {
                 Log.i("smart ai movement", "could not make move. something went wrong");
             }
 
@@ -871,6 +876,51 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
                 }
             }
         }
+    }
+
+    /**
+     * if there is absolutely nothing else comp can do, then make a random move
+     */
+    public void lastResortMove() {
+        BoardSquare squareSrc = null;
+        BoardSquare squareDest = null;
+        for (int i = 0; i < StrategoGameState.BOARD_SIZE; i++) {
+            for (int j = 0; j < StrategoGameState.BOARD_SIZE; j++) {
+                if (isCompPiece(gameState.getBoardSquares()[i][j]) && !isBombOrFlag(gameState.getBoardSquares()[i][j])) {
+                    squareSrc = gameState.getBoardSquares()[i][j];
+                }
+            }
+        }
+
+        Random rand = new Random();
+        int randDir = rand.nextInt(4);
+        switch (randDir) {
+            case 0: //move down
+                if (squareSrc.getRow() + 1 < StrategoGameState.BOARD_SIZE) {
+                    squareDest = gameState.getBoardSquares()[squareSrc.getRow() + 1][squareSrc.getCol()];
+                }
+                break;
+            case 1: //move up
+                if (squareSrc.getRow() - 1 < StrategoGameState.BOARD_SIZE) {
+                    squareDest = gameState.getBoardSquares()[squareSrc.getRow() - 1][squareSrc.getCol()];
+                }
+                break;
+            case 2: //move right
+                if (squareSrc.getCol() + 1 < StrategoGameState.BOARD_SIZE) {
+                    squareDest = gameState.getBoardSquares()[squareSrc.getRow()][squareSrc.getCol() + 1];
+                }
+                break;
+            case 3: //move left
+                if (squareSrc.getCol() - 1 < StrategoGameState.BOARD_SIZE) {
+                    squareDest = gameState.getBoardSquares()[squareSrc.getRow()][squareSrc.getCol() - 1];
+                }
+                break;
+            default:
+                break;
+        }
+
+        moveSuccessful = true;
+        game.sendAction(new StrategoMoveAction(this, coordConverter(squareSrc), coordConverter(squareDest)));
     }
 
     /**
