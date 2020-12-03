@@ -6,9 +6,11 @@ import java.util.Random;
 
 import edu.up.cs301.game.GameFramework.GameComputerPlayer;
 import edu.up.cs301.game.GameFramework.infoMessage.GameInfo;
+import edu.up.cs301.game.GameFramework.infoMessage.GameState;
 
 /**
  * A smarter computer player to play Stratego
+ * TODO: replace all checks for BLUE/RED so they will work with both blue player and red player configurations
  *
  * @author Gabby Marshak
  * @author Francisco Nguyen
@@ -66,7 +68,7 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
                 Log.i("smart ai movement", "failed defended computer player's flag");
             }
 
-            //specialCaseAttack();
+            specialCaseAttack();
             if(moveSuccessful){
                 Log.i("smart ai movement", "made special case attack");
                 return;
@@ -74,7 +76,7 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
                 Log.i("smart ai movement", "failed to make special case attack");
             }
 
-            //scoutAttack();
+            scoutAttack();
             if(moveSuccessful){
                 Log.i("smart ai movement", "made scout attack");
                 return;
@@ -107,7 +109,7 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
             }
 
         }else{
-            //TODO: add initial board setup
+            //TODO: add initial board setup/presets
 
             //make between 1 and 7 swaps between random pieces on the board
             //may need to add error checking
@@ -128,8 +130,8 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
     /**
      * checks if human player's flag piece is within one square of a computer player's piece
      * checks if in a straight line from a computer player's scouts
-     * TODO: add some sort of logic from graveyard counts/visible pieces to determine where the flag is
      * right now the method is just going to always know where the flag is whether or not it's visible
+     * may need to formally remove depending on if it's needed or not
      */
     public void flagAttack(){
         BoardSquare flag = null;
@@ -403,7 +405,6 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
                 }
             }
         }
-
     }
 
     /**
@@ -412,22 +413,23 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
     public void specialCaseAttack() {
         boolean reachableBomb = false;
         boolean reachableMarshall = false;
-        int aBomb = -1;
-        int theMarshall = -1;
+        BoardSquare aBomb = null;
+        BoardSquare theMarshall = null;
 
         //look for visible and reachable opp marshall or bomb
         //TODO: choose specific bomb or marshall to attack
         for (int i = 0; i < StrategoGameState.BOARD_SIZE; i++) {
             for (int j = 0; j < StrategoGameState.BOARD_SIZE; j++) {
                 //look for opp's piece that is visible
-                if (gameState.getBoardSquares()[i][j].getPiece() != null
-                    && gameState.getBoardSquares()[i][j].getPiece().getTeam() != playerNum && gameState.getBoardSquares()[i][j].getPiece().getVisible()) {
+                if ((gameState.getBoardSquares()[i][j].getPiece() != null) &&
+                        (gameState.getBoardSquares()[i][j].getPiece().getTeam() != playerNum) &&
+                        (gameState.getBoardSquares()[i][j].getPiece().getVisible())) {
                     if (gameState.getBoardSquares()[i][j].getPiece().getRank() == GamePiece.BOMB && lonelySquare(i, j)) { //found a movable bomb
                         reachableBomb = true;
-                        aBomb = i * 10 + j;
+                        aBomb = gameState.getBoardSquares()[i][j];
                     } else if (gameState.getBoardSquares()[i][j].getPiece().getRank() == 10 && lonelySquare(i, j)) {  //found a movable marshall
                         reachableMarshall = true;
-                        theMarshall = i * 10 + j;
+                        theMarshall = gameState.getBoardSquares()[i][j];
                     }
                 }
             }
@@ -438,6 +440,7 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
         } else if (reachableMarshall) {
             foundReachableMarshall(theMarshall);
         } else {
+            Log.i("special case attack", "did not find bomb or marshall to move");
             return;
         }
     }
@@ -447,9 +450,9 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
      *
      * @param aBomb the bomb that was found
      */
-    public void foundReachableBomb(int aBomb) {
-        int squareSrc = -1;
-        int squareDest = -1;
+    public void foundReachableBomb(BoardSquare aBomb) {
+        BoardSquare squareSrc = null;
+        BoardSquare squareDest = null;
 
         //check if smart comp has any miner to attack bomb
         if (playerNum == StrategoGameState.BLUE && gameState.getBlueGY()[5-1] == StrategoGameState.NUM_OF_PIECES[5]
@@ -457,64 +460,38 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
             return;
         }
 
-        int closestMiner = -1;
+        BoardSquare closestMiner = null;
         //looking for a miner that can move around
         for (int i = 0; i < StrategoGameState.BOARD_SIZE; i++) {
             for (int j = 0; j < StrategoGameState.BOARD_SIZE; j++) {
                 //found a miner that's movable in at least one direction (could be surrounded on three sides)
-                if (isPlayerPiece(i * 10 + j) && gameState.getBoardSquares()[i][j].getPiece().getRank() == 5
+                if (isPlayerPiece(gameState.getBoardSquares()[i][j]) && gameState.getBoardSquares()[i][j].getPiece().getRank() == 5
                     && lonelySquare(i, j)) {
-                    squareSrc = i * 10 + j;
+                    squareSrc = gameState.getBoardSquares()[i][j];
                 }
                 //check if new squareSrc is closer to bomb than old closestMiner
-                if (closestMiner < 0 || closestSquare(squareSrc, closestMiner, aBomb)) {
+                if (closestMiner == null || closestSquare(squareSrc, closestMiner, aBomb)) {
                     closestMiner = squareSrc;
                 }
             }
         }
         //if conditional is true, the for loops couldn't find a miner that's movable
-        if (squareSrc < 0) {
+        if (squareSrc  == null) {
             return;
         }
 
         squareSrc = closestMiner;
         //at this point squareSrc should have the closest miner to the bomb that can move
 
-        //setting dest to src. if dest == src after trying to move then failed to get closer
-        squareDest = squareSrc;
-        //find which move will get the miner even closer to the bomb (and does not run into their own piece)
-        if (gameState.squareOnBoard(coordToSquareConverter(squareSrc + 10)) && closestSquare(squareSrc + 10, squareSrc, aBomb)
-            && !isPlayerPiece(squareSrc + 10)) {   //move down
-            squareDest = squareSrc + 10;
-        } else if (gameState.squareOnBoard(coordToSquareConverter(squareSrc - 10)) && closestSquare(squareSrc - 10, squareSrc, aBomb)
-                && !isPlayerPiece(squareSrc - 10)) {    //move up
-            squareDest = squareSrc - 10;
-        } else if (gameState.squareOnBoard(coordToSquareConverter(squareSrc + 1)) && closestSquare(squareSrc + 1, squareSrc, aBomb)
-                && !isPlayerPiece(squareSrc + 1)) {  //move right
-            squareDest = squareSrc + 1;
-        } else if (gameState.squareOnBoard(coordToSquareConverter(squareSrc - 1)) && closestSquare(squareSrc - 1, squareSrc, aBomb)
-                && !isPlayerPiece(squareSrc - 1)) {  //move left
-            squareDest = squareSrc - 1;
-        }
-
-        //if trying to move miner into a lake square, move it right or left (whichever is closer to bomb)
-        //this does no checking for any sort of attack so it will probably make bad moves sometimes
-        if (gameState.isLakeSquare(coordToSquareConverter(squareDest))) {
-            if (closestSquare(squareSrc + 1, squareSrc - 1, aBomb)
-                ||  (isPlayerPiece(squareSrc - 1))) {
-                squareDest = squareSrc + 1;
-            } else {
-                squareDest = squareSrc - 1;
-            }
-        }
+        squareDest = getDirToMove(squareSrc, aBomb);
 
         //check if failed to move
-        if (squareSrc == squareDest) {
+        if (squareDest == null) {
             return;
         }
 
         moveSuccessful = true;
-        game.sendAction(new StrategoMoveAction(this, squareSrc, squareDest));
+        game.sendAction(new StrategoMoveAction(this, coordConverter(squareSrc), coordConverter(squareDest)));
     }
 
     /**
@@ -522,9 +499,9 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
      *
      * @param theMarshall   the marshall that was found
      */
-    public void foundReachableMarshall(int theMarshall) {
-        int squareSrc = -1;
-        int squareDest = -1;
+    public void foundReachableMarshall(BoardSquare theMarshall) {
+        BoardSquare squareSrc = null;
+        BoardSquare squareDest = null;
 
         //check if smart comp has any miner to attack bomb
         if (playerNum == 0 && gameState.getBlueGY()[1-1] == StrategoGameState.NUM_OF_PIECES[1]
@@ -535,52 +512,27 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
         //looking for the spy piece
         for (int i = 0; i < StrategoGameState.BOARD_SIZE; i++) {
             for (int j = 0; j < StrategoGameState.BOARD_SIZE; j++) {
-                if (isPlayerPiece(i * 10 + j) && gameState.getBoardSquares()[i][j].getPiece().getRank() == 5
+                if (isPlayerPiece(gameState.getBoardSquares()[i][j]) && gameState.getBoardSquares()[i][j].getPiece().getRank() == 1
                         && lonelySquare(i, j)) {
-                    squareSrc = i * 10 + j;
+                    squareSrc = gameState.getBoardSquares()[i][j];
                 }
             }
         }
-        //if conditional is true, the for loops couldn't find a spy that's movable
-        if (squareSrc < 0) {
+        //if conditional is true, the spy isn't movable
+        if (squareSrc == null) {
             return;
         }
 
         //setting dest to src. if dest == src after trying to move then failed to get closer
-        squareDest = squareSrc;
-        //find which move will get the spy even closer to the marshall (and does not run into any pieces)
-        if (gameState.squareOnBoard(coordToSquareConverter(squareSrc + 10)) && closestSquare(squareSrc + 10, squareSrc, theMarshall)
-            && !gameState.getBoardSquares()[(squareSrc + 10) / 10][(squareSrc + 10) % 10].getOccupied()) {   //move down
-            squareDest = squareSrc + 10;
-        } else if (gameState.squareOnBoard(coordToSquareConverter(squareSrc - 10)) && closestSquare(squareSrc - 10, squareSrc, theMarshall)
-                && !gameState.getBoardSquares()[(squareSrc - 10) / 10][(squareSrc - 10) % 10].getOccupied()) {    //move up
-            squareDest = squareSrc - 10;
-        } else if (gameState.squareOnBoard(coordToSquareConverter(squareSrc + 1)) && closestSquare(squareSrc + 1, squareSrc, theMarshall)
-                && !gameState.getBoardSquares()[(squareSrc + 1) / 10][(squareSrc + 1) % 10].getOccupied()) {  //move right
-            squareDest = squareSrc + 1;
-        } else if (gameState.squareOnBoard(coordToSquareConverter(squareSrc - 1)) && closestSquare(squareSrc - 1, squareSrc, theMarshall)
-                && !gameState.getBoardSquares()[(squareSrc - 1) / 10][(squareSrc - 1) % 10].getOccupied()) {  //move left
-            squareDest = squareSrc - 1;
-        }
-
-        //if trying to move miner into a lake square, move it right or left (whichever is closer to bomb)
-        //this does no checking for any sort of attack so it will probably make bad moves sometimes
-        if (gameState.isLakeSquare(coordToSquareConverter(squareDest))) {
-            if (closestSquare(squareSrc + 1, squareSrc - 1, theMarshall)
-                    || isPlayerPiece(squareSrc - 1)) {
-                squareDest = squareSrc + 1;
-            } else {
-                squareDest = squareSrc - 1;
-            }
-        }
+        squareDest = getDirToMove(squareSrc, theMarshall);
 
         //check if failed to move
-        if (squareSrc == squareDest) {
+        if (squareDest == null) {
             return;
         }
 
         moveSuccessful = true;
-        game.sendAction(new StrategoMoveAction(this, squareSrc, squareDest));
+        game.sendAction(new StrategoMoveAction(this, coordConverter(squareSrc), coordConverter(squareDest)));
     }
 
     /**
@@ -591,9 +543,9 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
      * @param squareDest    coordinates of dest square
      * @return  true if squareSrc1 is closer to squareDest than squareSrc2 or they're equidistant from squareDest
      */
-    private boolean closestSquare(int squareSrc1, int squareSrc2, int squareDest) {
-        double src1ToDestDist = Math.sqrt(Math.pow((squareSrc1 / 10) -  (squareDest / 10), 2) + Math.pow((squareSrc1 % 10) -  (squareDest % 10), 2));
-        double src2ToDestDist = Math.sqrt(Math.pow((squareSrc2 / 10) -  (squareDest / 10), 2) + Math.pow((squareSrc2 % 10) -  (squareDest % 10), 2));
+    private boolean closestSquare(BoardSquare squareSrc1, BoardSquare squareSrc2, BoardSquare squareDest) {
+        double src1ToDestDist = Math.sqrt(Math.pow(squareSrc1.getRow() - squareDest.getRow(), 2) + Math.pow(squareSrc1.getCol() - squareDest.getCol(), 2));
+        double src2ToDestDist = Math.sqrt(Math.pow(squareSrc2.getRow() - squareDest.getRow(), 2) + Math.pow(squareSrc2.getCol() - squareDest.getCol(), 2));
         return (src1ToDestDist <= src2ToDestDist);
     }
 
@@ -616,14 +568,121 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
     }
 
     /**
-     * method to attack enemy scouts
+     * Find direction to move that will get the src square closer to its goal.
+     * Avoids moves that will make the src square run into another piece or a lake square.
+     *
+     * @param squareSrc square to move
+     * @param goal      square that squareSrc wants to reach in least amount of moves
+     * @return  a squareDest that squareSrc will move to on its next move
      */
-    public void scoutAttack(){
+    private BoardSquare getDirToMove(BoardSquare squareSrc, BoardSquare goal) {
+        BoardSquare squareDest;
+        //find a squareDest that'll closer to goal than squareSrc and isn't occupied
+        if (squareSrc.getRow() + 1 < StrategoGameState.BOARD_SIZE && closestSquare(coordToSquareConverter(coordConverter(squareSrc) + 10), squareSrc, goal)
+                && !coordToSquareConverter(coordConverter(squareSrc) + 10).getOccupied()) {   //move down
+            squareDest = coordToSquareConverter(coordConverter(squareSrc) + 10);
+        } else if (squareSrc.getRow() - 1 >= 0 && closestSquare(coordToSquareConverter(coordConverter(squareSrc) - 10), squareSrc, goal)
+                && !coordToSquareConverter(coordConverter(squareSrc) - 10).getOccupied()) {    //move up
+            squareDest = coordToSquareConverter(coordConverter(squareSrc) - 10);
+        } else if (squareSrc.getCol() + 1 < StrategoGameState.BOARD_SIZE && closestSquare(coordToSquareConverter(coordConverter(squareSrc) + 1), squareSrc, goal)
+                && !coordToSquareConverter(coordConverter(squareSrc) + 1).getOccupied()) {  //move right
+            squareDest = coordToSquareConverter(coordConverter(squareSrc) + 1);
+        } else if (squareSrc.getCol() - 1 >= 0 && closestSquare(coordToSquareConverter(coordConverter(squareSrc) - 1), squareSrc, goal)
+                && !coordToSquareConverter(coordConverter(squareSrc) - 1).getOccupied()) {  //move left
+            squareDest = coordToSquareConverter(coordConverter(squareSrc) - 1);
+        } else {
+            return null;
+        }
 
+        //if trying to move squareSrc piece into a lake square, move it right or left (whichever is closer to goal)
+        if (squareDest != null && gameState.isLakeSquare(squareDest)) {
+            //if there are pieces to the left and right of squareSrc, don't move because the only move left is backwards
+            if (!coordToSquareConverter(coordConverter(squareSrc) + 1).getOccupied() && !coordToSquareConverter(coordConverter(squareSrc) - 1).getOccupied()) {
+                return null;
+            }
+            //move right if there is a piece to the left of squareSrc or if it'll get piece on squareSrc closer to the bomb
+            if (coordToSquareConverter(coordConverter(squareSrc) - 1).getOccupied()
+                    || closestSquare(coordToSquareConverter(coordConverter(squareSrc) + 1), coordToSquareConverter(coordConverter(squareSrc) - 1), goal)) {
+                squareDest = coordToSquareConverter(coordConverter(squareSrc) + 1);
+            } else {
+                squareDest = coordToSquareConverter(coordConverter(squareSrc) - 1);
+            }
+        }
+        return squareDest;
     }
 
     /**
-     *
+     * method to attack enemy scouts
+     */
+    public void scoutAttack(){
+        BoardSquare source = null;
+        BoardSquare dest = null;
+        BoardSquare current = null;
+        int sourceCoord;
+        int destCoord;
+
+        //double for loop through board for human player's scouts (rank 2)
+        for (int i = 0; i < StrategoGameState.BOARD_SIZE; i++) {
+            for (int j = 0; j < StrategoGameState.BOARD_SIZE; j++) {
+                current = gameState.getBoardSquares()[i][j];
+
+                //checks first the the current piece is a visible scout owned by the human player
+                if((current.getOccupied()) && (current.getPiece() != null) &&
+                        (current.getPiece().getTeam() == StrategoGameState.BLUE) &&
+                        (current.getPiece().getRank() == 2) && (current.getPiece().getVisible())){
+                    //check for adjacent occupied squares with red pieces, then check visibility of current piece
+
+                    //north
+                    if((i+1 < StrategoGameState.BOARD_SIZE) &&
+                            (gameState.getBoardSquares()[i+1][j].getPiece() != null) &&
+                            (gameState.getBoardSquares()[i+1][j].getPiece().getTeam() == StrategoGameState.RED)){
+                            source = gameState.getBoardSquares()[i+1][j];
+                            dest = current;
+                    }
+
+                    //south
+                    if((i-1 >= 0) &&
+                            (gameState.getBoardSquares()[i-1][j].getPiece() != null) &&
+                            (gameState.getBoardSquares()[i-1][j].getPiece().getTeam() == StrategoGameState.RED)){
+                            source = gameState.getBoardSquares()[i-1][j];
+                            dest = current;
+                    }
+
+                    //east
+                    if((j+1 < StrategoGameState.BOARD_SIZE) &&
+                            (gameState.getBoardSquares()[i][j+1].getPiece() != null) &&
+                            (gameState.getBoardSquares()[i][j+1].getPiece().getTeam() == StrategoGameState.RED)){
+                            source = gameState.getBoardSquares()[i][j+1];
+                            dest = current;
+                    }
+
+                    //west
+                    if((j-1 >= 0) &&
+                            (gameState.getBoardSquares()[i][j-1].getPiece() != null) &&
+                            (gameState.getBoardSquares()[i][j-1].getPiece().getTeam() == StrategoGameState.RED)){
+                            source = gameState.getBoardSquares()[i][j-1];
+                            dest = current;
+                    }
+                }
+            }
+        }
+
+        if(source == null || dest == null){
+            Log.i("scoutAttack", "source or destination square was null");
+            return;
+        }
+
+        //send info
+        sourceCoord = coordConverter(source);
+        destCoord = coordConverter(dest);
+
+        moveSuccessful = true;
+        game.sendAction(new StrategoMoveAction(this, sourceCoord, destCoord));
+    }
+
+    /**
+     * method to attack visible pieces that the computer can capture
+     * specifically only looks at being directly adjacent for now but may add scout usage later
      */
     public void normalAttack() {
         BoardSquare attackWith = null;
@@ -792,6 +851,7 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
 
     /**
      * default movement action (used if no other type of movment can be done)
+     * TODO: can occasionally cause the ai to hang if it can't find a move to make
      */
     public void defaultMove() {
         //find the furthest move piece towards the other player, (down the board if computer player is only player 2)
@@ -816,8 +876,9 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
                 }
             }
         }
-
         //if we cant find a piece to move forward, then we gotta move left or right with a piece
+        boolean moveLeft = false;
+        boolean moveRight = false;
         //if can move left or right, set that boardSquare to a variable
         //if you cant move forward, then find one that can move left or right
         for (int i = 0; i < StrategoGameState.BOARD_SIZE; i++) {
@@ -868,7 +929,6 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
 
     /**
      * method that converts a given board square into the integer coordinate needed to create a move action
-     * TODO: test if this works
      * @param square the board square to get the coordinate of
      * @return the coordinate of the board square
      */
@@ -903,12 +963,8 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
      * @param square    square to check
      * @return  true if the square's gamepiece is occupied by an opp piece
      */
-    private boolean isOppPiece(int square) {
-        if (gameState.getBoardSquares()[square / 10][square % 10].getPiece() != null
-                && gameState.getBoardSquares()[square / 10][square % 10].getPiece().getTeam() != playerNum) {
-            return true;
-        }
-        return false;
+    private boolean isOppPiece(BoardSquare square) {
+        return (square.getPiece() != null && square.getPiece().getTeam() != playerNum);
     }
 
     /**
@@ -917,11 +973,7 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
      * @param square    square to check
      * @return  true if the square's gamepiece is occupied by a comp's piece
      */
-    private boolean isPlayerPiece(int square) {
-        if (gameState.getBoardSquares()[square / 10][square % 10].getPiece() != null
-                && gameState.getBoardSquares()[square / 10][square % 10].getPiece().getTeam() == playerNum) {
-            return true;
-        }
-        return false;
+    private boolean isPlayerPiece(BoardSquare square) {
+        return (square.getPiece() != null && square.getPiece().getTeam() == playerNum);
     }
 }

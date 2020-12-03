@@ -172,12 +172,7 @@ public class StrategoGameState extends GameState {
      * @return true is square is a lake square
      */
     public boolean isLakeSquare(BoardSquare square) {
-      for (int[] coord : LAKE_SQUARES) {
-            if (square.getRow() == coord[0] && square.getCol() == coord[1]) {
-                return true;
-            }
-        }
-        return false;
+      return (square.getOccupied() && square.getPiece() == null);
     }
 
     /*
