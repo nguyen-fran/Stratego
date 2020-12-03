@@ -814,75 +814,73 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
     public void defaultMove() {
         //find the furthest move piece towards the other player, (down the board if computer player is only player 2)
         BoardSquare moveThisOne = null;
-        BoardSquare moveThisIfRandomIsBad = null;
-        boolean moveForward = false;
+        int step;
+        //for comp as player 1 functionality
+        if (playerNum == StrategoGameState.BLUE) {
+            //default move up a row
+            step = -1;
+        } else {
+            //default move down a row
+            step = 1;
+        }
 
         //loop through the board and find the piece for this player that can move the most forward
         for (int i = 0; i < StrategoGameState.BOARD_SIZE; i++) {
             for (int j = 0; j < StrategoGameState.BOARD_SIZE; j++) {
-                if ((i + 1 < StrategoGameState.BOARD_SIZE) &&
-                        (!gameState.getBoardSquares()[i+1][j].getOccupied()) &&
-                        (gameState.getBoardSquares()[i][j].getPiece() != null) &&
-                        (gameState.getBoardSquares()[i][j].getPiece().getRank() != 0) &&
-                        (gameState.getBoardSquares()[i][j].getPiece().getRank() != 11) &&
-                        (gameState.getBoardSquares()[i][j].getPiece().getTeam() == playerNum)){
-                            if ( gameState.getBoardSquares()[i+1][j] != null ) {
-                                moveSuccessful = true;
-                                moveThisOne = gameState.getBoardSquares()[i][j];
-                                game.sendAction(new StrategoMoveAction(this, coordConverter(moveThisOne), coordConverter(gameState.getBoardSquares()[moveThisOne.getRow() + 1][moveThisOne.getCol()])));
-                            }
+                if ((isCompPiece(gameState.getBoardSquares()[i][j])) &&
+                        (!isBombOrFlag(gameState.getBoardSquares()[i][j])) &&
+                        (i + step < StrategoGameState.BOARD_SIZE && i + step >= 0) &&
+                        (!gameState.getBoardSquares()[i+step][j].getOccupied())){
+                    moveSuccessful = true;
+                    moveThisOne = gameState.getBoardSquares()[i][j];
+                    game.sendAction(new StrategoMoveAction(this, coordConverter(moveThisOne), coordConverter(gameState.getBoardSquares()[moveThisOne.getRow() + step][moveThisOne.getCol()])));
+                    return;
                 }
             }
         }
-        //if we cant find a piece to move forward, then we gotta move left or right with a piece
-        boolean moveLeft = false;
-        boolean moveRight = false;
+
+        //if we cant find a piece to move forward, then we gotta move left or right
         //if can move left or right, set that boardSquare to a variable
-        //if you cant move forward, then find one that can move left or right
         for (int i = 0; i < StrategoGameState.BOARD_SIZE; i++) {
             for (int j = 0; j < StrategoGameState.BOARD_SIZE; j++) {
-                if ((j + 1 < StrategoGameState.BOARD_SIZE) &&
-                        (!gameState.getBoardSquares()[i][j+1].getOccupied()) &&
-                        (gameState.getBoardSquares()[i][j].getPiece() != null) &&
-                        (gameState.getBoardSquares()[i][j].getPiece().getRank() != 0) &&
-                        (gameState.getBoardSquares()[i][j].getPiece().getRank() != 11) &&
-                        (gameState.getBoardSquares()[i][j].getPiece().getTeam() == playerNum)){
-                    if ( gameState.getBoardSquares()[i][j+1] != null ) {
+                if (isCompPiece(gameState.getBoardSquares()[i][j]) && !isBombOrFlag(gameState.getBoardSquares()[i][j])) {
+                    if ((j + 1 < StrategoGameState.BOARD_SIZE) && (!gameState.getBoardSquares()[i][j + 1].getOccupied())) {
                         moveSuccessful = true;
-                        game.sendAction(new StrategoMoveAction(this, coordConverter(gameState.getBoardSquares()[i][j]), coordConverter(gameState.getBoardSquares()[i][j+1])));
-                    }
-                } else if ((j - 1 >= 0) &&
-                        (!gameState.getBoardSquares()[i][j-1].getOccupied()) &&
-                        (gameState.getBoardSquares()[i][j].getPiece() != null) &&
-                        (gameState.getBoardSquares()[i][j].getPiece().getRank() != 0) &&
-                        (gameState.getBoardSquares()[i][j].getPiece().getRank() != 11) &&
-                        (gameState.getBoardSquares()[i][j].getPiece().getTeam() == playerNum)){
-                    if ( gameState.getBoardSquares()[i][j-1] != null ) {
+                        game.sendAction(new StrategoMoveAction(this, coordConverter(gameState.getBoardSquares()[i][j]), coordConverter(gameState.getBoardSquares()[i][j + 1])));
+                        return;
+                    } else if ((j - 1 >= 0) && (!gameState.getBoardSquares()[i][j - 1].getOccupied())) {
                         moveSuccessful = true;
-                        game.sendAction(new StrategoMoveAction(this, coordConverter(gameState.getBoardSquares()[i][j]), coordConverter(gameState.getBoardSquares()[i][j-1])));
+                        game.sendAction(new StrategoMoveAction(this, coordConverter(gameState.getBoardSquares()[i][j]), coordConverter(gameState.getBoardSquares()[i][j - 1])));
+                        return;
                     }
                 }
             }
         }
 
-        //if cant move forwards or side to side, then backwards? idk if this will ever be reached but yea
+        //if cant move forward or sideways, then backwards? idk if this will ever be reached but yeah
         for (int i = 0; i < StrategoGameState.BOARD_SIZE; i++) {
             for (int j = 0; j < StrategoGameState.BOARD_SIZE; j++) {
-                if ((i - 1 >= 0) &&
-                        (!gameState.getBoardSquares()[i-1][j].getOccupied()) &&
-                        (gameState.getBoardSquares()[i][j].getPiece() != null) &&
-                        (gameState.getBoardSquares()[i][j].getPiece().getRank() != 0) &&
-                        (gameState.getBoardSquares()[i][j].getPiece().getRank() != 11) &&
-                        (gameState.getBoardSquares()[i][j].getPiece().getTeam() == playerNum)){
-                    if ( gameState.getBoardSquares()[i-1][j] != null ) {
-                        moveSuccessful = true;
-                        moveThisOne = gameState.getBoardSquares()[i][j];
-                        game.sendAction(new StrategoMoveAction(this, coordConverter(moveThisOne), coordConverter(gameState.getBoardSquares()[moveThisOne.getRow() - 1][moveThisOne.getCol()])));
-                    }
+                if ((isCompPiece(gameState.getBoardSquares()[i][j])) &&
+                        (!isBombOrFlag(gameState.getBoardSquares()[i][j])) &&
+                        (i - step < StrategoGameState.BOARD_SIZE && i - step >= 0) &&
+                        (!gameState.getBoardSquares()[i + step][j].getOccupied())){
+                    moveSuccessful = true;
+                    moveThisOne = gameState.getBoardSquares()[i][j];
+                    game.sendAction(new StrategoMoveAction(this, coordConverter(moveThisOne), coordConverter(gameState.getBoardSquares()[moveThisOne.getRow() - step][moveThisOne.getCol()])));
+                    return;
                 }
             }
         }
+    }
 
+    /**
+     * checks if a square has a bomb or flag on it
+     *
+     * @param square    the boardsquare to check
+     * @return  true if square has either a bomb or a flag occupying it
+     */
+    private boolean isBombOrFlag(BoardSquare square) {
+        return (square.getPiece() != null && (square.getPiece().getRank() == GamePiece.BOMB || square.getPiece().getRank() == GamePiece.FLAG));
     }
 
     /**
