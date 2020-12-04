@@ -1,5 +1,6 @@
 package edu.up.cs301.Stratego;
 
+import android.se.omapi.SEService;
 import android.util.Log;
 
 import java.util.Random;
@@ -18,6 +19,42 @@ import edu.up.cs301.game.GameFramework.infoMessage.GameInfo;
  */
 public class StrategoSmartComputerPlayer extends GameComputerPlayer {
 
+    /**
+     * External Citation
+     * Date: 3 December 2020
+     * Problem: Needed professional setups for default smart ai setups
+     *
+     * Resource: https://www.ultraboardgames.com/stratego/setups.php
+     * Solution: Used setups on the site
+     */
+    //Vincent Deboer first setup on the site
+    public static final int[][] SETUP_1 = {{6,2,2,5,2,6,3,10,2,6},
+                                            {5,4,11,1,9,2,7,7,8,2},
+                                            {4,11,4,7,8,5,11,5,6,4},
+                                            {2,3,11,2,3,11,0,11,3,3}};
+    //Vincent Deboer third setup on the site
+    public static final int[][] SETUP_2 = {{6,2,4,9,6,2,2,10,2,6},
+                                            {5,2,7,5,11,2,7,7,8,3},
+                                            {4,8,1,3,11,2,6,5,5,11},
+                                            {3,11,4,11,4,2,3,3,11,0}};
+    //Vincent Deboer fourth setup on the site
+    public static final int[][] SETUP_3 = {{2,8,5,2,6,2,9,3,2,6},
+                                            {10,2,7,8,2,6,11,5,11,5},
+                                            {6,4,7,1,7,5,11,4,11,4},
+                                            {3,2,3,3,4,11,0,11,3,2}};
+    //Philip Atzemoglou setup
+    public static final int[][] SETUP_4 = {{10,7,3,4,11,11,4,3,7,9},
+                                            {7,2,8,2,6,5,2,8,2,1},
+                                            {11,6,2,5,4,11,6,2,3,2},
+                                            {0,11,5,3,11,4,3,6,2,5}};
+    //Mike Rowles Bomb Barrier
+    public static final int[][] SETUP_5 = {{11,9,10,2,4,5,4,5,5,11},
+                                            {8,1,11,6,4,2,2,11,5,6},
+                                            {11,7,3,3,8,7,2,7,4,2},
+                                            {0,11,3,3,3,6,2,2,6,2}};
+
+
+    private boolean madeSetup = false;
     public boolean shouldDefend = false;
     private StrategoGameState gameState;
     private boolean moveSuccessful;
@@ -34,6 +71,7 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
     /**
      * method to determine what move the computer should take
      * sends either move or swap actions
+     *
      * @param info current state of the game
      */
     @Override
@@ -56,7 +94,7 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
         if(gameState.getGamePhase()){
             //going down the list of different types of moves to make until one actually works
             //TODO: find more efficient way to call these/check/structure this
-            
+
             flagDefend();
             if(moveSuccessful){
                 Log.i("smart ai movement", "defended computer player's flag");
@@ -111,22 +149,39 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
                 Log.i("smart ai movement", "could not make move. something went wrong");
             }
 
-        }else{
-            //TODO: add initial board setup/presets
+        } else if (!madeSetup) {
+            //making swaps to copy one of the default setups
+            setupCompBoard();
 
             //make between 1 and 7 swaps between random pieces on the board
-            //may need to add error checking
             Random rand = new Random();
             int swapNum = rand.nextInt(7) + 1;
             int swap1;
             int swap2;
+            //setting range
+            int upperBounds = 100;
+            int lowerBounds = 60;
+            if (playerNum == StrategoGameState.RED) {
+                upperBounds = 40;
+                lowerBounds = 0;
+            }
 
-            for(int i = 0; i < swapNum; i++){
-                swap1 = rand.nextInt(100);
-                swap2 = rand.nextInt(100);
+            for (int i = 0; i < swapNum; i++) {
+                //don't swap the flag
+                do {
+                    swap1 = rand.nextInt(upperBounds - lowerBounds) + lowerBounds;
+                    swap2 = rand.nextInt(upperBounds - lowerBounds) + lowerBounds;
+                } while (coordToSquareConverter(swap1).getPiece().getRank() == GamePiece.FLAG
+                        || coordToSquareConverter(swap2).getPiece().getRank() == GamePiece.FLAG);
                 game.sendAction(new StrategoSwapAction(this, swap1, swap2));
                 Log.i("smart ai setup", "swapped " + swap1 + " and " + swap2);
             }
+            madeSetup = true;
+            //a dummy swap after comp finishes its setup, this is so the human can make swaps if it wants
+            game.sendAction(new StrategoSwapAction(this, -1, -1));
+        } else {
+            game.sendAction(new StrategoSwapAction(this, -1, -1));
+            Log.i("smart ai", "still in setup phase but smart ai already made setup");
         }
     }
 
@@ -884,6 +939,7 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
     public void lastResortMove() {
         BoardSquare squareSrc = null;
         BoardSquare squareDest = null;
+        //find any comp piece that's not a bomb or flag
         for (int i = 0; i < StrategoGameState.BOARD_SIZE; i++) {
             for (int j = 0; j < StrategoGameState.BOARD_SIZE; j++) {
                 if (isCompPiece(gameState.getBoardSquares()[i][j]) && !isBombOrFlag(gameState.getBoardSquares()[i][j])) {
@@ -892,6 +948,7 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
             }
         }
 
+        //move it in a random direction
         Random rand = new Random();
         int randDir = rand.nextInt(4);
         switch (randDir) {
@@ -921,6 +978,125 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
 
         moveSuccessful = true;
         game.sendAction(new StrategoMoveAction(this, coordConverter(squareSrc), coordConverter(squareDest)));
+    }
+
+    /**
+     * chooses one of the class's static default setups and does a series of swaps so that
+     * comp's side on the board is a copy of that setup
+     */
+    public void setupCompBoard() {
+        //randomly choose one of the five default setups to match
+        int[][] chosenSetup = new int[SETUP_1.length][SETUP_1[0].length];
+        chooseRandSetup(chosenSetup);
+        //set the starting and ending rows do swaps in, based on if comp is player 1 or 2
+        int rowStart;
+        int rowEnd;
+        if (playerNum == StrategoGameState.BLUE) {
+            rowStart = 6;
+            rowEnd = StrategoGameState.BOARD_SIZE;
+        } else {
+            //reverse the array because the arrangement is in player 1's perspective on this app
+            reverse2DArray(chosenSetup);
+            rowStart = 0;
+            rowEnd = 4;
+        }
+
+        //this faux sorting algorithm works similar to a selection but rather than
+        //iterating to find the least or greatest value, it looks for an exact value
+        boolean madeSwap;
+        GamePiece tempPiece;
+        for (int i = rowStart; i < rowEnd; i++) {
+            for (int j = 0; j < StrategoGameState.BOARD_SIZE; j++) {
+                //leave if at the last indices of the setup arrays
+                if (i >= rowEnd - 1 && j >= StrategoGameState.BOARD_SIZE - 1) {
+                    break;
+                }
+                //if the current piece at (i, j) is not the right rank, then find the right one and do a swap
+                if (gameState.getBoardSquares()[i][j].getPiece().getRank() != chosenSetup[i - rowStart][j]) {
+                    //k and l set where to start the search for the right piece
+                    int k = i;
+                    int l = j + 1;
+                    //if at the end of a row, move on to the next row before starting the search
+                    if (j >= StrategoGameState.BOARD_SIZE - 1) {
+                        k = i + 1;
+                        l = 0;
+                    }
+                    madeSwap = false;
+                    for (int m = k; m < rowEnd; m++) {
+                        //if the search has moved on to the next row, the old 'l' value is no longer the column to start the search at
+                        if (m > k) l = 0;
+                        for (int n = l; n < StrategoGameState.BOARD_SIZE; n++) {
+                            if (gameState.getBoardSquares()[m][n].getPiece().getRank() == chosenSetup[i - rowStart][j]) {
+                                //update local copy of gamestate
+                                tempPiece = gameState.getBoardSquares()[i][j].getPiece();
+                                gameState.getBoardSquares()[i][j].setPiece(gameState.getBoardSquares()[m][n].getPiece());
+                                gameState.getBoardSquares()[m][n].setPiece(tempPiece);
+                                //update shared copy of gamestate
+                                game.sendAction(new StrategoSwapAction(this, coordConverter(gameState.getBoardSquares()[i][j]), coordConverter(gameState.getBoardSquares()[m][n])));
+                                madeSwap = true;
+                                break;
+                            }
+                        }
+                        if (madeSwap) break;
+                    }
+                }
+            }
+        }
+    }
+
+    private void chooseRandSetup(int[][] setup) {
+        Random rand = new Random();
+        int randInt = rand.nextInt(5);
+        int[][] randDefault;
+        switch (randInt) {
+            case 0:
+                randDefault = SETUP_1;
+                break;
+            case 1:
+                randDefault = SETUP_2;
+                break;
+            case 2:
+                randDefault = SETUP_3;
+                break;
+            case 3:
+                randDefault = SETUP_4;
+                break;
+            case 4:
+                randDefault = SETUP_5;
+                break;
+            default:
+                return;
+        }
+
+        for (int i = 0; i < setup.length; i++) {
+            for (int j = 0; j < setup[0].length; j++) {
+                setup[i][j] = randDefault[i][j];
+            }
+        }
+    }
+
+    /**
+     * reverses a 2d array
+     *
+     * @param arr the 2d array to reverse
+     */
+    private void reverse2DArray(int[][] arr) {
+        int temp;
+        //flip arr along vertical axis
+        for (int i = 0; i < arr.length; i++ ) {
+            for (int j = 0; j < arr[0].length / 2; j++) {
+                temp = arr[i][j];
+                arr[i][j] = arr[i][(arr[0].length - 1) - j];
+                arr[i][(arr[0].length - 1) - j] = temp;
+            }
+        }
+        int[] tempArr;
+        //flip arr along horizontal axis
+        for (int i = 0; i < arr.length / 2; i++) {
+            tempArr = arr[i];
+            arr[i] = arr[(arr.length - 1) - i];
+            arr[(arr.length - 1) - i] = tempArr;
+        }
     }
 
     /**
@@ -981,5 +1157,9 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
      */
     private boolean isCompPiece(BoardSquare square) {
         return (square.getPiece() != null && square.getPiece().getTeam() == playerNum);
+    }
+
+    public boolean getMadeSetup() {
+        return this.madeSetup;
     }
 }

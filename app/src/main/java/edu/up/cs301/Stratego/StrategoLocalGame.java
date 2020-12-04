@@ -59,6 +59,22 @@ public class StrategoLocalGame extends LocalGame {
                     gameState.setCurrPlayerIndex(0);
                 }
             }
+            //allow the smart ai to make swaps
+            if (players[0] instanceof StrategoSmartComputerPlayer) {
+                gameState.setCurrPlayerIndex(0);
+            }
+            if (players[1] instanceof StrategoSmartComputerPlayer) {
+                gameState.setCurrPlayerIndex(1);
+            }
+            //if the smart ai is done with making its setup, let the human do their swaps
+            if ((action.getPlayer() instanceof StrategoSmartComputerPlayer)
+                && ((StrategoSmartComputerPlayer) action.getPlayer()).getMadeSetup()) {
+                if (gameState.getCurrPlayerIndex() == 0) {
+                    gameState.setCurrPlayerIndex(1);
+                } else {
+                    gameState.setCurrPlayerIndex(0);
+                }
+            }
             return swap((StrategoSwapAction) action);
         } else if(action instanceof StrategoStartAction){
             return (begin());
@@ -251,7 +267,10 @@ public class StrategoLocalGame extends LocalGame {
      */
     public boolean swap(StrategoSwapAction action) {
         //correct phase and turn checking
-        if (gameState.getGamePhase() || !canMove(getPlayerIdx(action.getPlayer()))) {
+//        if (gameState.getGamePhase() || !canMove(getPlayerIdx(action.getPlayer()))) {
+//            return false;
+//        }
+        if (gameState.getGamePhase()) {
             return false;
         }
         //bounds checking
