@@ -127,83 +127,7 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
             }
         }
     }
-
-    /**
-     * checks squares in a straight line from a given board square in all four directions
-     * checking for computer player's pieces or the end of the board, whichever comes first
-     * decides what to return by prioritising the first scout it finds
-     * otherwise just the first occupied board square it finds
-     * @param square board square we are checking around
-     * @return square with piece that we want to move on it
-     */
-    public BoardSquare straightLineChecker(BoardSquare square){
-        BoardSquare north = null;
-        BoardSquare south = null;
-        BoardSquare east = null;
-        BoardSquare west = null;
-
-        //north (moving up on board, row - 1 every time, col is constant)
-        for(int i = square.getRow(); i >= 0; i--){
-            if(gameState.getBoardSquares()[i][square.getCol()].getOccupied() &&
-                    (gameState.getBoardSquares()[i][square.getCol()].getPiece().getTeam() == StrategoGameState.RED)){
-                north = gameState.getBoardSquares()[i][square.getCol()];
-                if(north.getPiece().getRank() == 2){
-                    return north;
-                }
-                break;
-            }
-        }
-
-        //south (moving down on board, row + 1 every time, col is constant)
-        for(int i = square.getRow(); i < StrategoGameState.BOARD_SIZE; i++){
-            if(gameState.getBoardSquares()[i][square.getCol()].getOccupied() &&
-                    (gameState.getBoardSquares()[i][square.getCol()].getPiece().getTeam() == StrategoGameState.RED)){
-                south = gameState.getBoardSquares()[i][square.getCol()];
-                if(south.getPiece().getRank() == 2){
-                    return south;
-                }
-                break;
-            }
-        }
-
-        //east (moving right on board, col + 1 every time, row is constant)
-        for(int i = square.getCol(); i < StrategoGameState.BOARD_SIZE; i++){
-            if(gameState.getBoardSquares()[square.getRow()][i].getOccupied() &&
-                    (gameState.getBoardSquares()[square.getRow()][i].getPiece().getTeam() == StrategoGameState.RED)){
-                east = gameState.getBoardSquares()[square.getRow()][i];
-                if(east.getPiece().getRank() == 2){
-                    return east;
-                }
-                break;
-            }
-        }
-
-        //west (moving left on board, col - 1 every time, row is constant)
-        for(int i = square.getCol(); i >= 0; i--){
-            if(gameState.getBoardSquares()[square.getRow()][i].getOccupied() &&
-                    (gameState.getBoardSquares()[square.getRow()][i].getPiece().getTeam() == StrategoGameState.RED)){
-                west = gameState.getBoardSquares()[square.getRow()][i];
-                if(west.getPiece().getRank() == 2){
-                    return west;
-                }
-                break;
-            }
-        }
-
-        //if none of the pieces found are scouts, just return the first one that is occupied
-        if(north != null){
-            return north;
-        }else if(south != null){
-            return south;
-        }else if(east != null){
-            return east;
-        }else if(west != null){
-            return west;
-        }else{
-            return null;
-        }
-    }
-
+    
     /**
      * checks if computer player's flag is reachable by human player's pieces, moves to defend the flag if possible
      * similar logic to flagAttack for the checks, just with teams swapped around
@@ -721,7 +645,8 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
                         (!gameState.getBoardSquares()[i+step][j].getOccupied())){
                     moveSuccessful = true;
                     moveThisOne = gameState.getBoardSquares()[i][j];
-                    game.sendAction(new StrategoMoveAction(this, coordConverter(moveThisOne), coordConverter(gameState.getBoardSquares()[moveThisOne.getRow() + step][moveThisOne.getCol()])));
+                    game.sendAction(new StrategoMoveAction(this, coordConverter(moveThisOne),
+                            coordConverter(gameState.getBoardSquares()[moveThisOne.getRow() + step][moveThisOne.getCol()])));
                     return;
                 }
             }
