@@ -29,7 +29,6 @@
             android:id="@+id/blueGYName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Player 1 Graveyard"
             android:textSize="18sp" />
 
         <LinearLayout
@@ -495,17 +494,20 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="5"
+        android:layout_height="match_parent"
+        android:layout_weight="10"
         android:gravity="center"
         android:orientation="vertical">
 
         <androidx.gridlayout.widget.GridLayout
             android:id="@+id/gameBoardGrid"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="10"
             app:columnCount="10"
-            app:rowCount="10" />
+            app:rowCount="10" >
+
+        </androidx.gridlayout.widget.GridLayout>
 
     </LinearLayout>
 
@@ -514,6 +516,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="30dp"
+        android:layout_weight="0"
         android:gravity="end"
         android:text="Player's turn"
         android:textSize="30sp" />
@@ -521,7 +524,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="0"
         android:orientation="horizontal">
 
         <Button

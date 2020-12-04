@@ -51,6 +51,12 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
         * should be changed to true before any move sending happens, so we can know whether to call
         * another helper method to attempt another type of move, or to return (reset to false every turn)*/
         moveSuccessful = false;
+        
+        try{
+            Thread.sleep(2000);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
 
         //determining if smart computer player should make moves or set up the board depending on game phase
         if(gameState.getGamePhase()){

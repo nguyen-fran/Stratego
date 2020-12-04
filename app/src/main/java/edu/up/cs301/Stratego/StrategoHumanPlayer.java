@@ -36,6 +36,8 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
     private ViewGroup gameBoardGrid;
     private ViewGroup blueGY;
     private ViewGroup redGY;
+    private TextView blueGYName;
+    private TextView redGYName;
 
     private int firstClick = -1;    //will hold id of first button clicked for move or swap action
     private int secondClick = -1;   //will hold id of second button clicked for move or swap action
@@ -280,6 +282,8 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
 
         this.blueGY = activity.findViewById(R.id.blueGY);
         this.redGY = activity.findViewById(R.id.redGY);
+        this.blueGYName = activity.findViewById(R.id.blueGYName);
+        this.redGYName = activity.findViewById(R.id.redGYName);
         this.turnIndicator = activity.findViewById(R.id.turnIndicator);
 
         this.begin = myActivity.findViewById(R.id.beginButton);
@@ -294,6 +298,17 @@ public class StrategoHumanPlayer extends GameHumanPlayer implements OnClickListe
         this.quit = myActivity.findViewById(R.id.quitButton);
         this.quit.setOnClickListener(this);
 
+    }
+
+    /**
+     * processes inputted names and sets for the graveyard
+     *
+     * no params
+     */
+    @Override
+    protected void initAfterReady(){
+        this.blueGYName.setText(allPlayerNames[0] + " Graveyard");
+        this.redGYName.setText(allPlayerNames[1] + " Graveyard");
     }
 
     /**
