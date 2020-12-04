@@ -678,7 +678,7 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
             double total = (double) totalPieces;
             double chanceOfWinning = (weWin / total) * 100;
             Log.i("hiddenPieceAttack", "chance of winning: " + chanceOfWinning);
-            if (chanceOfWinning >= 6) {
+            if (chanceOfWinning >= 60) {
                 moveSuccessful = true;
                 Log.i("hiddenPieceAttack", "trying to move: " + attackingSquare.getRow() + ", " +
                         attackingSquare.getCol() + " to: " + defendingSquare.getRow() + ", " + defendingSquare.getCol());
