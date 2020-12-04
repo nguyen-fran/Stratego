@@ -11,17 +11,23 @@ import edu.up.cs301.game.GameFramework.gameConfiguration.GamePlayerType;
 /**
  * Main activity class
  *
- * Current State of the Game as of Beta Release (11/25/20)
- * rule of play and board setup are implemented (human player can swap pieces around at the start of
- * the game, and make moves during the main gameplay phase)
- * game can be played with human and computer player where either the computer->red and human->blue or the other way around
+ * Current State of the Game as of Final Release (12/4/20)
+ * Rule of play and board setup are implemented (human player can swap pieces around at the start of
+ * the game, and make moves during the main gameplay phase).
+ * Game can be played with human and computer player or smart computer player and the game
+ * works regardless of who is player 1 or 2.
  * UI is fully implemented (can call up a rules popup or reset/quit the game), settings button was
- * cut due to settings (like for the player names/ai settings) being handled in the game framework menus instead
+ * cut due to settings (like for the player names/ai settings) being handled in the game framework menus instead.
  *
  * Known Issues: updated (12/4/20)
- * - smart AI will only pick a premade board setup if it is player 2
- * - sizing on different resolution is messed up
- * - the gui will not work for certain issues if the human player is not player 1
+ * - (this is lack of functionality and not a bug but, will not fix) smart AI will only pick a premade board setup if it is player 2
+ *      - implementing the functionality when smart ai is player 1 will require a lot
+ *        of fiddling with the gamestate's currPlayerIndex in local game's makeMove
+ *        that could make it unable to work if smart ai is player 2
+ * - (will not fix) the buttons that make up the board don't fit on-screen for all screen sizes
+ *      - tried moving around components and putting them in different sub-components
+ *        and tried playing with the weights of everything but it seems that the
+ *        images are dominating the sizing
  *
  * @author Gabby Marshak
  * @author Francisco Nguyen
