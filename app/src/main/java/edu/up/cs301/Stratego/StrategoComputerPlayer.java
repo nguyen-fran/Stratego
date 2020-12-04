@@ -55,25 +55,25 @@ public class StrategoComputerPlayer extends GameComputerPlayer {
         switch (randDir) {
             case 0: //move left
                 //only move left if not on the left side of the board
-                if (squareSrc % 10 != 0) {
+                if ((squareSrc % 10) - 1 >= 0) {
                     squareDest -= 1;
                 }
                 break;
             case 1: //move right
                 //only move right if not on the right side of the board
-                if (squareSrc % 10 != 9) {
+                if ((squareSrc % 10) + 1 < StrategoGameState.BOARD_SIZE) {
                     squareDest += 1;
                 }
                 break;
             case 2: //move up
                 //only move up if not at the top of the board
-                if (squareSrc / 10 != 0) {
+                if ((squareSrc / 10 ) - 1 >= 0) {
                     squareDest -= 10;
                 }
                 break;
             case 3: //move down
                 //only move down if not at the bottom of the board
-                if (squareSrc / 10 != 9) {
+                if ((squareSrc / 10) + 1 < StrategoGameState.BOARD_SIZE) {
                     squareDest += 10;
                 }
                 break;

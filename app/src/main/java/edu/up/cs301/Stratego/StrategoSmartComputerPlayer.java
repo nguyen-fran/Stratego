@@ -284,8 +284,8 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
         for (int i = 0; i < StrategoGameState.BOARD_SIZE; i++) {
             for (int j = 0; j < StrategoGameState.BOARD_SIZE; j++) {
                 //look for opp's piece that is visible
-                if ((gameState.getBoardSquares()[i][j].getPiece().getVisible())
-                    && isHumanPiece(gameState.getBoardSquares()[i][j])) {
+                if (isHumanPiece(gameState.getBoardSquares()[i][j])
+                    && (gameState.getBoardSquares()[i][j].getPiece().getVisible())) {
                     if (gameState.getBoardSquares()[i][j].getPiece().getRank() == GamePiece.BOMB && lonelySquare(i, j)) { //found a movable bomb
                         reachableBomb = true;
                         aBomb = gameState.getBoardSquares()[i][j];
@@ -600,7 +600,6 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
         }
 
         //setting up doubles/ints for math later
-        int totalDead = 0;
         int weCanWin = 0;
         int totalPieces = 40;
 
@@ -652,10 +651,9 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
                 //number of pieces alive of rank i + 1
                 weCanWin += StrategoGameState.NUM_OF_PIECES[i + 1] - oppGY[i];
             }
-            totalDead += oppGY[i];
+            totalPieces -= oppGY[i];
         }
 
-        totalPieces -= totalDead;
         Log.i("total pieces", "" + totalPieces);
 
         //doing math for winning/losing

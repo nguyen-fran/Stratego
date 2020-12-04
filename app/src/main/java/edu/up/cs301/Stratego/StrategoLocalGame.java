@@ -50,8 +50,8 @@ public class StrategoLocalGame extends LocalGame {
                 return true;
             }
             return false;
-        } else if (action instanceof StrategoSwapAction){
-            //change curr player if comp tries to swap, this avoid app freezing if comp is first player
+        } else if (action instanceof StrategoSwapAction) {
+            //change curr player if dumb ai tries to swap, this avoid app freezing if comp is first player
             if (action.getPlayer() instanceof StrategoComputerPlayer) {
                 if (gameState.getCurrPlayerIndex() == 0) {
                     gameState.setCurrPlayerIndex(1);
@@ -66,7 +66,7 @@ public class StrategoLocalGame extends LocalGame {
             if (players[1] instanceof StrategoSmartComputerPlayer) {
                 gameState.setCurrPlayerIndex(1);
             }
-            //if the smart ai is done with making its setup, let the human do their swaps
+            //if the smart ai is done making it's setup, let the human do their swaps
             if ((action.getPlayer() instanceof StrategoSmartComputerPlayer)
                 && ((StrategoSmartComputerPlayer) action.getPlayer()).getMadeSetup()) {
                 if (gameState.getCurrPlayerIndex() == 0) {
@@ -76,7 +76,7 @@ public class StrategoLocalGame extends LocalGame {
                 }
             }
             return swap((StrategoSwapAction) action);
-        } else if(action instanceof StrategoStartAction){
+        } else if (action instanceof StrategoStartAction) {
             return (begin());
         }
         return false;
