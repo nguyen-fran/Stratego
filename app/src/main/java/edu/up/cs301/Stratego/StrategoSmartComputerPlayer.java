@@ -592,94 +592,76 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
     //NEEDS TO BE IMPLEMENTED SOMEWHERE
     public void hiddenPieceAttack() {
         //getting the graveyard
-        int[] blueGY = gameState.getBlueGY();
-        int[] pieceNumbers = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+        int[] oppGY;
+        if (playerNum == StrategoGameState.BLUE) {
+            oppGY = gameState.getRedGY();
+        } else {
+            oppGY = gameState.getBlueGY();
+        }
 
         //setting up doubles/ints for math later
         int totalDead = 0;
         int weCanWin = 0;
-        int weWillLose = 0;
         int totalPieces = 40;
 
         //getting square we want to attack with
         BoardSquare defendingSquare = null;
         BoardSquare attackingSquare = null;
-        for ( int j = 9; j >= 0; j-- ) {
-            for ( int k = 9; k >= 0; k-- ) {
-                if ( j - 1 >= 0 ) {
-                    if (gameState.getBoardSquares()[j - 1][k].getPiece() != null &&  gameState.getBoardSquares()[j][k].getPiece() != null) {
-
-                        if (gameState.getBoardSquares()[j - 1][k].getPiece().getTeam() != playerNum &&
-                                !gameState.getBoardSquares()[j - 1][k].getPiece().getVisible() &&
-                                gameState.getBoardSquares()[j][k].getPiece().getTeam() == playerNum ) {
-                            defendingSquare = gameState.getBoardSquares()[j - 1][k];
-                            attackingSquare = gameState.getBoardSquares()[j][k];
-                        }
-
+        for ( int j = StrategoGameState.BOARD_SIZE - 1; j >= 0; j-- ) {
+            for ( int k = StrategoGameState.BOARD_SIZE - 1; k >= 0; k-- ) {
+                if (isCompPiece(gameState.getBoardSquares()[j][k]) &&
+                        !isBombOrFlag(gameState.getBoardSquares()[j][k])) {
+                    if (j - 1 >= 0
+                            && isHumanPiece(gameState.getBoardSquares()[j - 1][k])
+                            && !gameState.getBoardSquares()[j - 1][k].getPiece().getVisible()) {
+                        defendingSquare = gameState.getBoardSquares()[j - 1][k];
+                        attackingSquare = gameState.getBoardSquares()[j][k];
                     }
-                }
-                if ( j + 1 < 10 ) {
-                    if (gameState.getBoardSquares()[j + 1][k].getPiece() != null &&  gameState.getBoardSquares()[j][k].getPiece() != null ) {
-
-                        if (gameState.getBoardSquares()[j + 1][k].getPiece().getTeam() != playerNum &&
-                                !gameState.getBoardSquares()[j + 1][k].getPiece().getVisible() &&
-                                gameState.getBoardSquares()[j][k].getPiece().getTeam() == playerNum) {
-                            defendingSquare = gameState.getBoardSquares()[j + 1][k];
-                            attackingSquare = gameState.getBoardSquares()[j][k];
-                        }
-
+                    if (j + 1 < StrategoGameState.BOARD_SIZE
+                            && isHumanPiece(gameState.getBoardSquares()[j + 1][k])
+                            && !gameState.getBoardSquares()[j + 1][k].getPiece().getVisible()) {
+                        defendingSquare = gameState.getBoardSquares()[j + 1][k];
+                        attackingSquare = gameState.getBoardSquares()[j][k];
                     }
-                }
-                if ( k + 1 < 10 ) {
-                    if (gameState.getBoardSquares()[j][k + 1].getPiece() != null &&  gameState.getBoardSquares()[j][k].getPiece() != null ) {
-
-                        if (gameState.getBoardSquares()[j][k + 1].getPiece().getTeam() != playerNum &&
-                                !gameState.getBoardSquares()[j][k + 1].getPiece().getVisible() &&
-                                gameState.getBoardSquares()[j][k].getPiece().getTeam() == playerNum) {
-                            defendingSquare = gameState.getBoardSquares()[j][k + 1];
-                            attackingSquare = gameState.getBoardSquares()[j][k];
-                        }
-
+                    if (k + 1 < StrategoGameState.BOARD_SIZE
+                            && isHumanPiece(gameState.getBoardSquares()[j][k + 1])
+                            && !gameState.getBoardSquares()[j][k + 1].getPiece().getVisible()) {
+                        defendingSquare = gameState.getBoardSquares()[j][k + 1];
+                        attackingSquare = gameState.getBoardSquares()[j][k];
                     }
-                }
-                if ( k - 1 >= 0 ) {
-                    if (gameState.getBoardSquares()[j][k - 1].getPiece() != null &&  gameState.getBoardSquares()[j][k].getPiece() != null) {
-
-                        if (gameState.getBoardSquares()[j][k - 1].getPiece().getTeam() != playerNum &&
-                                !gameState.getBoardSquares()[j][k - 1].getPiece().getVisible() &&
-                                gameState.getBoardSquares()[j][k].getPiece().getTeam() == playerNum) {
-                            defendingSquare = gameState.getBoardSquares()[j][k - 1];
-                            attackingSquare = gameState.getBoardSquares()[j][k];
-                        }
-
+                    if (k - 1 >= 0
+                            && isHumanPiece(gameState.getBoardSquares()[j][k - 1])
+                            && !gameState.getBoardSquares()[j][k - 1].getPiece().getVisible()) {
+                        defendingSquare = gameState.getBoardSquares()[j][k - 1];
+                        attackingSquare = gameState.getBoardSquares()[j][k];
                     }
                 }
             }
         }
 
-        for ( int i = 0; i < blueGY.length - 1; i++ ) {
-            //if rank of attacking piece < piece rank in array, then add 1 to win
-            if (attackingSquare != null) {
-                if (pieceNumbers[i] > attackingSquare.getPiece().getRank()) {
-                    //if rank of attacking piece is < piece rank in the # array, then add 1 to lose
-                    weWillLose += blueGY[i];
-                } else {
-                    weCanWin += blueGY[i];
-                }
-                totalDead += blueGY[i];
-            }
+        if (attackingSquare == null || defendingSquare == null) {
+            Log.i("hiddenPieceAttack", "could not find attackSquare or defendingSquare");
+            return;
         }
 
-        totalPieces = totalPieces - totalDead;
+        for ( int i = 0; i < oppGY.length - 1; i++ ) {
+            //add to weCanWin the number of pieces still alive with a rank lower/equal to attackingSquare
+            //REMINDER: graveyard array index = pieces's rank - 1 (ex. blueGY[5] holds num of dead rank 6 blue pieces)
+            if (i + 1 <= attackingSquare.getPiece().getRank()) {
+                //StrategoGameState.NUM_OF_PIECES[i + 1] - oppGY[i] will return the
+                //number of pieces alive of rank i + 1
+                weCanWin += StrategoGameState.NUM_OF_PIECES[i + 1] - oppGY[i];
+            }
+            totalDead += oppGY[i];
+        }
+
+        totalPieces -= totalDead;
         Log.i("total pieces", "" + totalPieces);
 
         //doing math for winning/losing
-        if ( attackingSquare != null && defendingSquare != null &&
-                !(isBombOrFlag(attackingSquare)) && (weCanWin != 0)) {
+        if (weCanWin != 0) {
             Log.i("", " +  " + weCanWin);
-            double weWin = (double) weCanWin;
-            double total = (double) totalPieces;
-            double chanceOfWinning = (weWin / total) * 100;
+            double chanceOfWinning = (((double) weCanWin) / ((double) totalPieces)) * 100;
             Log.i("hiddenPieceAttack", "chance of winning: " + chanceOfWinning);
             if (chanceOfWinning >= 60) {
                 moveSuccessful = true;
