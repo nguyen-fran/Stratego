@@ -89,14 +89,13 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
         * another helper method to attempt another type of move, or to return (reset to false every turn)*/
         moveSuccessful = false;
 
-        try{
-            Thread.sleep(2000);
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-
         //determining if smart computer player should make moves or set up the board depending on game phase
         if(gameState.getGamePhase()){
+            try{
+                Thread.sleep(1000);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
             //going down the list of different types of moves to make until one actually works
 
             flagDefend();

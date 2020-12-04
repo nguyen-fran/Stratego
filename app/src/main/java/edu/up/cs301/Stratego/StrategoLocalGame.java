@@ -266,10 +266,7 @@ public class StrategoLocalGame extends LocalGame {
      * @return true if swap was successful, false otherwise
      */
     public boolean swap(StrategoSwapAction action) {
-        //correct phase and turn checking
-//        if (gameState.getGamePhase() || !canMove(getPlayerIdx(action.getPlayer()))) {
-//            return false;
-//        }
+        //correct phase checking, does no turn checking
         if (gameState.getGamePhase()) {
             return false;
         }
