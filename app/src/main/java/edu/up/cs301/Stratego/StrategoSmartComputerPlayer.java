@@ -10,7 +10,6 @@ import edu.up.cs301.game.GameFramework.infoMessage.GameInfo;
 
 /**
  * A smarter computer player to play Stratego
- * TODO: replace all checks for BLUE/RED so they will work with both blue player and red player configurations
  *
  * @author Gabby Marshak
  * @author Francisco Nguyen
@@ -90,10 +89,15 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
         * another helper method to attempt another type of move, or to return (reset to false every turn)*/
         moveSuccessful = false;
 
+        try{
+            Thread.sleep(2000);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
         //determining if smart computer player should make moves or set up the board depending on game phase
         if(gameState.getGamePhase()){
             //going down the list of different types of moves to make until one actually works
-            //TODO: find more efficient way to call these/check/structure this
 
             flagDefend();
             if(moveSuccessful){
@@ -111,7 +115,7 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
                 Log.i("smart ai movement", "failed to make special case attack");
             }
 
-            //scoutAttack();
+            scoutAttack();
             if(moveSuccessful){
                 Log.i("smart ai movement", "made scout attack");
                 return;
@@ -186,167 +190,12 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
     }
 
     /**
-     * checks if human player's flag piece is within one square of a computer player's piece
-     * checks if in a straight line from a computer player's scouts
-     * right now the method is just going to always know where the flag is whether or not it's visible
-     * may need to formally remove depending on if it's needed or not
-     */
-    public void flagAttack(){
-        BoardSquare flag = null;
-        BoardSquare source = null;
-        BoardSquare dest = null;
-
-        int sourceCoord;
-        int destCoord;
-
-        //for loop through human player's pieces to find where the flag is
-        BoardSquare current = null;
-        for(int i = 0; i < StrategoGameState.BOARD_SIZE; i++){
-            for(int j = 0; j < StrategoGameState.BOARD_SIZE; j++){
-                current = gameState.getBoardSquares()[i][j];
-
-                if(current.getOccupied() && current.getPiece() != null){
-                    if(current.getPiece().getRank() == 0
-                            && current.getPiece().getTeam() == StrategoGameState.BLUE) {
-                        flag = gameState.getBoardSquares()[i][j];
-                        break;
-                    }
-                }
-
-            }
-        }
-
-        //if you return here, something went wrong, either on the board or in the for loop
-        if(flag == null){
-            return;
-        }
-
-        //check in straight lines from the human flag until it hits another piece or goes off the board
-        source = straightLineChecker(flag);
-
-        //if there are no computer pieces in straight lines from the flag, then return and do something else
-        if(source == null){
-            return;
-        }
-
-        //if the piece is a red scout, destination should be the flag square
-        if(source.getPiece().getTeam() == StrategoGameState.RED && source.getPiece().getRank() == 2){
-            dest = flag;
-        }
-        //if the piece is any other mobile red piece, destination should be moving one square towards the flag
-        else if(source.getPiece().getTeam() == StrategoGameState.RED &&
-                !(source.getPiece().getRank() == GamePiece.FLAG || source.getPiece().getRank() == GamePiece.BOMB)){
-            //check if row/col is shared between the flag and source
-            if(source.getRow() == flag.getRow()){
-                //destination depends on if source column is greater or less than flag column
-                if(source.getCol() > flag.getCol()){
-                    dest = gameState.getBoardSquares()[flag.getRow()][source.getCol() - 1];
-                }else{
-                    dest = gameState.getBoardSquares()[flag.getRow()][source.getCol() + 1];
-                }
-            }else if(source.getCol() == flag.getCol()){
-                //destination depends on if source column is greater or less than flag columns
-                if(source.getRow() > flag.getRow()){
-                    dest = gameState.getBoardSquares()[source.getRow() - 1][flag.getCol()];
-                }else{
-                    dest = gameState.getBoardSquares()[source.getRow() + 1][flag.getCol()];
-                }
-            }
-        }
-
-        //making sure destination is not null before doing anything with it. if it is then something went wrong
-        if(dest == null){
-            return;
-        }
-        sourceCoord = coordConverter(source);
-        destCoord = coordConverter(dest);
-
-        moveSuccessful = true;
-        game.sendAction(new StrategoMoveAction(this, sourceCoord, destCoord));
-    }
-
-    /**
-     * checks squares in a straight line from a given board square in all four directions
-     * checking for computer player's pieces or the end of the board, whichever comes first
-     * decides what to return by prioritising the first scout it finds
-     * otherwise just the first occupied board square it finds
-     * @param square board square we are checking around
-     * @return square with piece that we want to move on it
-     */
-    public BoardSquare straightLineChecker(BoardSquare square){
-        BoardSquare north = null;
-        BoardSquare south = null;
-        BoardSquare east = null;
-        BoardSquare west = null;
-
-        //north (moving up on board, row - 1 every time, col is constant)
-        for(int i = square.getRow(); i >= 0; i--){
-            if(gameState.getBoardSquares()[i][square.getCol()].getOccupied() &&
-                    (gameState.getBoardSquares()[i][square.getCol()].getPiece().getTeam() == StrategoGameState.RED)){
-                north = gameState.getBoardSquares()[i][square.getCol()];
-                if(north.getPiece().getRank() == 2){
-                    return north;
-                }
-                break;
-            }
-        }
-
-        //south (moving down on board, row + 1 every time, col is constant)
-        for(int i = square.getRow(); i < StrategoGameState.BOARD_SIZE; i++){
-            if(gameState.getBoardSquares()[i][square.getCol()].getOccupied() &&
-                    (gameState.getBoardSquares()[i][square.getCol()].getPiece().getTeam() == StrategoGameState.RED)){
-                south = gameState.getBoardSquares()[i][square.getCol()];
-                if(south.getPiece().getRank() == 2){
-                    return south;
-                }
-                break;
-            }
-        }
-
-        //east (moving right on board, col + 1 every time, row is constant)
-        for(int i = square.getCol(); i < StrategoGameState.BOARD_SIZE; i++){
-            if(gameState.getBoardSquares()[square.getRow()][i].getOccupied() &&
-                    (gameState.getBoardSquares()[square.getRow()][i].getPiece().getTeam() == StrategoGameState.RED)){
-                east = gameState.getBoardSquares()[square.getRow()][i];
-                if(east.getPiece().getRank() == 2){
-                    return east;
-                }
-                break;
-            }
-        }
-
-        //west (moving left on board, col - 1 every time, row is constant)
-        for(int i = square.getCol(); i >= 0; i--){
-            if(gameState.getBoardSquares()[square.getRow()][i].getOccupied() &&
-                    (gameState.getBoardSquares()[square.getRow()][i].getPiece().getTeam() == StrategoGameState.RED)){
-                west = gameState.getBoardSquares()[square.getRow()][i];
-                if(west.getPiece().getRank() == 2){
-                    return west;
-                }
-                break;
-            }
-        }
-
-        //if none of the pieces found are scouts, just return the first one that is occupied
-        if(north != null){
-            return north;
-        }else if(south != null){
-            return south;
-        }else if(east != null){
-            return east;
-        }else if(west != null){
-            return west;
-        }else{
-            return null;
-        }
-    }
-
-    /**
      * checks if computer player's flag is reachable by human player's pieces, moves to defend the flag if possible
      * similar logic to flagAttack for the checks, just with teams swapped around
      */
     public void flagDefend(){
         BoardSquare flag = null;
+
         //loop through and find computer player's flag
         BoardSquare current = null;
         for(int i = 0; i < StrategoGameState.BOARD_SIZE; i++){
@@ -367,20 +216,21 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
 
         //finding the piece thats attacking the flag
         BoardSquare killThisOne = null;
-        if ( flag.getRow() - 1 >= 0 ) {
+        if ( flag.getRow() - 1 >= 0 &&
+                isHumanPiece(gameState.getBoardSquares()[flag.getRow() - 1][flag.getCol()])) {
             killThisOne = gameState.getBoardSquares()[flag.getRow() - 1][flag.getCol()];
-        }
-        if ( flag.getRow() + 1 < 10 ) {
-            killThisOne = gameState.getBoardSquares()[flag.getRow()+1][flag.getCol()];
-        }
-        if ( flag.getCol() -1 >= 0 ) {
+        } else if ( flag.getRow() + 1 < StrategoGameState.BOARD_SIZE &&
+                isHumanPiece(gameState.getBoardSquares()[flag.getRow() + 1][flag.getCol()])) {
+            killThisOne = gameState.getBoardSquares()[flag.getRow() + 1][flag.getCol()];
+        } else if ( flag.getCol() -1 >= 0 &&
+                isHumanPiece(gameState.getBoardSquares()[flag.getRow()][flag.getCol() - 1])) {
             killThisOne = gameState.getBoardSquares()[flag.getRow()][flag.getCol() - 1];
-        }
-        if ( flag.getCol() + 1 < 10 ) {
+        } else if ( flag.getCol() + 1 < StrategoGameState.BOARD_SIZE &&
+                isHumanPiece(gameState.getBoardSquares()[flag.getRow()][flag.getCol() + 1])) {
             killThisOne = gameState.getBoardSquares()[flag.getRow()][flag.getCol() + 1];
         }
 
-        if(killThisOne == null || isHumanPiece(killThisOne)){
+        if(killThisOne == null || isCompPiece(killThisOne)){
             Log.i("flagDefend", "could not find piece to kill");
             return;
         }
@@ -682,8 +532,9 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
 
     /**
      * method to attack visible pieces that the computer can capture
-     * specifically only looks at being directly adjacent for now but may add scout usage later
-     * TODO: reformat this
+     * specifically only looks at being directly adjacent
+     *
+     * will attack a visible enemy piece if its in range, and the rank is <= the piece that's attacking
      */
     public void normalAttack() {
         BoardSquare attackWith = null;
@@ -693,63 +544,14 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
                 attackWith = gameState.getBoardSquares()[i][j];
                 if (attackWith.getPiece() != null) {
                     if (attackWith.getPiece().getRank() == 0 || attackWith.getPiece().getRank() == 11) {
-
+                        Log.i("normalAttack", "trying to move immobile piece");
+                        return;
                     } else {
                         if (attackWith.getPiece() != null && attackWith.getPiece().getTeam() == playerNum) {
-                            int rank = attackWith.getPiece().getRank();
-                            if (attackWith.getCol() + 1 < 10) {
-                                defendWith = gameState.getBoardSquares()[attackWith.getRow()][attackWith.getCol() + 1];
-                                if (defendWith.getPiece() != null) {
-                                    if (defendWith.getPiece().getVisible() && defendWith.getPiece().getTeam() != playerNum ) {
-                                        if (defendWith.getPiece().getRank() <= rank) {
-                                            moveSuccessful = true;
-                                            Log.d("Tried attacking with:", "" + attackWith.getRow() + ", " + attackWith.getCol() + " / " + defendWith.getRow() + ", " + defendWith.getCol());
-                                            game.sendAction(new StrategoMoveAction(this, coordConverter(attackWith), coordConverter(defendWith)));
-                                            return;
-                                        }
-                                    }
-                                }
-
-                            }
-                            if (attackWith.getCol() - 1 >= 0) {
-                                defendWith = gameState.getBoardSquares()[attackWith.getRow()][attackWith.getCol() - 1];
-                                if (defendWith.getPiece() != null) {
-                                    if (defendWith.getPiece().getVisible() && defendWith.getPiece().getTeam() != playerNum ) {
-                                        if (defendWith.getPiece().getRank() <= rank) {
-                                            moveSuccessful = true;
-                                            Log.d("Tried attacking with:", "" + attackWith.getRow() + ", " + attackWith.getCol() + " / " + defendWith.getRow() + ", " + defendWith.getCol());
-                                            game.sendAction(new StrategoMoveAction(this, coordConverter(attackWith), coordConverter(defendWith)));
-                                            return;
-                                        }
-                                    }
-                                }
-                            }
-                            if (attackWith.getRow() - 1 >= 0) {
-                                defendWith = gameState.getBoardSquares()[attackWith.getRow() - 1][attackWith.getCol()];
-                                if (defendWith.getPiece() != null) {
-                                    if (defendWith.getPiece().getVisible() && defendWith.getPiece().getTeam() != playerNum  ) {
-                                        if (defendWith.getPiece().getRank() <= rank) {
-                                            moveSuccessful = true;
-                                            Log.d("Tried attacking with:", "" + attackWith.getRow() + ", " + attackWith.getCol() + " / " + defendWith.getRow() + ", " + defendWith.getCol());
-                                            game.sendAction(new StrategoMoveAction(this, coordConverter(attackWith), coordConverter(defendWith)));
-                                            return;
-                                        }
-                                    }
-                                }
-                            }
-                            if (attackWith.getRow() + 1 < 10) {
-                                defendWith = gameState.getBoardSquares()[attackWith.getRow() + 1][attackWith.getCol()];
-                                if (defendWith.getPiece() != null) {
-                                    if (defendWith.getPiece().getVisible() && defendWith.getPiece().getTeam() != playerNum ) {
-                                        if (defendWith.getPiece().getRank() <= rank) {
-                                            moveSuccessful = true;
-                                            Log.d("Tried attacking with:", "" + attackWith.getRow() + ", " + attackWith.getCol() + " / " + defendWith.getRow() + ", " + defendWith.getCol());
-                                            game.sendAction(new StrategoMoveAction(this, coordConverter(attackWith), coordConverter(defendWith)));
-                                            return;
-                                        }
-                                    }
-                                }
-                            }
+                            normalAttackHelper(attackWith, defendWith, 0, 1);
+                            normalAttackHelper(attackWith, defendWith, 0, -1);
+                            normalAttackHelper(attackWith, defendWith, 1, 0);
+                            normalAttackHelper(attackWith, defendWith, -1, 0);
                         }
                     }
                 }
@@ -758,9 +560,32 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
     }
 
     /**
+     * helper method for normal attack, performs validity checking on a given set of board squares and direction to move in
+     * @param attackWith piece that the computer player is attacking with
+     * @param defendWith piece that the human player is defending with
+     * @param row rows to move in (should only ever be 1 or -1)
+     * @param col columns to move in (should only ever be 1 or -1)
+     */
+    public void normalAttackHelper(BoardSquare attackWith, BoardSquare defendWith, int row, int col) {
+        if (attackWith.getCol() + col < 10 && attackWith.getCol() + col >= 0 && attackWith.getRow() + row >= 0 && attackWith.getRow() + row < 10) {
+            defendWith = gameState.getBoardSquares()[attackWith.getRow() + row][attackWith.getCol() + col];
+            if (defendWith.getPiece() != null) {
+                if (defendWith.getPiece().getVisible() && defendWith.getPiece().getTeam() != playerNum) {
+                    if ( defendWith.getPiece().getRank() <= attackWith.getPiece().getRank()  ||
+                            defendWith.getPiece().getRank() == 10 && attackWith.getPiece().getRank() == 1   ||
+                            defendWith.getPiece().getRank() == 11 && attackWith.getPiece().getRank() == 5  ) {
+                        moveSuccessful = true;
+                        Log.i("normalAttack", "Tried attacking with: [" + attackWith.getRow() + ", " + attackWith.getCol() +
+                                "], rank " + attackWith.getPiece().getRank() + " to [" + defendWith.getRow() + ", " +
+                                defendWith.getCol() + "], rank " + defendWith.getPiece().getRank());
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      *calculates odds of successfully attacking a piece that has not been revealed to the computer player
-     *
-     * @return true if the computer will attack the piece, false if it will not
      */
     //NEEDS TO BE IMPLEMENTED SOMEWHERE
     public void hiddenPieceAttack() {
@@ -844,26 +669,23 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
         }
 
         totalPieces = totalPieces - totalDead;
-        Log.d("total pieces", "" + totalPieces);
+        Log.i("total pieces", "" + totalPieces);
 
         //doing math for winning/losing
-        if ( attackingSquare != null && defendingSquare != null ) {
-            if (attackingSquare.getPiece().getRank() != 11 && attackingSquare.getPiece().getRank() != 0) {
-                if (weCanWin == 0) {
-
-                } else {
-                    Log.d("", " +  " + weCanWin);
-                    double weWin = (double) weCanWin;
-                    double total = (double) totalPieces;
-                    double chanceOfWinning = (weWin / total) * 100;
-                    Log.d("chance of winning: ", "" + chanceOfWinning);
-                    if (chanceOfWinning >= 60) {
-                        moveSuccessful = true;
-                        Log.d("trying to move: ", "" + attackingSquare.getRow() + ", " +
-                                attackingSquare.getCol() + " to: " + defendingSquare.getRow() + ", " + defendingSquare.getCol());
-                        game.sendAction(new StrategoMoveAction(this, coordConverter(attackingSquare), coordConverter(defendingSquare)));
-                    }
-                }
+        if ( attackingSquare != null && defendingSquare != null &&
+                !(isBombOrFlag(attackingSquare)) && (weCanWin != 0)) {
+            Log.i("", " +  " + weCanWin);
+            double weWin = (double) weCanWin;
+            double total = (double) totalPieces;
+            double chanceOfWinning = (weWin / total) * 100;
+            Log.i("hiddenPieceAttack", "chance of winning: " + chanceOfWinning);
+            if (chanceOfWinning >= 6) {
+                moveSuccessful = true;
+                Log.i("hiddenPieceAttack", "trying to move: " + attackingSquare.getRow() + ", " +
+                        attackingSquare.getCol() + " to: " + defendingSquare.getRow() + ", " + defendingSquare.getCol());
+                game.sendAction(new StrategoMoveAction(this, coordConverter(attackingSquare), coordConverter(defendingSquare)));
+            }else{
+                Log.i("hiddenPieceAttack", "chance of winning less than 60%");
             }
         }
     }
@@ -893,7 +715,8 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
                         (!gameState.getBoardSquares()[i+step][j].getOccupied())){
                     moveSuccessful = true;
                     moveThisOne = gameState.getBoardSquares()[i][j];
-                    game.sendAction(new StrategoMoveAction(this, coordConverter(moveThisOne), coordConverter(gameState.getBoardSquares()[moveThisOne.getRow() + step][moveThisOne.getCol()])));
+                    game.sendAction(new StrategoMoveAction(this, coordConverter(moveThisOne),
+                            coordConverter(gameState.getBoardSquares()[moveThisOne.getRow() + step][moveThisOne.getCol()])));
                     return;
                 }
             }
@@ -906,18 +729,20 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
                 if (isCompPiece(gameState.getBoardSquares()[i][j]) && !isBombOrFlag(gameState.getBoardSquares()[i][j])) {
                     if ((j + 1 < StrategoGameState.BOARD_SIZE) && (!gameState.getBoardSquares()[i][j + 1].getOccupied())) {
                         moveSuccessful = true;
-                        game.sendAction(new StrategoMoveAction(this, coordConverter(gameState.getBoardSquares()[i][j]), coordConverter(gameState.getBoardSquares()[i][j + 1])));
+                        game.sendAction(new StrategoMoveAction(this, coordConverter(gameState.getBoardSquares()[i][j]),
+                                coordConverter(gameState.getBoardSquares()[i][j + 1])));
                         return;
                     } else if ((j - 1 >= 0) && (!gameState.getBoardSquares()[i][j - 1].getOccupied())) {
                         moveSuccessful = true;
-                        game.sendAction(new StrategoMoveAction(this, coordConverter(gameState.getBoardSquares()[i][j]), coordConverter(gameState.getBoardSquares()[i][j - 1])));
+                        game.sendAction(new StrategoMoveAction(this, coordConverter(gameState.getBoardSquares()[i][j]),
+                                coordConverter(gameState.getBoardSquares()[i][j - 1])));
                         return;
                     }
                 }
             }
         }
 
-        //if cant move forward or sideways, then backwards? idk if this will ever be reached but yeah
+        //if cant move forward or sideways, then backwards
         for (int i = 0; i < StrategoGameState.BOARD_SIZE; i++) {
             for (int j = 0; j < StrategoGameState.BOARD_SIZE; j++) {
                 if ((isCompPiece(gameState.getBoardSquares()[i][j])) &&
@@ -926,7 +751,8 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
                         (!gameState.getBoardSquares()[i + step][j].getOccupied())){
                     moveSuccessful = true;
                     moveThisOne = gameState.getBoardSquares()[i][j];
-                    game.sendAction(new StrategoMoveAction(this, coordConverter(moveThisOne), coordConverter(gameState.getBoardSquares()[moveThisOne.getRow() - step][moveThisOne.getCol()])));
+                    game.sendAction(new StrategoMoveAction(this, coordConverter(moveThisOne),
+                            coordConverter(gameState.getBoardSquares()[moveThisOne.getRow() - step][moveThisOne.getCol()])));
                     return;
                 }
             }
@@ -948,6 +774,11 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
             }
         }
 
+        if(squareSrc == null || squareSrc.getPiece() == null){
+            Log.i("lastResortMove", "squareSrc or the piece on it did not exist");
+            return;
+        }
+
         //move it in a random direction
         Random rand = new Random();
         int randDir = rand.nextInt(4);
@@ -958,7 +789,7 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
                 }
                 break;
             case 1: //move up
-                if (squareSrc.getRow() - 1 < StrategoGameState.BOARD_SIZE) {
+                if (squareSrc.getRow() - 1 >= 0) {
                     squareDest = gameState.getBoardSquares()[squareSrc.getRow() - 1][squareSrc.getCol()];
                 }
                 break;
@@ -968,7 +799,7 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
                 }
                 break;
             case 3: //move left
-                if (squareSrc.getCol() - 1 < StrategoGameState.BOARD_SIZE) {
+                if (squareSrc.getCol() - 1 >= 0) {
                     squareDest = gameState.getBoardSquares()[squareSrc.getRow()][squareSrc.getCol() - 1];
                 }
                 break;
