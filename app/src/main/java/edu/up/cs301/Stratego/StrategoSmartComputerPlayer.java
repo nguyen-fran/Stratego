@@ -9,7 +9,6 @@ import edu.up.cs301.game.GameFramework.infoMessage.GameInfo;
 
 /**
  * A smarter computer player to play Stratego
- * TODO: replace all checks for BLUE/RED so they will work with both blue player and red player configurations
  *
  * @author Gabby Marshak
  * @author Francisco Nguyen
@@ -55,7 +54,6 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
         //determining if smart computer player should make moves or set up the board depending on game phase
         if(gameState.getGamePhase()){
             //going down the list of different types of moves to make until one actually works
-            //TODO: find more efficient way to call these/check/structure this
             
             flagDefend();
             if(moveSuccessful){
@@ -122,8 +120,8 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
             int swap2;
 
             for(int i = 0; i < swapNum; i++){
-                swap1 = rand.nextInt(100);
-                swap2 = rand.nextInt(100);
+                swap1 = rand.nextInt((StrategoGameState.BOARD_SIZE)*(StrategoGameState.BOARD_SIZE));
+                swap2 = rand.nextInt((StrategoGameState.BOARD_SIZE)*(StrategoGameState.BOARD_SIZE));
                 game.sendAction(new StrategoSwapAction(this, swap1, swap2));
                 Log.i("smart ai setup", "swapped " + swap1 + " and " + swap2);
             }
@@ -586,8 +584,9 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
         destCoord = coordConverter(defendWith);
 
         moveSuccessful = true;
-        Log.i("Tried attacking with:", "" + attackWith.getRow() + ", " + attackWith.getCol() +
-                " / " + defendWith.getRow() + ", " + defendWith.getCol());
+        Log.i("normalAttack", "Tried attacking with: [" + attackWith.getRow() + ", " + attackWith.getCol() +
+                "], rank " + attackWith.getPiece().getRank() + " to [" + defendWith.getRow() + ", " +
+                defendWith.getCol() + "], rank " + defendWith.getPiece().getRank());
         game.sendAction(new StrategoMoveAction(this, sourceCoord, destCoord));
     }
 
@@ -686,7 +685,7 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
             double total = (double) totalPieces;
             double chanceOfWinning = (weWin / total) * 100;
             Log.i("hiddenPieceAttack", "chance of winning: " + chanceOfWinning);
-            if (chanceOfWinning >= 60) {
+            if (chanceOfWinning >= 6) {
                 moveSuccessful = true;
                 Log.i("hiddenPieceAttack", "trying to move: " + attackingSquare.getRow() + ", " +
                         attackingSquare.getCol() + " to: " + defendingSquare.getRow() + ", " + defendingSquare.getCol());
@@ -735,27 +734,30 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
                 if (isCompPiece(gameState.getBoardSquares()[i][j]) && !isBombOrFlag(gameState.getBoardSquares()[i][j])) {
                     if ((j + 1 < StrategoGameState.BOARD_SIZE) && (!gameState.getBoardSquares()[i][j + 1].getOccupied())) {
                         moveSuccessful = true;
-                        game.sendAction(new StrategoMoveAction(this, coordConverter(gameState.getBoardSquares()[i][j]), coordConverter(gameState.getBoardSquares()[i][j + 1])));
+                        game.sendAction(new StrategoMoveAction(this, coordConverter(gameState.getBoardSquares()[i][j]),
+                                coordConverter(gameState.getBoardSquares()[i][j + 1])));
                         return;
                     } else if ((j - 1 >= 0) && (!gameState.getBoardSquares()[i][j - 1].getOccupied())) {
                         moveSuccessful = true;
-                        game.sendAction(new StrategoMoveAction(this, coordConverter(gameState.getBoardSquares()[i][j]), coordConverter(gameState.getBoardSquares()[i][j - 1])));
+                        game.sendAction(new StrategoMoveAction(this, coordConverter(gameState.getBoardSquares()[i][j]),
+                                coordConverter(gameState.getBoardSquares()[i][j - 1])));
                         return;
                     }
                 }
             }
         }
 
-        //if cant move forward or sideways, then backwards? idk if this will ever be reached but yeah
+        //if cant move forward or sideways, then backwards
         for (int i = 0; i < StrategoGameState.BOARD_SIZE; i++) {
             for (int j = 0; j < StrategoGameState.BOARD_SIZE; j++) {
                 if ((isCompPiece(gameState.getBoardSquares()[i][j])) &&
                         (!isBombOrFlag(gameState.getBoardSquares()[i][j])) &&
-                        (i - step < StrategoGameState.BOARD_SIZE && i - step >= 0) &&
+                        (i + step < StrategoGameState.BOARD_SIZE && i - step >= 0) &&
                         (!gameState.getBoardSquares()[i + step][j].getOccupied())){
                     moveSuccessful = true;
                     moveThisOne = gameState.getBoardSquares()[i][j];
-                    game.sendAction(new StrategoMoveAction(this, coordConverter(moveThisOne), coordConverter(gameState.getBoardSquares()[moveThisOne.getRow() - step][moveThisOne.getCol()])));
+                    game.sendAction(new StrategoMoveAction(this, coordConverter(moveThisOne),
+                            coordConverter(gameState.getBoardSquares()[moveThisOne.getRow() - step][moveThisOne.getCol()])));
                     return;
                 }
             }
@@ -774,6 +776,11 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
                     squareSrc = gameState.getBoardSquares()[i][j];
                 }
             }
+        }
+
+        if(squareSrc == null || squareSrc.getPiece() == null){
+            Log.i("lastResortMove", "squareSrc or the piece on it did not exist");
+            return;
         }
 
         Random rand = new Random();
