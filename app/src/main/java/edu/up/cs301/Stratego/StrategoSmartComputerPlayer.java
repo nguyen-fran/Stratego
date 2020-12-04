@@ -251,12 +251,15 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
             defendWithThis = gameState.getBoardSquares()[killThisOne.getRow()][killThisOne.getCol() - 1];
         }
 
-        if (defendWithThis.getPiece() != null) {
-            moveSuccessful = true;
-            game.sendAction(new StrategoMoveAction(this, coordConverter(defendWithThis), coordConverter(killThisOne)));
-        }else{
-            Log.i("flagDefend", "defendWithThis does not meet proper criteria");
+        if (defendWithThis != null ) {
+            if (defendWithThis.getPiece() != null) {
+                moveSuccessful = true;
+                game.sendAction(new StrategoMoveAction(this, coordConverter(defendWithThis), coordConverter(killThisOne)));
+            }else{
+                Log.i("flagDefend", "defendWithThis does not meet proper criteria");
+            }
         }
+
     }
 
     /**
