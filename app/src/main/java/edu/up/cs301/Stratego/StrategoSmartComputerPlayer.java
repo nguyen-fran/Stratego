@@ -127,7 +127,7 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
             }
         }
     }
-    
+
     /**
      * checks if computer player's flag is reachable by human player's pieces, moves to defend the flag if possible
      * similar logic to flagAttack for the checks, just with teams swapped around
@@ -472,46 +472,55 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
     /**
      * method to attack visible pieces that the computer can capture
      * specifically only looks at being directly adjacent
+     *
+     * will attack a visible enemy piece if its in range, and the rank is <= the piece that's attacking
      */
     public void normalAttack() {
         BoardSquare attackWith = null;
         BoardSquare defendWith = null;
-        int sourceCoord;
-        int destCoord;
-
         for ( int i = 0; i < 10; i++ ) {
             for (int j = 0; j < 10; j++) {
                 attackWith = gameState.getBoardSquares()[i][j];
-                if (isCompPiece(attackWith) && attackWith.getPiece().getRank() != 0 && attackWith.getPiece().getRank() != 11) {
-                    if (attackWith.getCol() + 1 < StrategoGameState.BOARD_SIZE) {
-                        defendWith = gameState.getBoardSquares()[attackWith.getRow()][attackWith.getCol() + 1];
-                    } else if (attackWith.getCol() - 1 >= 0) {
-                        defendWith = gameState.getBoardSquares()[attackWith.getRow()][attackWith.getCol() - 1];
-                    } else if (attackWith.getRow() - 1 >= 0) {
-                        defendWith = gameState.getBoardSquares()[attackWith.getRow() - 1][attackWith.getCol()];
-                    } else if (attackWith.getRow() + 1 < StrategoGameState.BOARD_SIZE) {
-                        defendWith = gameState.getBoardSquares()[attackWith.getRow() + 1][attackWith.getCol()];
+                if (attackWith.getPiece() != null) {
+                    if (attackWith.getPiece().getRank() == 0 || attackWith.getPiece().getRank() == 11) {
+                        Log.i("normalAttack", "trying to move immobile piece");
+                        return;
+                    } else {
+                        if (attackWith.getPiece() != null && attackWith.getPiece().getTeam() == playerNum) {
+                            normalAttackHelper(attackWith, defendWith, 0, 1);
+                            normalAttackHelper(attackWith, defendWith, 0, -1);
+                            normalAttackHelper(attackWith, defendWith, 1, 0);
+                            normalAttackHelper(attackWith, defendWith, -1, 0);
+                        }
                     }
                 }
             }
         }
+    }
 
-        if(defendWith == null || !isHumanPiece(defendWith) || !defendWith.getPiece().getVisible()){
-            Log.i("normalAttack", "defendWith is either null, does not have a human player " +
-                    "piece or is not visible to the computer");
-            return;
-        }else if(defendWith.getPiece().getRank() >= attackWith.getPiece().getRank()){
-            Log.i("normalAttack", "defendWith has greater or equal rank to attackWith");
-            return;
+    /**
+     * helper method for normal attack, performs validity checking on a given set of board squares and direction to move in
+     * @param attackWith piece that the computer player is attacking with
+     * @param defendWith piece that the human player is defending with
+     * @param row rows to move in (should only ever be 1 or -1)
+     * @param col columns to move in (should only ever be 1 or -1)
+     */
+    public void normalAttackHelper(BoardSquare attackWith, BoardSquare defendWith, int row, int col) {
+        if (attackWith.getCol() + col < 10 && attackWith.getCol() + col >= 0 && attackWith.getRow() + row >= 0 && attackWith.getRow() + row < 10) {
+            defendWith = gameState.getBoardSquares()[attackWith.getRow() + row][attackWith.getCol() + col];
+            if (defendWith.getPiece() != null) {
+                if (defendWith.getPiece().getVisible() && defendWith.getPiece().getTeam() != playerNum) {
+                    if ( defendWith.getPiece().getRank() <= attackWith.getPiece().getRank()  ||
+                            defendWith.getPiece().getRank() == 10 && attackWith.getPiece().getRank() == 1   ||
+                            defendWith.getPiece().getRank() == 11 && attackWith.getPiece().getRank() == 5  ) {
+                        moveSuccessful = true;
+                        Log.i("normalAttack", "Tried attacking with: [" + attackWith.getRow() + ", " + attackWith.getCol() +
+                                "], rank " + attackWith.getPiece().getRank() + " to [" + defendWith.getRow() + ", " +
+                                defendWith.getCol() + "], rank " + defendWith.getPiece().getRank());
+                    }
+                }
+            }
         }
-        sourceCoord = coordConverter(attackWith);
-        destCoord = coordConverter(defendWith);
-
-        moveSuccessful = true;
-        Log.i("normalAttack", "Tried attacking with: [" + attackWith.getRow() + ", " + attackWith.getCol() +
-                "], rank " + attackWith.getPiece().getRank() + " to [" + defendWith.getRow() + ", " +
-                defendWith.getCol() + "], rank " + defendWith.getPiece().getRank());
-        game.sendAction(new StrategoMoveAction(this, sourceCoord, destCoord));
     }
 
     /**
@@ -717,7 +726,7 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
                 }
                 break;
             case 1: //move up
-                if (squareSrc.getRow() - 1 < StrategoGameState.BOARD_SIZE) {
+                if (squareSrc.getRow() - 1 >= 0) {
                     squareDest = gameState.getBoardSquares()[squareSrc.getRow() - 1][squareSrc.getCol()];
                 }
                 break;
@@ -727,7 +736,7 @@ public class StrategoSmartComputerPlayer extends GameComputerPlayer {
                 }
                 break;
             case 3: //move left
-                if (squareSrc.getCol() - 1 < StrategoGameState.BOARD_SIZE) {
+                if (squareSrc.getCol() - 1 >= 0) {
                     squareDest = gameState.getBoardSquares()[squareSrc.getRow()][squareSrc.getCol() - 1];
                 }
                 break;
